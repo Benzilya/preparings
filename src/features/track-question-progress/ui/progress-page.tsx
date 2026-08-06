@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ChangeEvent, useMemo, useState } from "react";
 
-import type { Question } from "@/entities/question";
+import { localizeQuestion, type Question } from "@/entities/question";
 import { getTranslations, useSettings } from "@/features/manage-settings";
 
 import { summarizeProgress } from "../model/storage";
@@ -24,44 +24,53 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
   const [resetPending, setResetPending] = useState(false);
   const [resetConfirmation, setResetConfirmation] = useState("");
   const summary = summarizeProgress(questions.length, records);
+  const localizedQuestions = useMemo(
+    () => questions.map((question) => localizeQuestion(question, language)),
+    [language, questions],
+  );
 
   const recordsByQuestion = useMemo(
     () => new Map(records.map((record) => [record.questionId, record])),
     [records],
   );
 
-  const categoryStats = useMemo(
-    () =>
-      [...new Set(questions.map((question) => question.category))]
-        .map((category) => {
-          const categoryQuestions = questions.filter((question) => question.category === category);
-          return {
-            category,
-            total: categoryQuestions.length,
-            completed: categoryQuestions.filter(
-              (question) => recordsByQuestion.get(question.id)?.status === "completed",
-            ).length,
-            learning: categoryQuestions.filter(
-              (question) => recordsByQuestion.get(question.id)?.status === "learning",
-            ).length,
-          };
-        })
-        .toSorted((left, right) => left.category.localeCompare(right.category, "en")),
-    [questions, recordsByQuestion],
-  );
+  const categoryStats = useMemo(() => {
+    const categories = new Map<string, { category: string; total: number; completed: number; learning: number }>();
+    for (const question of localizedQuestions) {
+      const current = categories.get(question.categorySlug) ?? {
+        category: question.category,
+        total: 0,
+        completed: 0,
+        learning: 0,
+      };
+      const status = recordsByQuestion.get(question.id)?.status;
+      categories.set(question.categorySlug, {
+        ...current,
+        total: current.total + 1,
+        completed: current.completed + (status === "completed" ? 1 : 0),
+        learning: current.learning + (status === "learning" ? 1 : 0),
+      });
+    }
+    return [...categories.values()].toSorted((left, right) =>
+      left.category.localeCompare(right.category, language),
+    );
+  }, [language, localizedQuestions, recordsByQuestion]);
 
   const activityGroups = useMemo(() => {
-    const groups = new Map<string, Array<{ record: (typeof records)[number]; question: Question }>>();
+    const groups = new Map<
+      string,
+      Array<{ record: (typeof records)[number]; question: (typeof localizedQuestions)[number] }>
+    >();
     records
       .toSorted((left, right) => right.updatedAt.localeCompare(left.updatedAt))
       .forEach((record) => {
-        const question = questions.find((item) => item.id === record.questionId);
+        const question = localizedQuestions.find((item) => item.id === record.questionId);
         if (!question) return;
         const dateKey = getDateKey(record.updatedAt);
         groups.set(dateKey, [...(groups.get(dateKey) ?? []), { record, question }]);
       });
     return [...groups.entries()].slice(0, 7);
-  }, [questions, records]);
+  }, [localizedQuestions, records]);
 
   const formatDate = (value: string) =>
     new Intl.DateTimeFormat(copy.locale, { day: "numeric", month: "long", year: "numeric" }).format(
