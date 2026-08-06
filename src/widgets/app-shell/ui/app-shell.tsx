@@ -17,13 +17,15 @@ function NavigationGroup({
   items,
   language,
   ariaLabel,
+  className,
 }: {
   items: typeof mainNavigation;
   language: "ru" | "en";
   ariaLabel: string;
+  className?: string;
 }) {
   return (
-    <nav aria-label={ariaLabel}>
+    <nav aria-label={ariaLabel} className={className}>
       <ul className="appNavList">
         {items.map((item) => {
           const Icon = item.icon;
@@ -90,7 +92,7 @@ export function AppShell({ children }: PropsWithChildren) {
           <span className="appBrandMark">Q</span>
           <span>
             <strong>QA Interview</strong>
-            <small>Trainer Platform</small>
+            <small>{copy.preparation}</small>
           </span>
         </Link>
 
@@ -115,7 +117,6 @@ export function AppShell({ children }: PropsWithChildren) {
           >
             {copy.createdBy}
           </a>
-          <p>Foundation · v0.1</p>
         </div>
       </aside>
 
@@ -134,6 +135,12 @@ export function AppShell({ children }: PropsWithChildren) {
             <ThemeToggle />
           </div>
         </header>
+        <NavigationGroup
+          ariaLabel={copy.primaryNavigation}
+          className="mobileNavigation"
+          items={mainNavigation}
+          language={language}
+        />
         <main className="appContent" id="main-content" tabIndex={-1}>
           {children}
         </main>
