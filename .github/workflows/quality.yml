@@ -1,3 +1,4 @@
+# Release Gate workflow confirmed by repository owner
 name: Quality
 
 on:
