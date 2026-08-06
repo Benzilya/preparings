@@ -1,6 +1,7 @@
 name: Repair pnpm lockfile
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - agent/project-foundation
@@ -9,6 +10,10 @@ on:
 
 permissions:
   contents: write
+
+concurrency:
+  group: repair-pnpm-lockfile
+  cancel-in-progress: false
 
 jobs:
   repair:
@@ -23,14 +28,16 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
       - name: Activate pnpm
         run: |
           corepack enable
           corepack prepare pnpm@10.15.0 --activate
+          pnpm --version
       - name: Regenerate lockfile
         run: |
           rm -f pnpm-lock.yaml
-          pnpm install --lockfile-only
+          pnpm install --lockfile-only --registry=https://registry.npmjs.org
           pnpm install --frozen-lockfile
       - name: Commit generated lockfile
         run: |
