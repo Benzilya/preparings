@@ -8,5 +8,7 @@ export {
   writeSettings,
 } from "./model/settings";
 export type { CatalogDensity, InterfaceLanguage, UserSettings } from "./model/settings";
+export { getTranslations } from "./model/translations";
+export type { InterfaceTranslations } from "./model/translations";
 export { useSettings } from "./model/use-settings";
 export { SettingsPage } from "./ui/settings-page";
