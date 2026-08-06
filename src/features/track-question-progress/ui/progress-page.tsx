@@ -8,9 +8,22 @@ import type { Question } from "@/entities/question";
 import { summarizeProgress } from "../model/storage";
 import { useQuestionProgress } from "../model/use-question-progress";
 
+function getDateKey(value: string): string {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function formatActivityDate(value: string): string {
+  return new Intl.DateTimeFormat("ru-RU", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(`${value}T00:00:00`));
+}
+
 export function ProgressPage({ questions }: { questions: readonly Question[] }) {
   const { records, reset, exportJson, importJson } = useQuestionProgress();
   const [message, setMessage] = useState("");
+  const [resetPending, setResetPending] = useState(false);
   const summary = summarizeProgress(questions.length, records);
 
   const recordsByQuestion = useMemo(
@@ -33,14 +46,25 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
       .toSorted((left, right) => left.category.localeCompare(right.category, "en"));
   }, [questions, recordsByQuestion]);
 
-  const recent = records
-    .toSorted((left, right) => right.updatedAt.localeCompare(left.updatedAt))
-    .slice(0, 6)
-    .map((record) => ({
-      record,
-      question: questions.find((question) => question.id === record.questionId),
-    }))
-    .filter((item) => item.question);
+  const activityGroups = useMemo(() => {
+    const groups = new Map<
+      string,
+      Array<{ record: (typeof records)[number]; question: Question }>
+    >();
+
+    records
+      .toSorted((left, right) => right.updatedAt.localeCompare(left.updatedAt))
+      .forEach((record) => {
+        const question = questions.find((item) => item.id === record.questionId);
+        if (!question) return;
+        const dateKey = getDateKey(record.updatedAt);
+        const items = groups.get(dateKey) ?? [];
+        items.push({ record, question });
+        groups.set(dateKey, items);
+      });
+
+    return [...groups.entries()].slice(0, 7);
+  }, [questions, records]);
 
   const downloadProgress = () => {
     const blob = new Blob([exportJson()], { type: "application/json" });
@@ -58,6 +82,7 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
 
     try {
       importJson(await file.text());
+      setResetPending(false);
       setMessage("Progress imported / Прогресс импортирован");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Import failed / Ошибка импорта");
@@ -66,7 +91,14 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
     }
   };
 
-  const completion = questions.length === 0 ? 0 : Math.round((summary.completed / questions.length) * 100);
+  const confirmReset = () => {
+    reset();
+    setResetPending(false);
+    setMessage("Progress reset / Прогресс сброшен");
+  };
+
+  const completion =
+    questions.length === 0 ? 0 : Math.round((summary.completed / questions.length) * 100);
 
   return (
     <div className="progressPage">
@@ -79,32 +111,87 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
       </header>
 
       <section className="metrics" aria-label="Progress summary / Сводка прогресса">
-        <article className="metric"><strong>{completion}%</strong><span>Completed / Завершено</span></article>
-        <article className="metric"><strong>{summary.learning}</strong><span>Learning / Изучается</span></article>
-        <article className="metric"><strong>{summary.favorites}</strong><span>Favorites / Избранное</span></article>
+        <article className="metric">
+          <strong>{completion}%</strong>
+          <span>Completed / Завершено</span>
+        </article>
+        <article className="metric">
+          <strong>{summary.learning}</strong>
+          <span>Learning / Изучается</span>
+        </article>
+        <article className="metric">
+          <strong>{summary.favorites}</strong>
+          <span>Favorites / Избранное</span>
+        </article>
       </section>
 
       <section className="progressPanel">
         <div className="progressPanelHeader">
-          <div><p className="cardLabel">Backup / Резервная копия</p><h2>Import and export / Импорт и экспорт</h2></div>
+          <div>
+            <p className="cardLabel">Backup / Резервная копия</p>
+            <h2>Import and export / Импорт и экспорт</h2>
+          </div>
           <div className="progressActions">
-            <button onClick={downloadProgress} type="button">Export JSON / Экспорт</button>
-            <label className="progressImport">Import JSON / Импорт<input accept="application/json,.json" onChange={handleImport} type="file" /></label>
-            <button onClick={() => { reset(); setMessage("Progress reset / Прогресс сброшен"); }} type="button">Reset / Сбросить</button>
+            <button onClick={downloadProgress} type="button">
+              Export JSON / Экспорт
+            </button>
+            <label className="progressImport">
+              Import JSON / Импорт
+              <input accept="application/json,.json" onChange={handleImport} type="file" />
+            </label>
+            {!resetPending ? (
+              <button onClick={() => setResetPending(true)} type="button">
+                Reset / Сбросить
+              </button>
+            ) : null}
           </div>
         </div>
-        {message ? <p className="progressMessage" role="status">{message}</p> : null}
+
+        {resetPending ? (
+          <div className="resetConfirmation" role="alert">
+            <div>
+              <strong>Delete all local progress? / Удалить весь локальный прогресс?</strong>
+              <p>This cannot be undone unless you exported a backup.</p>
+            </div>
+            <div className="progressActions">
+              <button onClick={() => setResetPending(false)} type="button">
+                Cancel / Отмена
+              </button>
+              <button className="dangerAction" onClick={confirmReset} type="button">
+                Delete progress / Удалить
+              </button>
+            </div>
+          </div>
+        ) : null}
+
+        {message ? (
+          <p className="progressMessage" role="status">
+            {message}
+          </p>
+        ) : null}
       </section>
 
       <section className="progressPanel">
-        <div className="progressPanelHeader"><div><p className="cardLabel">Categories / Категории</p><h2>Coverage by topic / Покрытие по темам</h2></div></div>
+        <div className="progressPanelHeader">
+          <div>
+            <p className="cardLabel">Categories / Категории</p>
+            <h2>Coverage by topic / Покрытие по темам</h2>
+          </div>
+        </div>
         <div className="categoryProgressList">
           {categoryStats.map((item) => {
             const percent = Math.round((item.completed / item.total) * 100);
             return (
               <article className="categoryProgressItem" key={item.category}>
-                <div><strong>{item.category}</strong><span>{item.completed} completed · {item.learning} learning · {item.total} total</span></div>
-                <div className="progressBar" aria-label={`${item.category}: ${percent}%`}><span style={{ width: `${percent}%` }} /></div>
+                <div>
+                  <strong>{item.category}</strong>
+                  <span>
+                    {item.completed} completed · {item.learning} learning · {item.total} total
+                  </span>
+                </div>
+                <div className="progressBar" aria-label={`${item.category}: ${percent}%`}>
+                  <span style={{ width: `${percent}%` }} />
+                </div>
               </article>
             );
           })}
@@ -112,17 +199,38 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
       </section>
 
       <section className="progressPanel">
-        <div className="progressPanelHeader"><div><p className="cardLabel">Activity / Активность</p><h2>Recently changed / Недавние изменения</h2></div></div>
-        {recent.length ? (
-          <div className="recentProgressList">
-            {recent.map(({ record, question }) => question ? (
-              <Link href={`/questions/${question.slug}`} key={record.questionId}>
-                <strong>{question.title}</strong>
-                <span>{record.status} · {new Date(record.updatedAt).toLocaleDateString()}</span>
-              </Link>
-            ) : null)}
+        <div className="progressPanelHeader">
+          <div>
+            <p className="cardLabel">Activity / Активность</p>
+            <h2>History by date / История по датам</h2>
           </div>
-        ) : <p className="progressEmpty">No activity yet / Активности пока нет</p>}
+        </div>
+        {activityGroups.length ? (
+          <div className="activityGroups">
+            {activityGroups.map(([date, items]) => (
+              <section className="activityGroup" key={date}>
+                <h3>{formatActivityDate(date)}</h3>
+                <div className="recentProgressList">
+                  {items.map(({ record, question }) => (
+                    <Link href={`/questions/${question.slug}`} key={record.questionId}>
+                      <strong>{question.title}</strong>
+                      <span>
+                        {record.status}
+                        {record.favorite ? " · favorite" : ""} ·{" "}
+                        {new Date(record.updatedAt).toLocaleTimeString("ru-RU", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+        ) : (
+          <p className="progressEmpty">No activity yet / Активности пока нет</p>
+        )}
       </section>
     </div>
   );
