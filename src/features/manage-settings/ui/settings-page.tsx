@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { clearQuestionProgress } from "@/features/track-question-progress/model/storage";
 
@@ -50,6 +50,7 @@ export function SettingsPage() {
         <label className="settingsField">
           <span>{translations.language}</span>
           <select
+            aria-label={translations.language}
             onChange={(event) =>
               update({ ...settings, language: event.target.value as UserSettings["language"] })
             }
@@ -63,6 +64,7 @@ export function SettingsPage() {
         <label className="settingsField">
           <span>{translations.density}</span>
           <select
+            aria-label={translations.density}
             onChange={(event) =>
               update({
                 ...settings,
