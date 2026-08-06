@@ -1,5 +1,6 @@
 export type QuestionDifficulty = "junior" | "middle" | "senior";
 export type QuestionLanguage = "ru" | "en";
+export type QuestionFrequencyTier = "very-common" | "common" | "frequent";
 
 export interface LocalizedText {
   readonly ru: string;
@@ -23,6 +24,12 @@ export interface InterviewAnswerExample {
   readonly answer: LocalizedText;
 }
 
+export interface QuestionRankingEvidence {
+  readonly frequencyTier: QuestionFrequencyTier;
+  readonly verifiedAt: string;
+  readonly inclusionRationale: LocalizedText;
+}
+
 export interface Question {
   readonly id: string;
   readonly slug: string;
@@ -32,6 +39,7 @@ export interface Question {
   readonly tags: readonly LocalizedTag[];
   readonly difficulty: QuestionDifficulty;
   readonly popularityRank: number;
+  readonly ranking?: QuestionRankingEvidence;
   readonly sourcesCount: number;
   readonly sources: readonly QuestionSource[];
   readonly explanation: LocalizedText;
