@@ -5,6 +5,7 @@ import type {
 } from "@/entities/progress";
 
 const storageKey = "qa-interview-trainer:question-progress:v1";
+const changedEvent = "question-progress:changed";
 
 function isStatus(value: unknown): value is QuestionProgressStatus {
   return value === "not-started" || value === "learning" || value === "completed";
@@ -22,6 +23,10 @@ function isRecord(value: unknown): value is QuestionProgressRecord {
   );
 }
 
+function notifyProgressChanged(): void {
+  window.dispatchEvent(new CustomEvent(changedEvent));
+}
+
 export function readQuestionProgress(): readonly QuestionProgressRecord[] {
   if (typeof window === "undefined") return [];
 
@@ -37,7 +42,24 @@ export function readQuestionProgress(): readonly QuestionProgressRecord[] {
 
 export function writeQuestionProgress(records: readonly QuestionProgressRecord[]): void {
   window.localStorage.setItem(storageKey, JSON.stringify(records));
-  window.dispatchEvent(new CustomEvent("question-progress:changed"));
+  notifyProgressChanged();
+}
+
+export function clearQuestionProgress(): void {
+  window.localStorage.removeItem(storageKey);
+  notifyProgressChanged();
+}
+
+export function exportQuestionProgress(): string {
+  return JSON.stringify(
+    {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      records: readQuestionProgress(),
+    },
+    null,
+    2,
+  );
 }
 
 export function upsertQuestionProgress(
