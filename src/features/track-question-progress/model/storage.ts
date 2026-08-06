@@ -17,9 +17,11 @@ function isRecord(value: unknown): value is QuestionProgressRecord {
 
   return (
     typeof record.questionId === "string" &&
+    record.questionId.length > 0 &&
     isStatus(record.status) &&
     typeof record.favorite === "boolean" &&
-    typeof record.updatedAt === "string"
+    typeof record.updatedAt === "string" &&
+    !Number.isNaN(Date.parse(record.updatedAt))
   );
 }
 
@@ -60,6 +62,37 @@ export function exportQuestionProgress(): string {
     null,
     2,
   );
+}
+
+export function importQuestionProgress(raw: string): readonly QuestionProgressRecord[] {
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error("Progress file is not valid JSON.");
+  }
+
+  if (!parsed || typeof parsed !== "object") {
+    throw new Error("Progress file must contain an object.");
+  }
+
+  const payload = parsed as { version?: unknown; records?: unknown };
+  if (payload.version !== 1 || !Array.isArray(payload.records)) {
+    throw new Error("Unsupported progress file format.");
+  }
+
+  const records = payload.records.filter(isRecord);
+  if (records.length !== payload.records.length) {
+    throw new Error("Progress file contains invalid records.");
+  }
+
+  const unique = new Map(records.map((record) => [record.questionId, record]));
+  const normalized = [...unique.values()].toSorted((left, right) =>
+    left.questionId.localeCompare(right.questionId, "en"),
+  );
+  writeQuestionProgress(normalized);
+  return normalized;
 }
 
 export function upsertQuestionProgress(
