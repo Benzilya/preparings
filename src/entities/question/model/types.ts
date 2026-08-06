@@ -1,6 +1,5 @@
-import type { InterfaceLanguage } from "@/features/manage-settings/model/settings";
-
 export type QuestionDifficulty = "junior" | "middle" | "senior";
+export type QuestionLanguage = "ru" | "en";
 
 export interface LocalizedText {
   readonly ru: string;
@@ -70,11 +69,11 @@ export interface QuestionCategory {
   readonly questions: readonly Question[];
 }
 
-export function localizeText(text: LocalizedText, language: InterfaceLanguage): string {
+export function localizeText(text: LocalizedText, language: QuestionLanguage): string {
   return text[language];
 }
 
-export function localizeQuestion(question: Question, language: InterfaceLanguage): LocalizedQuestion {
+export function localizeQuestion(question: Question, language: QuestionLanguage): LocalizedQuestion {
   return {
     ...question,
     title: localizeText(question.title, language),
