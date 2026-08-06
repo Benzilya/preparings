@@ -3,9 +3,15 @@
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
-import { getTranslations, useSettings } from "@/features/manage-settings";
+import {
+  getTranslations,
+  readSettings,
+  useSettings,
+  writeSettings,
+} from "@/features/manage-settings";
 import { ThemeToggle } from "@/features/theme-toggle";
 import { mainNavigation, utilityNavigation } from "@/shared/config/navigation";
+import { projectAuthor } from "@/shared/config/project-author";
 
 function NavigationGroup({
   items,
@@ -36,17 +42,47 @@ function NavigationGroup({
   );
 }
 
+function LanguageSwitcher({ language }: { language: "ru" | "en" }) {
+  const copy = getTranslations(language).shell;
+
+  const selectLanguage = (nextLanguage: "ru" | "en") => {
+    const current = readSettings();
+    writeSettings({ ...current, language: nextLanguage });
+  };
+
+  return (
+    <div className="languageSwitcher" role="group" aria-label={copy.languageSwitcher}>
+      <button
+        aria-label={copy.switchToRussian}
+        aria-pressed={language === "ru"}
+        className="languageOption"
+        onClick={() => selectLanguage("ru")}
+        type="button"
+      >
+        RU
+      </button>
+      <span aria-hidden="true">/</span>
+      <button
+        aria-label={copy.switchToEnglish}
+        aria-pressed={language === "en"}
+        className="languageOption"
+        onClick={() => selectLanguage("en")}
+        type="button"
+      >
+        EN
+      </button>
+    </div>
+  );
+}
+
 export function AppShell({ children }: PropsWithChildren) {
   const { language } = useSettings();
   const copy = getTranslations(language).shell;
-  const skipToContent = language === "ru" ? "Перейти к содержимому" : "Skip to content";
-  const utilityNavigationLabel =
-    language === "ru" ? "Служебная навигация" : "Utility navigation";
 
   return (
     <div className="appFrame">
       <a className="skipLink" href="#main-content">
-        {skipToContent}
+        {copy.skipToContent}
       </a>
 
       <aside className="appSidebar">
@@ -66,10 +102,19 @@ export function AppShell({ children }: PropsWithChildren) {
 
         <div className="appSidebarFooter">
           <NavigationGroup
-            ariaLabel={utilityNavigationLabel}
+            ariaLabel={copy.utilityNavigation}
             items={utilityNavigation}
             language={language}
           />
+          <a
+            aria-label={copy.authorLink}
+            className="authorLink"
+            href={projectAuthor.githubUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            {copy.createdBy}
+          </a>
           <p>Foundation · v0.1</p>
         </div>
       </aside>
@@ -81,6 +126,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <strong>{copy.preparation}</strong>
           </div>
           <div className="appTopbarActions">
+            <LanguageSwitcher language={language} />
             <button className="commandButton" type="button" aria-label={copy.openSearch}>
               <span>{copy.search}</span>
               <kbd>⌘ K</kbd>
