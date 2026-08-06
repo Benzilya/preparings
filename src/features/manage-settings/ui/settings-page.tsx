@@ -6,6 +6,7 @@ import { clearQuestionProgress } from "@/features/track-question-progress/model/
 
 import {
   defaultSettings,
+  getTranslations,
   readSettings,
   resetSettings,
   type UserSettings,
@@ -16,39 +17,38 @@ export function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [message, setMessage] = useState("");
   const [clearPending, setClearPending] = useState(false);
+  const translations = getTranslations(settings.language).settings;
 
   useEffect(() => setSettings(readSettings()), []);
 
   const update = (next: UserSettings) => {
     setSettings(next);
     writeSettings(next);
-    setMessage("Settings saved / Настройки сохранены");
+    setMessage(getTranslations(next.language).settings.saved);
   };
 
   const clearProgress = () => {
     clearQuestionProgress();
     setClearPending(false);
-    setMessage("Local progress deleted / Локальный прогресс удалён");
+    setMessage(translations.progressDeleted);
   };
 
   return (
     <div className="settingsPage">
       <header className="routeHero">
-        <p className="eyebrow">Settings / Настройки</p>
-        <h1>Local preferences / Локальные параметры</h1>
-        <p className="lead">
-          Interface and catalog preferences are stored only in this browser and require no account.
-        </p>
+        <p className="eyebrow">{translations.eyebrow}</p>
+        <h1>{translations.title}</h1>
+        <p className="lead">{translations.lead}</p>
       </header>
 
       <section className="settingsPanel">
         <div>
-          <p className="cardLabel">Interface / Интерфейс</p>
-          <h2>Language and catalog display / Язык и отображение каталога</h2>
+          <p className="cardLabel">{translations.interface}</p>
+          <h2>{translations.displayTitle}</h2>
         </div>
 
         <label className="settingsField">
-          <span>Interface language / Язык интерфейса</span>
+          <span>{translations.language}</span>
           <select
             onChange={(event) =>
               update({ ...settings, language: event.target.value as UserSettings["language"] })
@@ -61,7 +61,7 @@ export function SettingsPage() {
         </label>
 
         <label className="settingsField">
-          <span>Catalog density / Плотность каталога</span>
+          <span>{translations.density}</span>
           <select
             onChange={(event) =>
               update({
@@ -71,8 +71,8 @@ export function SettingsPage() {
             }
             value={settings.catalogDensity}
           >
-            <option value="comfortable">Comfortable / Комфортная</option>
-            <option value="compact">Compact / Компактная</option>
+            <option value="comfortable">{translations.comfortable}</option>
+            <option value="compact">{translations.compact}</option>
           </select>
         </label>
 
@@ -82,17 +82,15 @@ export function SettingsPage() {
             onChange={(event) => update({ ...settings, showExplanations: event.target.checked })}
             type="checkbox"
           />
-          <span>Show explanations in catalog cards / Показывать пояснения в карточках</span>
+          <span>{translations.explanations}</span>
         </label>
       </section>
 
       <section className="settingsPanel">
         <div>
-          <p className="cardLabel">Local data / Локальные данные</p>
-          <h2>Reset browser data / Сброс данных браузера</h2>
-          <p className="settingsHint">
-            Export progress from the Progress page before deletion when you need a backup.
-          </p>
+          <p className="cardLabel">{translations.localData}</p>
+          <h2>{translations.resetData}</h2>
+          <p className="settingsHint">{translations.backupHint}</p>
         </div>
 
         <div className="settingsActions">
@@ -100,24 +98,24 @@ export function SettingsPage() {
             onClick={() => {
               const next = resetSettings();
               setSettings(next);
-              setMessage("Settings reset / Настройки сброшены");
+              setMessage(getTranslations(next.language).settings.resetDone);
             }}
             type="button"
           >
-            Reset preferences / Сбросить настройки
+            {translations.resetPreferences}
           </button>
           {!clearPending ? (
             <button className="dangerAction" onClick={() => setClearPending(true)} type="button">
-              Delete progress / Удалить прогресс
+              {translations.deleteProgress}
             </button>
           ) : (
             <div className="settingsConfirm" role="alert">
-              <strong>Delete all local progress?</strong>
+              <strong>{translations.deleteTitle}</strong>
               <button onClick={() => setClearPending(false)} type="button">
-                Cancel / Отмена
+                {translations.cancel}
               </button>
               <button className="dangerAction" onClick={clearProgress} type="button">
-                Confirm delete / Подтвердить
+                {translations.confirmDelete}
               </button>
             </div>
           )}
