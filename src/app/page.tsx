@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { seedQuestions } from "@/../content/questions/seed";
 import { ProgressDashboard } from "@/features/track-question-progress";
 
@@ -31,9 +33,9 @@ export default function HomePage() {
             повторения слабых тем QA Fullstack Engineer.
           </p>
         </div>
-        <a className="button buttonPrimary" href="/questions">
+        <Link className="button buttonPrimary" href="/questions">
           Открыть базу вопросов
-        </a>
+        </Link>
       </section>
 
       <ProgressDashboard totalQuestions={seedQuestions.length} />
