@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import globalJsdom from "global-jsdom";
 import React from "react";
 
@@ -35,14 +35,13 @@ test("detail and category surfaces render complete Russian question content", ()
   assert.ok(screen.getByText(firstQuestion.title.ru));
   assert.ok(screen.getByText(firstQuestion.interviewerGoal.ru));
   assert.ok(screen.getByText(firstQuestion.expectedAnswer.ru));
+  assert.ok(screen.getByText(firstQuestion.alternativeAnswers[0]!.ru));
+  assert.ok(screen.getByText(firstQuestion.relatedTopics[0]!.ru));
   assert.equal(screen.queryByText(firstQuestion.title.en), null);
   unmount();
 
   render(
-    <LocalizedCategoryPage
-      categoryName={firstQuestion.category}
-      questions={[firstQuestion]}
-    />,
+    <LocalizedCategoryPage categoryName={firstQuestion.category} questions={[firstQuestion]} />,
   );
   assert.ok(screen.getByRole("heading", { name: firstQuestion.category.ru }));
   assert.ok(screen.getByText(firstQuestion.title.ru));
@@ -51,7 +50,9 @@ test("detail and category surfaces render complete Russian question content", ()
 
 test("detail surface switches to English without reload", async () => {
   render(<LocalizedQuestionDetails question={firstQuestion} />);
-  writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
+  act(() => {
+    writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
+  });
 
   assert.ok(await screen.findByText(firstQuestion.title.en));
   assert.ok(screen.getByText(firstQuestion.expectedAnswer.en));
