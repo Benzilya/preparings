@@ -8,6 +8,7 @@ export interface UserSettings {
 }
 
 const storageKey = "qa-interview-trainer:settings:v1";
+export const settingsChangedEvent = "user-settings:changed";
 
 export const defaultSettings: UserSettings = {
   language: "ru",
@@ -44,10 +45,16 @@ export function applySettings(settings: UserSettings): void {
   document.documentElement.dataset.showExplanations = String(settings.showExplanations);
 }
 
+export function restoreSettings(): UserSettings {
+  const settings = readSettings();
+  applySettings(settings);
+  return settings;
+}
+
 export function writeSettings(settings: UserSettings): void {
   window.localStorage.setItem(storageKey, JSON.stringify(settings));
   applySettings(settings);
-  window.dispatchEvent(new window.CustomEvent("user-settings:changed"));
+  window.dispatchEvent(new window.CustomEvent(settingsChangedEvent));
 }
 
 export function resetSettings(): UserSettings {
