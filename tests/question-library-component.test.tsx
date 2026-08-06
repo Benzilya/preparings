@@ -7,6 +7,7 @@ import globalJsdom from "global-jsdom";
 import React from "react";
 
 import { seedQuestions } from "../content/questions/seed";
+import { writeSettings } from "../src/features/manage-settings/model/settings";
 import { QuestionLibrary } from "../src/features/filter-questions/ui/question-library";
 
 let cleanupDom: () => void;
@@ -18,35 +19,47 @@ before(() => {
 afterEach(() => {
   cleanup();
   window.localStorage.clear();
+  document.documentElement.lang = "ru";
 });
 
 after(() => cleanupDom());
 
-test("Question Library filters questions by search and difficulty", async () => {
+test("Question Library uses Russian by default and searches Russian content", async () => {
   const user = userEvent.setup({ document: window.document });
   render(<QuestionLibrary questions={seedQuestions} />);
 
-  await user.type(screen.getByLabelText(/Search questions/), "flaky");
-  assert.ok(screen.getByText("How do you investigate and reduce flaky tests?"));
+  const search = screen.getByLabelText("Поиск вопросов");
+  await user.type(search, "нестабильные");
+  assert.ok(screen.getByText("Как исследовать и сокращать нестабильные тесты?"));
   assert.equal(screen.queryByText("What is the testing pyramid and when does it fail?"), null);
 
-  await user.clear(screen.getByLabelText(/Search questions/));
-  await user.selectOptions(screen.getByLabelText(/Level/), "junior");
-
-  const resultCount = screen.getByText(/of 6 questions/);
-  assert.match(resultCount.textContent ?? "", /^2 of 6/);
+  await user.clear(search);
+  await user.selectOptions(screen.getByLabelText("Уровень"), "junior");
+  assert.match(screen.getByText(/1 \/ 6 вопросов/).textContent ?? "", /^1 \/ 6/);
 });
 
-test("Question Library exposes an empty state and resets filters", async () => {
+test("Question Library switches to English without reload and searches English content", async () => {
   const user = userEvent.setup({ document: window.document });
   render(<QuestionLibrary questions={seedQuestions} />);
 
-  await user.type(screen.getByLabelText(/Search questions/), "topic-that-does-not-exist");
-  assert.ok(screen.getByText(/No questions found/));
+  writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
 
-  const resetButtons = screen.getAllByRole("button", { name: /Reset filters/ });
+  const search = await screen.findByLabelText("Search questions");
+  await user.type(search, "contract tests");
+  assert.ok(screen.getByText("How do contract tests protect service integrations?"));
+  assert.equal(screen.queryByText("Как контрактные тесты защищают интеграции сервисов?"), null);
+});
+
+test("Question Library exposes a localized empty state and resets filters", async () => {
+  const user = userEvent.setup({ document: window.document });
+  render(<QuestionLibrary questions={seedQuestions} />);
+
+  await user.type(screen.getByLabelText("Поиск вопросов"), "несуществующая-тема");
+  assert.ok(screen.getByText("Вопросы не найдены"));
+
+  const resetButtons = screen.getAllByRole("button", { name: "Сбросить фильтры" });
   await user.click(resetButtons.at(-1)!);
 
-  assert.equal(screen.queryByText(/No questions found/), null);
-  assert.ok(screen.getByText("What is the testing pyramid and when does it fail?"));
+  assert.equal(screen.queryByText("Вопросы не найдены"), null);
+  assert.ok(screen.getByText("Что такое пирамида тестирования и когда она не работает?"));
 });
