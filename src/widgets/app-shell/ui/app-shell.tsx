@@ -39,9 +39,16 @@ function NavigationGroup({
 export function AppShell({ children }: PropsWithChildren) {
   const { language } = useSettings();
   const copy = getTranslations(language).shell;
+  const skipToContent = language === "ru" ? "Перейти к содержимому" : "Skip to content";
+  const utilityNavigationLabel =
+    language === "ru" ? "Служебная навигация" : "Utility navigation";
 
   return (
     <div className="appFrame">
+      <a className="skipLink" href="#main-content">
+        {skipToContent}
+      </a>
+
       <aside className="appSidebar">
         <Link className="appBrand" href="/" aria-label={copy.home}>
           <span className="appBrandMark">Q</span>
@@ -59,7 +66,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
         <div className="appSidebarFooter">
           <NavigationGroup
-            ariaLabel={copy.primaryNavigation}
+            ariaLabel={utilityNavigationLabel}
             items={utilityNavigation}
             language={language}
           />
@@ -81,7 +88,9 @@ export function AppShell({ children }: PropsWithChildren) {
             <ThemeToggle />
           </div>
         </header>
-        <main className="appContent">{children}</main>
+        <main className="appContent" id="main-content" tabIndex={-1}>
+          {children}
+        </main>
       </div>
     </div>
   );
