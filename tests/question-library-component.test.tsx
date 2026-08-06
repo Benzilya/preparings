@@ -4,6 +4,7 @@ import { after, afterEach, before, test } from "node:test";
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import globalJsdom from "global-jsdom";
+import React from "react";
 
 import { seedQuestions } from "../content/questions/seed";
 import { QuestionLibrary } from "../src/features/filter-questions/ui/question-library";
@@ -22,7 +23,7 @@ afterEach(() => {
 after(() => cleanupDom());
 
 test("Question Library filters questions by search and difficulty", async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ document: window.document });
   render(<QuestionLibrary questions={seedQuestions} />);
 
   await user.type(screen.getByLabelText(/Search questions/), "flaky");
@@ -37,7 +38,7 @@ test("Question Library filters questions by search and difficulty", async () => 
 });
 
 test("Question Library exposes an empty state and resets filters", async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ document: window.document });
   render(<QuestionLibrary questions={seedQuestions} />);
 
   await user.type(screen.getByLabelText(/Search questions/), "topic-that-does-not-exist");
