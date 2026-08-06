@@ -39,10 +39,24 @@ jobs:
           rm -f pnpm-lock.yaml
           pnpm install --lockfile-only --registry=https://registry.npmjs.org
           pnpm install --frozen-lockfile
-      - name: Commit generated lockfile
+      - name: Format localized changes
+        run: pnpm format:write
+      - name: Architecture
+        run: pnpm architecture
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
+      - name: Lint
+        run: pnpm lint
+      - name: Format check
+        run: pnpm format
+      - name: Build
+        run: pnpm build
+      - name: Commit verified generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add pnpm-lock.yaml
-          git commit -m "chore: regenerate pnpm lockfile" || exit 0
+          git add -A
+          git commit -m "chore: regenerate lockfile and format localized content" || exit 0
           git push origin HEAD:agent/project-foundation
