@@ -32,6 +32,32 @@ select:focus-visible {
   outline-offset: 3px;
 }
 
+.mobileNavigation {
+  display: none;
+}
+
 #main-content:focus {
   outline: none;
+}
+
+@media (max-width: 900px) {
+  .mobileNavigation {
+    display: block;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border);
+    background: var(--sidebar);
+    padding: 10px 18px;
+    scrollbar-width: thin;
+  }
+
+  .mobileNavigation .appNavList {
+    display: flex;
+    width: max-content;
+    min-width: 100%;
+    gap: 6px;
+  }
+
+  .mobileNavigation .appNavLink {
+    white-space: nowrap;
+  }
 }
