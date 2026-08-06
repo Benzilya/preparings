@@ -3,6 +3,7 @@ import {
   Bookmark,
   BookOpen,
   Bot,
+  Contact,
   FlaskConical,
   LayoutDashboard,
   Map,
@@ -25,6 +26,7 @@ export const mainNavigation: readonly NavigationItem[] = [
   { label: "Practice Labs", labelRu: "Практика", href: "/labs", icon: FlaskConical },
   { label: "Roadmap", labelRu: "План развития", href: "/roadmap", icon: Map },
   { label: "Bookmarks", labelRu: "Закладки", href: "/bookmarks", icon: Bookmark },
+  { label: "Contacts", labelRu: "Контакты", href: "/contacts", icon: Contact },
 ];
 
 export const utilityNavigation: readonly NavigationItem[] = [
