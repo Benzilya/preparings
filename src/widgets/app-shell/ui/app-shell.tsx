@@ -1,12 +1,21 @@
+"use client";
+
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
+import { useSettings } from "@/features/manage-settings";
 import { ThemeToggle } from "@/features/theme-toggle";
 import { mainNavigation, utilityNavigation } from "@/shared/config/navigation";
 
-function NavigationGroup({ items }: { items: typeof mainNavigation }) {
+function NavigationGroup({
+  items,
+  language,
+}: {
+  items: typeof mainNavigation;
+  language: "ru" | "en";
+}) {
   return (
-    <nav aria-label="Primary navigation / Основная навигация">
+    <nav aria-label={language === "ru" ? "Основная навигация" : "Primary navigation"}>
       <ul className="appNavList">
         {items.map((item) => {
           const Icon = item.icon;
@@ -15,7 +24,7 @@ function NavigationGroup({ items }: { items: typeof mainNavigation }) {
             <li key={item.href}>
               <Link className="appNavLink" href={item.href}>
                 <Icon aria-hidden="true" size={18} strokeWidth={1.8} />
-                <span>{item.labelRu}</span>
+                <span>{language === "ru" ? item.labelRu : item.label}</span>
               </Link>
             </li>
           );
@@ -26,6 +35,9 @@ function NavigationGroup({ items }: { items: typeof mainNavigation }) {
 }
 
 export function AppShell({ children }: PropsWithChildren) {
+  const { language } = useSettings();
+  const isRussian = language === "ru";
+
   return (
     <div className="appFrame">
       <aside className="appSidebar">
@@ -37,10 +49,10 @@ export function AppShell({ children }: PropsWithChildren) {
           </span>
         </Link>
 
-        <NavigationGroup items={mainNavigation} />
+        <NavigationGroup items={mainNavigation} language={language} />
 
         <div className="appSidebarFooter">
-          <NavigationGroup items={utilityNavigation} />
+          <NavigationGroup items={utilityNavigation} language={language} />
           <p>Foundation · v0.1</p>
         </div>
       </aside>
@@ -48,12 +60,16 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className="appWorkspace">
         <header className="appTopbar">
           <div>
-            <p className="appTopbarEyebrow">Workspace / Рабочее пространство</p>
-            <strong>Interview preparation</strong>
+            <p className="appTopbarEyebrow">{isRussian ? "Рабочее пространство" : "Workspace"}</p>
+            <strong>{isRussian ? "Подготовка к интервью" : "Interview preparation"}</strong>
           </div>
           <div className="appTopbarActions">
-            <button className="commandButton" type="button" aria-label="Open command palette">
-              <span>Search / Поиск</span>
+            <button
+              className="commandButton"
+              type="button"
+              aria-label={isRussian ? "Открыть поиск" : "Open search"}
+            >
+              <span>{isRussian ? "Поиск" : "Search"}</span>
               <kbd>⌘ K</kbd>
             </button>
             <ThemeToggle />
