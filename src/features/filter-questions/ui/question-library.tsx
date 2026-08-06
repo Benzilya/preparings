@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import type { Question, QuestionDifficulty } from "@/entities/question";
+import type { QuestionProgressStatus } from "@/entities/progress";
+import { useQuestionProgress } from "@/features/track-question-progress";
 import { Card, CardContent, CardHeader, CardTitle, Input } from "@/shared/ui";
 
 const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
@@ -15,26 +17,31 @@ const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
 ];
 
 type SortOption = "popularity" | "updated" | "title";
+type ProgressFilter = QuestionProgressStatus | "all" | "favorites";
 
 function compareQuestions(left: Question, right: Question, sort: SortOption): number {
   let result = 0;
-
   if (sort === "title") result = left.title.localeCompare(right.title, "en");
   if (sort === "updated") result = right.updatedAt.localeCompare(left.updatedAt);
   if (sort === "popularity") result = left.popularityRank - right.popularityRank;
-
   return result || left.slug.localeCompare(right.slug, "en");
 }
 
 export function QuestionLibrary({ questions }: { questions: readonly Question[] }) {
+  const { records } = useQuestionProgress();
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty | "all">("all");
   const [category, setCategory] = useState("all");
+  const [progress, setProgress] = useState<ProgressFilter>("all");
   const [sort, setSort] = useState<SortOption>("popularity");
 
   const categories = useMemo(
     () => ["all", ...new Set(questions.map((question) => question.category))].toSorted(),
     [questions],
+  );
+  const progressByQuestion = useMemo(
+    () => new Map(records.map((record) => [record.questionId, record])),
+    [records],
   );
 
   const filteredQuestions = useMemo(() => {
@@ -42,6 +49,11 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
 
     return questions
       .filter((question) => {
+        const record = progressByQuestion.get(question.id);
+        const status = record?.status ?? "not-started";
+        const matchesProgress =
+          progress === "all" ||
+          (progress === "favorites" ? record?.favorite === true : status === progress);
         const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
         const matchesCategory = category === "all" || question.category === category;
         const searchableText = [question.title, question.category, ...question.tags]
@@ -50,15 +62,16 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         const matchesQuery =
           normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
 
-        return matchesDifficulty && matchesCategory && matchesQuery;
+        return matchesProgress && matchesDifficulty && matchesCategory && matchesQuery;
       })
       .toSorted((left, right) => compareQuestions(left, right, sort));
-  }, [category, difficulty, query, questions, sort]);
+  }, [category, difficulty, progress, progressByQuestion, query, questions, sort]);
 
   const resetFilters = () => {
     setQuery("");
     setDifficulty("all");
     setCategory("all");
+    setProgress("all");
     setSort("popularity");
   };
 
@@ -68,96 +81,30 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <label className="searchField">
           <Search aria-hidden="true" size={18} />
           <span className="srOnly">Search questions / Поиск вопросов</span>
-          <Input
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search topics / Искать темы"
-            type="search"
-            value={query}
-          />
+          <Input onChange={(event) => setQuery(event.target.value)} placeholder="Search topics / Искать темы" type="search" value={query} />
         </label>
 
-        <label className="filterField">
-          <span>Level / Уровень</span>
-          <select
-            onChange={(event) =>
-              setDifficulty(event.target.value as QuestionDifficulty | "all")
-            }
-            value={difficulty}
-          >
-            {difficultyOptions.map((option) => (
-              <option key={option} value={option}>
-                {option === "all" ? "All / Все" : option}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="filterField">
-          <span>Category / Категория</span>
-          <select onChange={(event) => setCategory(event.target.value)} value={category}>
-            {categories.map((option) => (
-              <option key={option} value={option}>
-                {option === "all" ? "All / Все" : option}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="filterField">
-          <span>Sort / Сортировка</span>
-          <select onChange={(event) => setSort(event.target.value as SortOption)} value={sort}>
-            <option value="popularity">Popularity / Популярность</option>
-            <option value="updated">Recently updated / Обновлённые</option>
-            <option value="title">Title / Название</option>
-          </select>
-        </label>
+        <label className="filterField"><span>Level / Уровень</span><select onChange={(event) => setDifficulty(event.target.value as QuestionDifficulty | "all")} value={difficulty}>{difficultyOptions.map((option) => <option key={option} value={option}>{option === "all" ? "All / Все" : option}</option>)}</select></label>
+        <label className="filterField"><span>Category / Категория</span><select onChange={(event) => setCategory(event.target.value)} value={category}>{categories.map((option) => <option key={option} value={option}>{option === "all" ? "All / Все" : option}</option>)}</select></label>
+        <label className="filterField"><span>Progress / Прогресс</span><select onChange={(event) => setProgress(event.target.value as ProgressFilter)} value={progress}><option value="all">All / Все</option><option value="not-started">Not started / Не начато</option><option value="learning">Learning / Изучается</option><option value="completed">Completed / Завершено</option><option value="favorites">Favorites / Избранное</option></select></label>
+        <label className="filterField"><span>Sort / Сортировка</span><select onChange={(event) => setSort(event.target.value as SortOption)} value={sort}><option value="popularity">Popularity / Популярность</option><option value="updated">Recently updated / Обновлённые</option><option value="title">Title / Название</option></select></label>
       </div>
 
-      <div className="questionResultsBar">
-        <p className="resultCount" aria-live="polite">
-          {filteredQuestions.length} of {questions.length} questions / вопросов
-        </p>
-        <button className="resetFilters" onClick={resetFilters} type="button">
-          Reset filters / Сбросить
-        </button>
-      </div>
+      <div className="questionResultsBar"><p className="resultCount" aria-live="polite">{filteredQuestions.length} of {questions.length} questions / вопросов</p><button className="resetFilters" onClick={resetFilters} type="button">Reset filters / Сбросить</button></div>
 
       <div className="questionGrid">
-        {filteredQuestions.map((question) => (
-          <Card key={question.id}>
-            <CardHeader>
-              <div className="questionCardMeta">
-                <span className="difficultyBadge">{question.difficulty}</span>
-                <Link href={`/questions/categories/${question.categorySlug}`}>
-                  {question.category}
-                </Link>
-              </div>
-              <CardTitle>{question.title}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>{question.explanation}</p>
-              <div className="tagList" aria-label="Tags / Теги">
-                {question.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-              <Link className="questionLink" href={`/questions/${question.slug}`}>
-                Open question / Открыть вопрос →
-              </Link>
-            </CardContent>
-          </Card>
-        ))}
+        {filteredQuestions.map((question) => {
+          const record = progressByQuestion.get(question.id);
+          return (
+            <Card key={question.id}>
+              <CardHeader><div className="questionCardMeta"><span className="difficultyBadge">{question.difficulty}</span><Link href={`/questions/categories/${question.categorySlug}`}>{question.category}</Link></div><CardTitle>{question.title}</CardTitle></CardHeader>
+              <CardContent><p>{question.explanation}</p><div className="questionState"><span>{record?.status ?? "not-started"}</span>{record?.favorite ? <span>★ Favorite</span> : null}</div><div className="tagList" aria-label="Tags / Теги">{question.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><Link className="questionLink" href={`/questions/${question.slug}`}>Open question / Открыть вопрос →</Link></CardContent>
+            </Card>
+          );
+        })}
       </div>
 
-      {filteredQuestions.length === 0 ? (
-        <div className="emptyState">
-          <strong>No questions found / Вопросы не найдены</strong>
-          <p>Change the filters or reset the library.</p>
-          <button className="resetFilters" onClick={resetFilters} type="button">
-            Reset filters / Сбросить
-          </button>
-        </div>
-      ) : null}
+      {filteredQuestions.length === 0 ? <div className="emptyState"><strong>No questions found / Вопросы не найдены</strong><p>Change the filters or reset the library.</p><button className="resetFilters" onClick={resetFilters} type="button">Reset filters / Сбросить</button></div> : null}
     </div>
   );
 }
