@@ -1,6 +1,7 @@
 export type {
   InterviewAnswerExample,
   Question,
+  QuestionCategory,
   QuestionDifficulty,
   QuestionSource,
 } from "./model/types";
