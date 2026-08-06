@@ -25,46 +25,24 @@ function isRecord(value: unknown): value is QuestionProgressRecord {
   );
 }
 
-function notifyProgressChanged(): void {
-  window.dispatchEvent(new CustomEvent(changedEvent));
-}
+function normalizeRecords(
+  records: readonly QuestionProgressRecord[],
+): readonly QuestionProgressRecord[] {
+  const latestByQuestion = new Map<string, QuestionProgressRecord>();
 
-export function readQuestionProgress(): readonly QuestionProgressRecord[] {
-  if (typeof window === "undefined") return [];
-
-  try {
-    const raw = window.localStorage.getItem(storageKey);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isRecord) : [];
-  } catch {
-    return [];
+  for (const record of records) {
+    const existing = latestByQuestion.get(record.questionId);
+    if (!existing || record.updatedAt.localeCompare(existing.updatedAt) >= 0) {
+      latestByQuestion.set(record.questionId, record);
+    }
   }
-}
 
-export function writeQuestionProgress(records: readonly QuestionProgressRecord[]): void {
-  window.localStorage.setItem(storageKey, JSON.stringify(records));
-  notifyProgressChanged();
-}
-
-export function clearQuestionProgress(): void {
-  window.localStorage.removeItem(storageKey);
-  notifyProgressChanged();
-}
-
-export function exportQuestionProgress(): string {
-  return JSON.stringify(
-    {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      records: readQuestionProgress(),
-    },
-    null,
-    2,
+  return [...latestByQuestion.values()].toSorted((left, right) =>
+    left.questionId.localeCompare(right.questionId, "en"),
   );
 }
 
-export function importQuestionProgress(raw: string): readonly QuestionProgressRecord[] {
+export function parseQuestionProgress(raw: string): readonly QuestionProgressRecord[] {
   let parsed: unknown;
 
   try {
@@ -87,10 +65,50 @@ export function importQuestionProgress(raw: string): readonly QuestionProgressRe
     throw new Error("Progress file contains invalid records.");
   }
 
-  const unique = new Map(records.map((record) => [record.questionId, record]));
-  const normalized = [...unique.values()].toSorted((left, right) =>
-    left.questionId.localeCompare(right.questionId, "en"),
+  return normalizeRecords(records);
+}
+
+function notifyProgressChanged(): void {
+  window.dispatchEvent(new CustomEvent(changedEvent));
+}
+
+export function readQuestionProgress(): readonly QuestionProgressRecord[] {
+  if (typeof window === "undefined") return [];
+
+  try {
+    const raw = window.localStorage.getItem(storageKey);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    return Array.isArray(parsed) ? normalizeRecords(parsed.filter(isRecord)) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function writeQuestionProgress(records: readonly QuestionProgressRecord[]): void {
+  window.localStorage.setItem(storageKey, JSON.stringify(normalizeRecords(records)));
+  notifyProgressChanged();
+}
+
+export function clearQuestionProgress(): void {
+  window.localStorage.removeItem(storageKey);
+  notifyProgressChanged();
+}
+
+export function exportQuestionProgress(): string {
+  return JSON.stringify(
+    {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      records: readQuestionProgress(),
+    },
+    null,
+    2,
   );
+}
+
+export function importQuestionProgress(raw: string): readonly QuestionProgressRecord[] {
+  const normalized = parseQuestionProgress(raw);
   writeQuestionProgress(normalized);
   return normalized;
 }
@@ -109,7 +127,7 @@ export function upsertQuestionProgress(
   };
   const updated = [...records.filter((record) => record.questionId !== questionId), next];
   writeQuestionProgress(updated);
-  return updated;
+  return normalizeRecords(updated);
 }
 
 export function summarizeProgress(
