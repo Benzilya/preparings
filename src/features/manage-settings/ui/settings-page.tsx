@@ -6,12 +6,12 @@ import { clearQuestionProgress } from "@/features/track-question-progress/model/
 
 import {
   defaultSettings,
-  getTranslations,
   readSettings,
   resetSettings,
   type UserSettings,
   writeSettings,
 } from "../model/settings";
+import { getTranslations } from "../model/translations";
 
 export function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
