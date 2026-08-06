@@ -7,6 +7,7 @@ import type { QuestionProgressRecord } from "@/entities/progress";
 import {
   clearQuestionProgress,
   exportQuestionProgress,
+  importQuestionProgress,
   readQuestionProgress,
 } from "./storage";
 
@@ -34,5 +35,10 @@ export function useQuestionProgress() {
       refresh();
     },
     exportJson: () => exportQuestionProgress(),
+    importJson: (raw: string) => {
+      const imported = importQuestionProgress(raw);
+      refresh();
+      return imported;
+    },
   };
 }
