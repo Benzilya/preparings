@@ -1,0 +1,46 @@
+name: Refresh pnpm lockfile
+
+on:
+  push:
+    branches:
+      - agent/project-foundation
+    paths:
+      - package.json
+      - .github/workflows/refresh-lockfile.yml
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lockfile:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/project-foundation
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.15.0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Refresh lockfile
+        run: pnpm install --lockfile-only --registry=https://registry.npmjs.org
+      - name: Verify frozen install
+        run: pnpm install --frozen-lockfile --registry=https://registry.npmjs.org
+      - name: Commit lockfile
+        run: |
+          if git diff --quiet -- pnpm-lock.yaml; then
+            echo "Lockfile is already synchronized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "chore: synchronize pnpm lockfile"
+          git push origin HEAD:agent/project-foundation
