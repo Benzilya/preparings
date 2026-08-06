@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import globalJsdom from "global-jsdom";
 import React from "react";
@@ -42,7 +42,9 @@ test("Question Library switches to English without reload and searches English c
   const user = userEvent.setup({ document: window.document });
   render(<QuestionLibrary questions={seedQuestions} />);
 
-  writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
+  act(() => {
+    writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
+  });
 
   const search = await screen.findByLabelText("Search questions");
   await user.type(search, "contract tests");
