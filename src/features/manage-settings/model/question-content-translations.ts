@@ -5,9 +5,11 @@ import type { InterfaceLanguage } from "./settings";
 const questionContentDictionary = {
   ru: {
     library: {
-      eyebrow: "База вопросов",
-      title: "Изучайте проверенную базу знаний QA.",
-      lead: "Ищите вопросы по теме или тегу, фильтруйте их по уровню собеседования и открывайте полные ответы с источниками.",
+      eyebrow: "ТОП-100 QA",
+      title: "ТОП-100 вопросов для собеседования QA",
+      lead: "Самые частые вопросы, которые задают QA-специалистам на технических собеседованиях. Рейтинг составлен по нескольким независимым источникам.",
+      showMore: "Показать ещё",
+      topCount: "Вопросов в основном рейтинге",
     },
     difficulty: {
       junior: "Начальный",
@@ -22,9 +24,11 @@ const questionContentDictionary = {
   },
   en: {
     library: {
-      eyebrow: "Question Library",
-      title: "Explore validated QA knowledge.",
-      lead: "Search by topic or tag, filter by interview level, and open complete answers with sources.",
+      eyebrow: "QA TOP 100",
+      title: "Top 100 QA Interview Questions",
+      lead: "The most frequently asked questions in QA technical interviews, ranked using multiple independent sources.",
+      showMore: "Show more",
+      topCount: "Questions in the primary ranking",
     },
     difficulty: {
       junior: "Junior",
@@ -40,7 +44,13 @@ const questionContentDictionary = {
 } as const satisfies Record<
   InterfaceLanguage,
   {
-    readonly library: { readonly eyebrow: string; readonly title: string; readonly lead: string };
+    readonly library: {
+      readonly eyebrow: string;
+      readonly title: string;
+      readonly lead: string;
+      readonly showMore: string;
+      readonly topCount: string;
+    };
     readonly difficulty: Record<QuestionDifficulty, string>;
     readonly details: {
       readonly alternativeAnswers: string;
