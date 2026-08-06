@@ -5,10 +5,14 @@ import Link from "next/link";
 import { useMemo } from "react";
 
 import type { Question } from "@/entities/question";
+import { getTranslations, useSettings } from "@/features/manage-settings";
 
 import { useQuestionProgress } from "../model/use-question-progress";
 
 export function FavoriteQuestionsPage({ questions }: { questions: readonly Question[] }) {
+  const { language } = useSettings();
+  const copy = getTranslations(language).favorites;
+  const progressCopy = getTranslations(language).questionLibrary;
   const { records } = useQuestionProgress();
 
   const favorites = useMemo(() => {
@@ -25,14 +29,18 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
       });
   }, [questions, records]);
 
+  const statusLabel = (status: string | undefined) => {
+    if (status === "learning") return progressCopy.learning;
+    if (status === "completed") return progressCopy.completed;
+    return progressCopy.notStarted;
+  };
+
   return (
     <div className="favoritesPage">
       <header className="routeHero">
-        <p className="eyebrow">Favorites / Избранное</p>
-        <h1>Saved questions / Сохранённые вопросы</h1>
-        <p className="lead">
-          Your locally saved shortlist for focused review. Data remains in this browser.
-        </p>
+        <p className="eyebrow">{copy.eyebrow}</p>
+        <h1>{copy.title}</h1>
+        <p className="lead">{copy.lead}</p>
       </header>
 
       {favorites.length ? (
@@ -47,11 +55,9 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
               <h2>{question.title}</h2>
               <p>{question.explanation}</p>
               <div className="favoriteQuestionFooter">
-                <span className="progressStatusBadge">
-                  {progress?.status ?? "not-started"}
-                </span>
+                <span className="progressStatusBadge">{statusLabel(progress?.status)}</span>
                 <Link className="questionLink" href={`/questions/${question.slug}`}>
-                  Open question / Открыть вопрос →
+                  {copy.openQuestion}
                 </Link>
               </div>
             </article>
@@ -60,10 +66,10 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
       ) : (
         <section className="progressPanel progressEmptyState">
           <Heart aria-hidden="true" size={28} />
-          <h2>No favorites yet / Избранного пока нет</h2>
-          <p>Mark useful questions in the library or on a question page.</p>
+          <h2>{copy.emptyTitle}</h2>
+          <p>{copy.emptyBody}</p>
           <Link className="button" href="/questions">
-            Open Question Library / Открыть базу вопросов
+            {copy.openLibrary}
           </Link>
         </section>
       )}
