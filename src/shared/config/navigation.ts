@@ -19,10 +19,10 @@ export interface NavigationItem {
 
 export const mainNavigation: readonly NavigationItem[] = [
   { label: "Dashboard", labelRu: "Дашборд", href: "/", icon: LayoutDashboard },
-  { label: "AI Interview", labelRu: "AI-интервью", href: "/interview", icon: Bot },
   { label: "Question Library", labelRu: "База вопросов", href: "/questions", icon: BookOpen },
+  { label: "Progress", labelRu: "Прогресс", href: "/progress", icon: BarChart3 },
+  { label: "AI Interview", labelRu: "AI-интервью", href: "/interview", icon: Bot },
   { label: "Practice Labs", labelRu: "Практика", href: "/labs", icon: FlaskConical },
-  { label: "Analytics", labelRu: "Аналитика", href: "/analytics", icon: BarChart3 },
   { label: "Roadmap", labelRu: "План развития", href: "/roadmap", icon: Map },
   { label: "Bookmarks", labelRu: "Закладки", href: "/bookmarks", icon: Bookmark },
 ];
