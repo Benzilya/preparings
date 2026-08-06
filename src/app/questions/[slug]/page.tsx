@@ -3,6 +3,7 @@ import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 
 import { seedQuestions } from "@/../content/questions/seed";
+import { QuestionProgressControls } from "@/features/track-question-progress";
 
 export function generateStaticParams() {
   return seedQuestions.map((question) => ({ slug: question.slug }));
@@ -32,6 +33,8 @@ export default async function QuestionDetailsPage({
         <h1>{question.title}</h1>
         <p className="lead">{question.explanation}</p>
       </header>
+
+      <QuestionProgressControls questionId={question.id} />
 
       <section className="detailSection">
         <h2>What the interviewer evaluates / Что оценивает интервьюер</h2>
