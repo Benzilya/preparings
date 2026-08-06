@@ -2,7 +2,7 @@
 
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 
 import type { Question, QuestionDifficulty } from "@/entities/question";
 import type { QuestionProgressStatus } from "@/entities/progress";
