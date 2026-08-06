@@ -1,5 +1,5 @@
 import { validateQuestions } from "@/entities/question/model/validate-question";
-import type { Question, QuestionFrequencyTier } from "@/entities/question";
+import type { Question, QuestionFrequencyTier, QuestionSource } from "@/entities/question";
 
 import { seedQuestions } from "../seed";
 import { rankingSources } from "../create-ranked-question";
@@ -10,7 +10,7 @@ import { top100Batch066085 } from "./batch-066-085";
 import { top100Batch086100 } from "./batch-086-100";
 
 const verifiedAt = "2026-08-07";
-const evidenceByRank: Record<number, { frequencyTier: QuestionFrequencyTier; source: typeof rankingSources.katalon }> = {
+const evidenceByRank: Record<number, { frequencyTier: QuestionFrequencyTier; source: QuestionSource }> = {
   1: { frequencyTier: "very-common", source: rankingSources.katalon },
   2: { frequencyTier: "very-common", source: rankingSources.softwaretestpilot },
   3: { frequencyTier: "very-common", source: rankingSources.qodex },
