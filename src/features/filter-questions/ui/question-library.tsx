@@ -59,13 +59,21 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
   );
   const categories = useMemo(() => {
     const entries = new Map<string, string>();
-    for (const question of localizedQuestions) entries.set(question.categorySlug, question.category);
+    for (const question of localizedQuestions) {
+      entries.set(question.categorySlug, question.category);
+    }
     return [...entries].toSorted((left, right) => left[1].localeCompare(right[1], language));
   }, [language, localizedQuestions]);
   const progressByQuestion = useMemo(
     () => new Map(records.map((record) => [record.questionId, record])),
     [records],
   );
+
+  const statusLabel = (status: QuestionProgressStatus | undefined): string => {
+    if (status === "learning") return copy.learning;
+    if (status === "completed") return copy.completed;
+    return copy.notStarted;
+  };
 
   const filteredQuestions = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase(language);
@@ -143,7 +151,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
           <select onChange={(event) => setCategory(event.target.value)} value={category}>
             <option value="all">{copy.all}</option>
             {categories.map(([slug, label]) => (
-              <option key={slug} value={slug}>{label}</option>
+              <option key={slug} value={slug}>
+                {label}
+              </option>
             ))}
           </select>
         </label>
@@ -174,7 +184,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <p className="resultCount" aria-live="polite">
           {filteredQuestions.length} / {questions.length} {copy.questions}
         </p>
-        <button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button>
+        <button className="resetFilters" onClick={resetFilters} type="button">
+          {copy.reset}
+        </button>
       </div>
 
       <div className="questionGrid">
@@ -184,21 +196,29 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
             <Card key={question.id}>
               <CardHeader>
                 <div className="questionCardMeta">
-                  <span className="difficultyBadge">{contentCopy.difficulty[question.difficulty]}</span>
-                  <Link href={`/questions/categories/${question.categorySlug}`}>{question.category}</Link>
+                  <span className="difficultyBadge">
+                    {contentCopy.difficulty[question.difficulty]}
+                  </span>
+                  <Link href={`/questions/categories/${question.categorySlug}`}>
+                    {question.category}
+                  </Link>
                 </div>
                 <CardTitle>{question.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p>{question.explanation}</p>
                 <div className="questionState">
-                  <span>{record?.status ? copy[record.status === "not-started" ? "notStarted" : record.status] : copy.notStarted}</span>
+                  <span>{statusLabel(record?.status)}</span>
                   {record?.favorite ? <span>★ {copy.favorite}</span> : null}
                 </div>
                 <div className="tagList" aria-label={copy.tags}>
-                  {question.tags.map((tag) => <span key={tag.key}>{tag.label}</span>)}
+                  {question.tags.map((tag) => (
+                    <span key={tag.key}>{tag.label}</span>
+                  ))}
                 </div>
-                <Link className="questionLink" href={`/questions/${question.slug}`}>{copy.openQuestion}</Link>
+                <Link className="questionLink" href={`/questions/${question.slug}`}>
+                  {copy.openQuestion}
+                </Link>
               </CardContent>
             </Card>
           );
@@ -209,7 +229,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <div className="emptyState">
           <strong>{copy.emptyTitle}</strong>
           <p>{copy.emptyBody}</p>
-          <button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button>
+          <button className="resetFilters" onClick={resetFilters} type="button">
+            {copy.reset}
+          </button>
         </div>
       ) : null}
     </div>
