@@ -6,7 +6,9 @@ export type {
   Question,
   QuestionCategory,
   QuestionDifficulty,
+  QuestionFrequencyTier,
   QuestionLanguage,
+  QuestionRankingEvidence,
   QuestionSource,
 } from "./model/types";
 export { localizeQuestion, localizeText } from "./model/types";
