@@ -6,6 +6,7 @@ import React, { useMemo, useState } from "react";
 
 import type { Question, QuestionDifficulty } from "@/entities/question";
 import type { QuestionProgressStatus } from "@/entities/progress";
+import { getTranslations, useSettings } from "@/features/manage-settings";
 import { useQuestionProgress } from "@/features/track-question-progress";
 import { Card, CardContent, CardHeader, CardTitle, Input } from "@/shared/ui";
 
@@ -29,6 +30,8 @@ function compareQuestions(left: Question, right: Question, sort: SortOption): nu
 
 export function QuestionLibrary({ questions }: { questions: readonly Question[] }) {
   const { records } = useQuestionProgress();
+  const { language } = useSettings();
+  const copy = getTranslations(language).questionLibrary;
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty | "all">("all");
   const [category, setCategory] = useState("all");
@@ -77,34 +80,116 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
 
   return (
     <div className="questionLibrary">
-      <div className="questionFilters" aria-label="Question filters / Фильтры вопросов">
+      <div className="questionFilters" aria-label={copy.filters}>
         <label className="searchField">
           <Search aria-hidden="true" size={18} />
-          <span className="srOnly">Search questions / Поиск вопросов</span>
-          <Input onChange={(event) => setQuery(event.target.value)} placeholder="Search topics / Искать темы" type="search" value={query} />
+          <span className="srOnly">{copy.searchLabel}</span>
+          <Input
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={copy.searchPlaceholder}
+            type="search"
+            value={query}
+          />
         </label>
 
-        <label className="filterField"><span>Level / Уровень</span><select onChange={(event) => setDifficulty(event.target.value as QuestionDifficulty | "all")} value={difficulty}>{difficultyOptions.map((option) => <option key={option} value={option}>{option === "all" ? "All / Все" : option}</option>)}</select></label>
-        <label className="filterField"><span>Category / Категория</span><select onChange={(event) => setCategory(event.target.value)} value={category}>{categories.map((option) => <option key={option} value={option}>{option === "all" ? "All / Все" : option}</option>)}</select></label>
-        <label className="filterField"><span>Progress / Прогресс</span><select onChange={(event) => setProgress(event.target.value as ProgressFilter)} value={progress}><option value="all">All / Все</option><option value="not-started">Not started / Не начато</option><option value="learning">Learning / Изучается</option><option value="completed">Completed / Завершено</option><option value="favorites">Favorites / Избранное</option></select></label>
-        <label className="filterField"><span>Sort / Сортировка</span><select onChange={(event) => setSort(event.target.value as SortOption)} value={sort}><option value="popularity">Popularity / Популярность</option><option value="updated">Recently updated / Обновлённые</option><option value="title">Title / Название</option></select></label>
+        <label className="filterField">
+          <span>{copy.level}</span>
+          <select
+            onChange={(event) => setDifficulty(event.target.value as QuestionDifficulty | "all")}
+            value={difficulty}
+          >
+            {difficultyOptions.map((option) => (
+              <option key={option} value={option}>
+                {option === "all" ? copy.all : option}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.category}</span>
+          <select onChange={(event) => setCategory(event.target.value)} value={category}>
+            {categories.map((option) => (
+              <option key={option} value={option}>
+                {option === "all" ? copy.all : option}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.progress}</span>
+          <select
+            onChange={(event) => setProgress(event.target.value as ProgressFilter)}
+            value={progress}
+          >
+            <option value="all">{copy.all}</option>
+            <option value="not-started">{copy.notStarted}</option>
+            <option value="learning">{copy.learning}</option>
+            <option value="completed">{copy.completed}</option>
+            <option value="favorites">{copy.favorites}</option>
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.sort}</span>
+          <select onChange={(event) => setSort(event.target.value as SortOption)} value={sort}>
+            <option value="popularity">{copy.popularity}</option>
+            <option value="updated">{copy.recentlyUpdated}</option>
+            <option value="title">{copy.title}</option>
+          </select>
+        </label>
       </div>
 
-      <div className="questionResultsBar"><p className="resultCount" aria-live="polite">{filteredQuestions.length} of {questions.length} questions / вопросов</p><button className="resetFilters" onClick={resetFilters} type="button">Reset filters / Сбросить</button></div>
+      <div className="questionResultsBar">
+        <p className="resultCount" aria-live="polite">
+          {filteredQuestions.length} / {questions.length} {copy.questions}
+        </p>
+        <button className="resetFilters" onClick={resetFilters} type="button">
+          {copy.reset}
+        </button>
+      </div>
 
       <div className="questionGrid">
         {filteredQuestions.map((question) => {
           const record = progressByQuestion.get(question.id);
           return (
             <Card key={question.id}>
-              <CardHeader><div className="questionCardMeta"><span className="difficultyBadge">{question.difficulty}</span><Link href={`/questions/categories/${question.categorySlug}`}>{question.category}</Link></div><CardTitle>{question.title}</CardTitle></CardHeader>
-              <CardContent><p>{question.explanation}</p><div className="questionState"><span>{record?.status ?? "not-started"}</span>{record?.favorite ? <span>★ Favorite</span> : null}</div><div className="tagList" aria-label="Tags / Теги">{question.tags.map((tag) => <span key={tag}>{tag}</span>)}</div><Link className="questionLink" href={`/questions/${question.slug}`}>Open question / Открыть вопрос →</Link></CardContent>
+              <CardHeader>
+                <div className="questionCardMeta">
+                  <span className="difficultyBadge">{question.difficulty}</span>
+                  <Link href={`/questions/categories/${question.categorySlug}`}>
+                    {question.category}
+                  </Link>
+                </div>
+                <CardTitle>{question.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{question.explanation}</p>
+                <div className="questionState">
+                  <span>{record?.status ?? copy.notStarted}</span>
+                  {record?.favorite ? <span>★ {copy.favorite}</span> : null}
+                </div>
+                <div className="tagList" aria-label={copy.tags}>
+                  {question.tags.map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
+                <Link className="questionLink" href={`/questions/${question.slug}`}>
+                  {copy.openQuestion}
+                </Link>
+              </CardContent>
             </Card>
           );
         })}
       </div>
 
-      {filteredQuestions.length === 0 ? <div className="emptyState"><strong>No questions found / Вопросы не найдены</strong><p>Change the filters or reset the library.</p><button className="resetFilters" onClick={resetFilters} type="button">Reset filters / Сбросить</button></div> : null}
+      {filteredQuestions.length === 0 ? (
+        <div className="emptyState">
+          <strong>{copy.emptyTitle}</strong>
+          <p>{copy.emptyBody}</p>
+          <button className="resetFilters" onClick={resetFilters} type="button">
+            {copy.reset}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }
