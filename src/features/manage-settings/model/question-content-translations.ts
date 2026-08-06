@@ -14,6 +14,11 @@ const questionContentDictionary = {
       middle: "Средний",
       senior: "Продвинутый",
     },
+    details: {
+      alternativeAnswers: "Альтернативные формулировки",
+      relatedTopics: "Связанные темы",
+      experienceExample: "Пример из практики",
+    },
   },
   en: {
     library: {
@@ -26,12 +31,22 @@ const questionContentDictionary = {
       middle: "Middle",
       senior: "Senior",
     },
+    details: {
+      alternativeAnswers: "Alternative formulations",
+      relatedTopics: "Related topics",
+      experienceExample: "Experience example",
+    },
   },
 } as const satisfies Record<
   InterfaceLanguage,
   {
     readonly library: { readonly eyebrow: string; readonly title: string; readonly lead: string };
     readonly difficulty: Record<QuestionDifficulty, string>;
+    readonly details: {
+      readonly alternativeAnswers: string;
+      readonly relatedTopics: string;
+      readonly experienceExample: string;
+    };
   }
 >;
 
