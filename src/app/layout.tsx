@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/widgets/app-shell";
 
 import "./globals.css";
+import "./accessibility.css";
 import "./progress.css";
 import "./questions.css";
 import "./settings.css";
