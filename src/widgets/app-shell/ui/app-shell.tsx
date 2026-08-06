@@ -3,19 +3,21 @@
 import Link from "next/link";
 import type { PropsWithChildren } from "react";
 
-import { useSettings } from "@/features/manage-settings";
+import { getTranslations, useSettings } from "@/features/manage-settings";
 import { ThemeToggle } from "@/features/theme-toggle";
 import { mainNavigation, utilityNavigation } from "@/shared/config/navigation";
 
 function NavigationGroup({
   items,
   language,
+  ariaLabel,
 }: {
   items: typeof mainNavigation;
   language: "ru" | "en";
+  ariaLabel: string;
 }) {
   return (
-    <nav aria-label={language === "ru" ? "Основная навигация" : "Primary navigation"}>
+    <nav aria-label={ariaLabel}>
       <ul className="appNavList">
         {items.map((item) => {
           const Icon = item.icon;
@@ -36,12 +38,12 @@ function NavigationGroup({
 
 export function AppShell({ children }: PropsWithChildren) {
   const { language } = useSettings();
-  const isRussian = language === "ru";
+  const copy = getTranslations(language).shell;
 
   return (
     <div className="appFrame">
       <aside className="appSidebar">
-        <Link className="appBrand" href="/" aria-label="QA Interview Trainer — home">
+        <Link className="appBrand" href="/" aria-label={copy.home}>
           <span className="appBrandMark">Q</span>
           <span>
             <strong>QA Interview</strong>
@@ -49,10 +51,18 @@ export function AppShell({ children }: PropsWithChildren) {
           </span>
         </Link>
 
-        <NavigationGroup items={mainNavigation} language={language} />
+        <NavigationGroup
+          ariaLabel={copy.primaryNavigation}
+          items={mainNavigation}
+          language={language}
+        />
 
         <div className="appSidebarFooter">
-          <NavigationGroup items={utilityNavigation} language={language} />
+          <NavigationGroup
+            ariaLabel={copy.primaryNavigation}
+            items={utilityNavigation}
+            language={language}
+          />
           <p>Foundation · v0.1</p>
         </div>
       </aside>
@@ -60,16 +70,12 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className="appWorkspace">
         <header className="appTopbar">
           <div>
-            <p className="appTopbarEyebrow">{isRussian ? "Рабочее пространство" : "Workspace"}</p>
-            <strong>{isRussian ? "Подготовка к интервью" : "Interview preparation"}</strong>
+            <p className="appTopbarEyebrow">{copy.workspace}</p>
+            <strong>{copy.preparation}</strong>
           </div>
           <div className="appTopbarActions">
-            <button
-              className="commandButton"
-              type="button"
-              aria-label={isRussian ? "Открыть поиск" : "Open search"}
-            >
-              <span>{isRussian ? "Поиск" : "Search"}</span>
+            <button className="commandButton" type="button" aria-label={copy.openSearch}>
+              <span>{copy.search}</span>
               <kbd>⌘ K</kbd>
             </button>
             <ThemeToggle />
