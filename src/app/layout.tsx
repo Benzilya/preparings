@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AppShell } from "@/widgets/app-shell";
 
 import "./globals.css";
+import "./questions.css";
 import { Providers } from "./providers";
 
 const sans = Geist({ subsets: ["latin", "cyrillic"], variable: "--font-sans" });
