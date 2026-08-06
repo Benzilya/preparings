@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { Search } from "lucide-react";
+import Link from "next/link";
 import { useMemo, useState } from "react";
 
 import type { Question, QuestionDifficulty } from "@/entities/question";
@@ -23,8 +23,11 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
 
     return questions.filter((question) => {
       const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
-      const searchableText = [question.title, question.category, ...question.tags].join(" ").toLowerCase();
-      const matchesQuery = normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
+      const searchableText = [question.title, question.category, ...question.tags]
+        .join(" ")
+        .toLowerCase();
+      const matchesQuery =
+        normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
 
       return matchesDifficulty && matchesQuery;
     });
@@ -47,7 +50,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <label className="difficultyField">
           <span>Level / Уровень</span>
           <select
-            onChange={(event) => setDifficulty(event.target.value as QuestionDifficulty | "all")}
+            onChange={(event) =>
+              setDifficulty(event.target.value as QuestionDifficulty | "all")
+            }
             value={difficulty}
           >
             {difficultyOptions.map((option) => (
