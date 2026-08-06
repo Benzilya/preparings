@@ -4,13 +4,13 @@
 }
 
 .questionFilters {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(240px, 1.5fr) repeat(3, minmax(160px, 0.7fr));
   align-items: end;
   gap: 16px;
-  flex-wrap: wrap;
 }
 
-.difficultyField {
+.filterField {
   display: grid;
   gap: 7px;
   color: var(--muted);
@@ -18,7 +18,7 @@
   font-weight: 650;
 }
 
-.difficultyField select {
+.filterField select {
   min-height: 46px;
   border: 1px solid var(--border);
   border-radius: 12px;
@@ -28,16 +28,45 @@
   text-transform: capitalize;
 }
 
+.questionResultsBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 .resultCount {
   margin: 0;
   color: var(--muted);
   font-size: 0.9rem;
 }
 
+.resetFilters {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.resetFilters:hover {
+  color: var(--accent);
+}
+
 .questionGrid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.questionCardMeta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.78rem;
 }
 
 .difficultyBadge {
@@ -82,7 +111,6 @@
 }
 
 .emptyState p {
-  margin-bottom: 0;
   color: var(--muted);
 }
 
@@ -157,10 +185,22 @@
   color: var(--accent);
 }
 
+@media (max-width: 1080px) {
+  .questionFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 760px) {
+  .questionFilters,
   .questionGrid,
   .detailColumns,
   .answerExampleGrid {
     grid-template-columns: 1fr;
+  }
+
+  .questionResultsBar {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
