@@ -24,5 +24,5 @@ export default async function QuestionCategoryPage({
 
   if (questions.length === 0) notFound();
 
-  return <LocalizedCategoryPage categoryName={questions[0]?.category ?? ""} questions={questions} />;
+  return <LocalizedCategoryPage categoryName={questions[0]!.category} questions={questions} />;
 }
