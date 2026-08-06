@@ -4,6 +4,18 @@ Production-grade open-source platform for preparing QA Fullstack Engineers for t
 
 Production-grade open-source платформа для подготовки QA Fullstack Engineers к техническим собеседованиям.
 
+## Interface language / Язык интерфейса
+
+Russian is always used on the first visit when no saved preference exists. The visible `RU / EN` switch changes the interface without a page reload and stores the selected language in `localStorage` for future visits.
+
+При первом посещении без сохранённой настройки всегда используется русский язык. Заметный переключатель `RU / EN` меняет язык без перезагрузки страницы и сохраняет выбор в `localStorage` для следующих посещений.
+
+## Contacts and author / Контакты и автор
+
+The project author is [@benzilya](https://github.com/Benzilya). The application footer and `/contacts` page contain safe, accessible links to email, phone, Telegram, GitHub, and the portfolio website. External links open in a new tab with `noopener noreferrer`. No contact form, backend, analytics, or personal-data collection is used.
+
+Автор проекта — [@benzilya](https://github.com/Benzilya). В подвале приложения и на странице `/contacts` размещены безопасные и доступные ссылки на email, телефон, Telegram, GitHub и портфолио. Внешние ссылки открываются в новой вкладке с `noopener noreferrer`. Контактная форма, backend, аналитика и сбор персональных данных не используются.
+
 ## Local development / Локальный запуск
 
 ### Requirements / Требования
@@ -84,13 +96,17 @@ Included / Включено:
 
 - Question Library with validated seed content, categories, search, filters, stable sorting, and question details;
 - local progress statuses, favorites, activity history, category analytics, import, export, and safe reset flows;
-- responsive Dashboard, Progress, Favorites, Settings, and localized English/Russian interface surfaces;
+- responsive Dashboard, Progress, Favorites, Settings, Contacts, and localized English/Russian interface surfaces;
+- Russian-first interface defaults with persisted `RU / EN` switching;
+- accessible author attribution and typed contact configuration;
 - accessibility hardening, security headers, architecture checks, domain tests, component tests, and release smoke tests;
 - bilingual architecture, testing, security, accessibility, and release documentation.
 
 - база вопросов с валидированным seed-контентом, категориями, поиском, фильтрами, устойчивой сортировкой и страницами вопросов;
 - локальные статусы прогресса, избранное, история активности, статистика по категориям, импорт, экспорт и безопасный сброс;
-- адаптивные Dashboard, Progress, Favorites и Settings, а также локализованные английский и русский интерфейсы;
+- адаптивные Dashboard, Progress, Favorites, Settings и Contacts, а также локализованные английский и русский интерфейсы;
+- русский язык по умолчанию и сохраняемый переключатель `RU / EN`;
+- доступное указание автора и типизированная конфигурация контактов;
 - улучшения доступности, security headers, архитектурные проверки, доменные и компонентные тесты и smoke-тесты релиза;
 - двуязычная документация по архитектуре, тестированию, безопасности, доступности и релизу.
 
