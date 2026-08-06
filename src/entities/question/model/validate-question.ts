@@ -3,6 +3,7 @@ import type {
   LocalizedText,
   Question,
   QuestionDifficulty,
+  QuestionFrequencyTier,
 } from "./types";
 
 export class QuestionValidationError extends Error {
@@ -13,6 +14,11 @@ export class QuestionValidationError extends Error {
 }
 
 const difficulties = new Set<QuestionDifficulty>(["junior", "middle", "senior"]);
+const frequencyTiers = new Set<QuestionFrequencyTier>([
+  "very-common",
+  "common",
+  "frequent",
+]);
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function isNonEmptyString(value: unknown): value is string {
@@ -63,7 +69,10 @@ export function validateQuestion(value: unknown): Question {
     }
   }
 
-  if (!slugPattern.test(question.slug as string) || !slugPattern.test(question.categorySlug as string)) {
+  if (
+    !slugPattern.test(question.slug as string) ||
+    !slugPattern.test(question.categorySlug as string)
+  ) {
     throw new QuestionValidationError("Question and category slugs must use lowercase kebab-case.");
   }
 
@@ -71,8 +80,14 @@ export function validateQuestion(value: unknown): Question {
     throw new QuestionValidationError("Question difficulty must be junior, middle, or senior.");
   }
 
-  if (!Array.isArray(question.tags) || question.tags.length === 0 || !question.tags.every(isLocalizedTag)) {
-    throw new QuestionValidationError("Question tags must contain stable keys and complete ru/en labels.");
+  if (
+    !Array.isArray(question.tags) ||
+    question.tags.length === 0 ||
+    !question.tags.every(isLocalizedTag)
+  ) {
+    throw new QuestionValidationError(
+      "Question tags must contain stable keys and complete ru/en labels.",
+    );
   }
 
   for (const field of [
@@ -90,8 +105,7 @@ export function validateQuestion(value: unknown): Question {
 
   if (
     !question.answerExamples.every(
-      (example) =>
-        example && difficulties.has(example.level) && isLocalizedText(example.answer),
+      (example) => example && difficulties.has(example.level) && isLocalizedText(example.answer),
     )
   ) {
     throw new QuestionValidationError(
@@ -124,6 +138,19 @@ export function validateQuestion(value: unknown): Question {
 
   if (!Number.isInteger(question.popularityRank) || (question.popularityRank as number) < 0) {
     throw new QuestionValidationError("Question popularityRank must be a non-negative integer.");
+  }
+
+  if (question.ranking !== undefined) {
+    if (
+      !frequencyTiers.has(question.ranking.frequencyTier) ||
+      !isNonEmptyString(question.ranking.verifiedAt) ||
+      Number.isNaN(Date.parse(question.ranking.verifiedAt)) ||
+      !isLocalizedText(question.ranking.inclusionRationale)
+    ) {
+      throw new QuestionValidationError(
+        "Question ranking must contain a valid frequency tier, verification date, and ru/en rationale.",
+      );
+    }
   }
 
   if (question.sourcesCount !== question.sources.length) {
