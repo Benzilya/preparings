@@ -14,7 +14,11 @@ export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingEle
   return <h2 className={cn("uiCardTitle", className)} {...props} />;
 }
 
-export function CardContent({ className, children, ...props }: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
+export function CardContent({
+  className,
+  children,
+  ...props
+}: PropsWithChildren<HTMLAttributes<HTMLDivElement>>) {
   return (
     <div className={cn("uiCardContent", className)} {...props}>
       {children}

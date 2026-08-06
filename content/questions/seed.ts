@@ -28,17 +28,26 @@ const records = [
       { level: "junior", answer: "Most tests should be fast unit tests, with fewer UI tests." },
       {
         level: "middle",
-        answer: "The pyramid optimizes feedback and maintenance, but service-heavy systems may need more integration tests.",
+        answer:
+          "The pyramid optimizes feedback and maintenance, but service-heavy systems may need more integration tests.",
       },
       {
         level: "senior",
-        answer: "I treat it as a portfolio constraint and tune the shape using failure cost, observability, architecture, and deployment frequency.",
+        answer:
+          "I treat it as a portfolio constraint and tune the shape using failure cost, observability, architecture, and deployment frequency.",
       },
     ],
-    mistakes: ["Treating the pyramid as a fixed percentage", "Ignoring contract and integration tests"],
-    followUpQuestions: ["How would you test a microservice boundary?", "What belongs in an end-to-end test?"],
+    mistakes: [
+      "Treating the pyramid as a fixed percentage",
+      "Ignoring contract and integration tests",
+    ],
+    followUpQuestions: [
+      "How would you test a microservice boundary?",
+      "What belongs in an end-to-end test?",
+    ],
     relatedTopics: ["contract testing", "test strategy", "CI feedback"],
-    practicalExample: "Use unit tests for pricing rules, API integration tests for checkout, and a few browser tests for the critical purchase path.",
+    practicalExample:
+      "Use unit tests for pricing rules, API integration tests for checkout, and a few browser tests for the critical purchase path.",
     updatedAt: "2026-08-06",
   },
   {
@@ -68,17 +77,20 @@ const records = [
       { level: "junior", answer: "Re-run the test, inspect logs, and remove fixed sleeps." },
       {
         level: "middle",
-        answer: "Capture artifacts, classify timing or state issues, isolate dependencies, and replace retries with explicit conditions.",
+        answer:
+          "Capture artifacts, classify timing or state issues, isolate dependencies, and replace retries with explicit conditions.",
       },
       {
         level: "senior",
-        answer: "Track flake rate by owner and signature, quarantine with expiry, fix systemic causes, and make suite reliability a release metric.",
+        answer:
+          "Track flake rate by owner and signature, quarantine with expiry, fix systemic causes, and make suite reliability a release metric.",
       },
     ],
     mistakes: ["Adding retries without diagnosis", "Deleting tests without replacing coverage"],
     followUpQuestions: ["When is quarantine acceptable?", "Which metrics show suite health?"],
     relatedTopics: ["observability", "test isolation", "CI reliability"],
-    practicalExample: "Replace a fixed two-second delay with polling on an observable state transition and attach traces on timeout.",
+    practicalExample:
+      "Replace a fixed two-second delay with polling on an observable state transition and attach traces on timeout.",
     updatedAt: "2026-08-06",
   },
 ] as const;

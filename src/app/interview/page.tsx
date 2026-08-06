@@ -27,7 +27,9 @@ export default function InterviewPage() {
             <Gauge aria-hidden="true" size={20} />
             <CardTitle>Difficulty / Сложность</CardTitle>
           </CardHeader>
-          <CardContent>Junior, Middle, and Senior tracks will share one domain contract.</CardContent>
+          <CardContent>
+            Junior, Middle, and Senior tracks will share one domain contract.
+          </CardContent>
         </Card>
         <Card>
           <CardHeader>
