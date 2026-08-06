@@ -17,6 +17,7 @@ export interface Question {
   readonly slug: string;
   readonly title: string;
   readonly category: string;
+  readonly categorySlug: string;
   readonly tags: readonly string[];
   readonly difficulty: QuestionDifficulty;
   readonly popularityRank: number;
@@ -33,4 +34,10 @@ export interface Question {
   readonly practicalExample?: string;
   readonly experienceExample?: string;
   readonly updatedAt: string;
+}
+
+export interface QuestionCategory {
+  readonly name: string;
+  readonly slug: string;
+  readonly questions: readonly Question[];
 }
