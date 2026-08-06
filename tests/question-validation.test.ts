@@ -34,7 +34,10 @@ test("validateQuestions rejects duplicate ids and slugs", () => {
   const base = seedQuestions[0];
   assert.ok(base);
 
-  assert.throws(() => validateQuestions([base, { ...base, slug: "another-slug" }]), /Duplicate question id/);
+  assert.throws(
+    () => validateQuestions([base, { ...base, slug: "another-slug" }]),
+    /Duplicate question id/,
+  );
   assert.throws(
     () => validateQuestions([base, { ...base, id: "another-id" }]),
     /Duplicate question slug/,
