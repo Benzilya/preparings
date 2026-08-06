@@ -44,6 +44,11 @@
   border-color: var(--accent);
 }
 
+.progressActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
 .progressActions .dangerAction {
   border-color: color-mix(in srgb, #dc2626 55%, var(--border));
   color: #dc2626;
@@ -83,6 +88,25 @@
 .resetConfirmation p {
   margin: 5px 0 0;
   color: var(--muted);
+}
+
+.resetConfirmationField {
+  display: grid;
+  gap: 6px;
+  max-width: 280px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.resetConfirmationField input {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 12px;
 }
 
 .categoryProgressList,
@@ -171,13 +195,34 @@
   font-size: 1.25rem;
 }
 
-.favoriteQuestionMeta {
+.favoriteQuestionMeta,
+.favoriteQuestionFooter {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.favoriteQuestionMeta {
   color: var(--accent);
   font-size: 0.78rem;
   font-weight: 700;
+  text-transform: uppercase;
+}
+
+.favoriteQuestionFooter {
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.progressStatusBadge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  color: var(--muted);
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
@@ -196,7 +241,8 @@
   .progressDashboardHeader,
   .progressPanelHeader,
   .recentProgressList a,
-  .resetConfirmation {
+  .resetConfirmation,
+  .favoriteQuestionFooter {
     align-items: flex-start;
     flex-direction: column;
   }
