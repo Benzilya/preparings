@@ -4,8 +4,12 @@ import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
 
-import type { Question } from "@/entities/question";
-import { getTranslations, useSettings } from "@/features/manage-settings";
+import { localizeQuestion, type Question } from "@/entities/question";
+import {
+  getQuestionContentTranslations,
+  getTranslations,
+  useSettings,
+} from "@/features/manage-settings";
 
 import { useQuestionProgress } from "../model/use-question-progress";
 
@@ -13,6 +17,7 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
   const { language } = useSettings();
   const copy = getTranslations(language).favorites;
   const progressCopy = getTranslations(language).questionLibrary;
+  const contentCopy = getQuestionContentTranslations(language);
   const { records } = useQuestionProgress();
 
   const favorites = useMemo(() => {
@@ -20,14 +25,17 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
 
     return questions
       .filter((question) => recordsByQuestion.get(question.id)?.favorite)
-      .map((question) => ({ question, progress: recordsByQuestion.get(question.id) }))
+      .map((question) => ({
+        question: localizeQuestion(question, language),
+        progress: recordsByQuestion.get(question.id),
+      }))
       .toSorted((left, right) => {
         const updated = (right.progress?.updatedAt ?? "").localeCompare(
           left.progress?.updatedAt ?? "",
         );
         return updated || left.question.slug.localeCompare(right.question.slug, "en");
       });
-  }, [questions, records]);
+  }, [language, questions, records]);
 
   const statusLabel = (status: string | undefined) => {
     if (status === "learning") return progressCopy.learning;
@@ -50,7 +58,7 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
               <div className="favoriteQuestionMeta">
                 <Heart aria-hidden="true" fill="currentColor" size={16} />
                 <span>{question.category}</span>
-                <span>{question.difficulty}</span>
+                <span>{contentCopy.difficulty[question.difficulty]}</span>
               </div>
               <h2>{question.title}</h2>
               <p>{question.explanation}</p>
