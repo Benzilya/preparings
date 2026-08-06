@@ -10,6 +10,10 @@ Russian is always used on the first visit when no saved preference exists. The v
 
 При первом посещении без сохранённой настройки всегда используется русский язык. Заметный переключатель `RU / EN` меняет язык без перезагрузки страницы и сохраняет выбор в `localStorage` для следующих посещений.
 
+The complete Question Library content is bilingual. All six seed questions include Russian and English titles, categories, visible tags, explanations, interviewer goals, expected answers, alternatives, level-specific examples, mistakes, follow-up questions, related topics, and practical examples. Search, category filters, sorting, detail pages, favorites, and progress history use the currently selected language while stable IDs and slugs preserve links and local progress.
+
+Весь контент базы вопросов двуязычный. Для каждого из шести seed-вопросов заполнены русские и английские заголовки, категории, видимые теги, объяснения, цели интервьюера, ожидаемые ответы, альтернативные формулировки, примеры по уровням, ошибки, уточняющие вопросы, связанные темы и практические примеры. Поиск, категории, сортировка, подробные страницы, избранное и история прогресса используют выбранный язык, а стабильные ID и slug сохраняют ссылки и локальный прогресс.
+
 ## Contacts and author / Контакты и автор
 
 The project author is [@benzilya](https://github.com/Benzilya). The application footer and `/contacts` page contain safe, accessible links to email, phone, Telegram, GitHub, and the portfolio website. External links open in a new tab with `noopener noreferrer`. No contact form, backend, analytics, or personal-data collection is used.
@@ -41,42 +45,16 @@ Open / Откройте:
 http://localhost:3000
 ```
 
-The development server supports hot reload: saved code changes appear in the browser automatically.
-
-Сервер разработки поддерживает hot reload: сохранённые изменения автоматически появляются в браузере.
-
-### Update the local copy / Обновление локальной копии
-
-```bash
-git switch agent/project-foundation
-git pull origin agent/project-foundation
-pnpm install --frozen-lockfile
-pnpm dev
-```
-
 ### Quality checks / Проверки качества
 
 ```bash
+pnpm install --frozen-lockfile
 pnpm architecture
 pnpm typecheck
 pnpm test
 pnpm lint
 pnpm format
 pnpm build
-```
-
-### Common issues / Частые проблемы
-
-If port 3000 is busy / Если порт 3000 занят:
-
-```bash
-pnpm dev -- --port 3001
-```
-
-Then open / Затем откройте:
-
-```text
-http://localhost:3001
 ```
 
 If `pnpm` is unavailable / Если команда `pnpm` недоступна:
@@ -88,48 +66,34 @@ corepack prepare pnpm@10.15.0 --activate
 
 ## Release 1.0 scope / Состав Release 1.0
 
-Release 1.0 focuses on a local-first interview preparation workflow without the AI interview module.
-
-Release 1.0 сфокусирован на локальной подготовке к собеседованиям без модуля AI-интервью.
-
 Included / Включено:
 
-- Question Library with validated seed content, categories, search, filters, stable sorting, and question details;
+- fully bilingual Question Library with six validated seed questions, localized search, categories, filters, stable sorting, and complete question details;
 - local progress statuses, favorites, activity history, category analytics, import, export, and safe reset flows;
 - responsive Dashboard, Progress, Favorites, Settings, Contacts, and localized English/Russian interface surfaces;
 - Russian-first interface defaults with persisted `RU / EN` switching;
 - accessible author attribution and typed contact configuration;
 - accessibility hardening, security headers, architecture checks, domain tests, component tests, and release smoke tests;
-- bilingual architecture, testing, security, accessibility, and release documentation.
+- bilingual architecture, testing, content, security, accessibility, and release documentation.
 
-- база вопросов с валидированным seed-контентом, категориями, поиском, фильтрами, устойчивой сортировкой и страницами вопросов;
+- полностью двуязычная база из шести валидированных вопросов, локализованный поиск, категории, фильтры, устойчивая сортировка и полные подробные ответы;
 - локальные статусы прогресса, избранное, история активности, статистика по категориям, импорт, экспорт и безопасный сброс;
 - адаптивные Dashboard, Progress, Favorites, Settings и Contacts, а также локализованные английский и русский интерфейсы;
 - русский язык по умолчанию и сохраняемый переключатель `RU / EN`;
 - доступное указание автора и типизированная конфигурация контактов;
 - улучшения доступности, security headers, архитектурные проверки, доменные и компонентные тесты и smoke-тесты релиза;
-- двуязычная документация по архитектуре, тестированию, безопасности, доступности и релизу.
+- двуязычная документация по архитектуре, тестированию, контенту, безопасности, доступности и релизу.
 
-Release gate status / Статус release gate:
+## Release gate status / Статус release gate
 
-- Next.js is pinned to 15.4.10;
-- `pnpm-lock.yaml` is synchronized with the package manifest;
-- CI installs dependencies with `pnpm install --frozen-lockfile`;
-- PR readiness still requires one complete green GitHub Actions run.
+- Next.js is pinned to `15.4.10`;
+- CI requires `pnpm install --frozen-lockfile` followed by architecture, typecheck, tests, lint, format, and build;
+- the current lockfile contains corrupted non-YAML output and must be regenerated by pnpm before the gate can pass;
+- PR #1 remains Draft until a complete green run is confirmed.
 
-- Next.js зафиксирован на версии 15.4.10;
-- `pnpm-lock.yaml` синхронизирован с package manifest;
-- CI устанавливает зависимости через `pnpm install --frozen-lockfile`;
-- для готовности PR всё ещё требуется один полный зелёный прогон GitHub Actions.
+- Next.js зафиксирован на версии `15.4.10`;
+- CI требует `pnpm install --frozen-lockfile`, затем architecture, typecheck, tests, lint, format и build;
+- текущий lockfile содержит повреждённый фрагмент, не являющийся YAML, и должен быть пересоздан pnpm до прохождения gate;
+- PR #1 остаётся Draft до подтверждения полного зелёного прогона.
 
 Release audit / Аудит релиза: `docs/release/release-1-audit.md`.
-
-## Development status / Статус разработки
-
-Active development happens in the `agent/project-foundation` branch and PR #1.
-
-Активная разработка ведётся в ветке `agent/project-foundation` и PR #1.
-
-Release 1.0 implementation is feature-complete. The remaining gate is full CI confirmation; PR #1 stays draft until that result is green.
-
-Реализация Release 1.0 функционально завершена. Оставшийся gate — подтверждение полного CI; PR #1 остаётся draft до зелёного результата.
