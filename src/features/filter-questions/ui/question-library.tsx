@@ -16,6 +16,16 @@ const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
 
 type SortOption = "popularity" | "updated" | "title";
 
+function compareQuestions(left: Question, right: Question, sort: SortOption): number {
+  let result = 0;
+
+  if (sort === "title") result = left.title.localeCompare(right.title, "en");
+  if (sort === "updated") result = right.updatedAt.localeCompare(left.updatedAt);
+  if (sort === "popularity") result = left.popularityRank - right.popularityRank;
+
+  return result || left.slug.localeCompare(right.slug, "en");
+}
+
 export function QuestionLibrary({ questions }: { questions: readonly Question[] }) {
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty | "all">("all");
@@ -23,7 +33,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
   const [sort, setSort] = useState<SortOption>("popularity");
 
   const categories = useMemo(
-    () => ["all", ...new Set(questions.map((question) => question.category))],
+    () => ["all", ...new Set(questions.map((question) => question.category))].toSorted(),
     [questions],
   );
 
@@ -42,11 +52,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
 
         return matchesDifficulty && matchesCategory && matchesQuery;
       })
-      .toSorted((left, right) => {
-        if (sort === "title") return left.title.localeCompare(right.title);
-        if (sort === "updated") return right.updatedAt.localeCompare(left.updatedAt);
-        return left.popularityRank - right.popularityRank;
-      });
+      .toSorted((left, right) => compareQuestions(left, right, sort));
   }, [category, difficulty, query, questions, sort]);
 
   const resetFilters = () => {
@@ -122,7 +128,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
             <CardHeader>
               <div className="questionCardMeta">
                 <span className="difficultyBadge">{question.difficulty}</span>
-                <span>{question.category}</span>
+                <Link href={`/questions/categories/${question.categorySlug}`}>
+                  {question.category}
+                </Link>
               </div>
               <CardTitle>{question.title}</CardTitle>
             </CardHeader>
