@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 
+import { getSettingsTranslations } from "../src/features/manage-settings/model/settings-translations";
 import { getTranslations } from "../src/features/manage-settings/model/translations";
 
 function collectShape(value: unknown, prefix = ""): string[] {
@@ -9,7 +10,9 @@ function collectShape(value: unknown, prefix = ""): string[] {
   if (!value || typeof value !== "object") return [`${prefix}:${typeof value}`];
 
   return Object.entries(value as Record<string, unknown>)
-    .flatMap(([key, nestedValue]) => collectShape(nestedValue, prefix ? `${prefix}.${key}` : key))
+    .flatMap(([key, nestedValue]) =>
+      collectShape(nestedValue, prefix ? `${prefix}.${key}` : key),
+    )
     .toSorted();
 }
 
@@ -22,11 +25,18 @@ function collectStrings(value: unknown): string[] {
 
 test("English and Russian dictionaries expose the same typed surface", () => {
   assert.deepEqual(collectShape(getTranslations("en")), collectShape(getTranslations("ru")));
+  assert.deepEqual(
+    collectShape(getSettingsTranslations("en")),
+    collectShape(getSettingsTranslations("ru")),
+  );
 });
 
 test("interface dictionaries do not contain empty user-facing strings", () => {
   for (const language of ["en", "ru"] as const) {
-    const strings = collectStrings(getTranslations(language));
+    const strings = [
+      ...collectStrings(getTranslations(language)),
+      ...collectStrings(getSettingsTranslations(language)),
+    ];
     assert.ok(strings.length > 0);
     assert.equal(strings.every((value) => value.trim().length > 0), true);
   }
