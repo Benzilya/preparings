@@ -1,0 +1,62 @@
+name: Repair pnpm lockfile
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - agent/project-foundation
+    paths:
+      - .github/workflows/repair-lockfile.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repair-pnpm-lockfile
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout current branch
+        uses: actions/checkout@v5
+        with:
+          ref: agent/project-foundation
+      - name: Setup Node.js
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - name: Activate pnpm
+        run: |
+          corepack enable
+          corepack prepare pnpm@10.15.0 --activate
+          pnpm --version
+      - name: Regenerate lockfile
+        run: |
+          rm -f pnpm-lock.yaml
+          pnpm install --lockfile-only --registry=https://registry.npmjs.org
+          pnpm install --frozen-lockfile
+      - name: Format localized changes
+        run: pnpm format:write
+      - name: Architecture
+        run: pnpm architecture
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test
+      - name: Lint
+        run: pnpm lint
+      - name: Format check
+        run: pnpm format
+      - name: Build
+        run: pnpm build
+      - name: Commit verified generated files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: regenerate lockfile and format localized content" || exit 0
+          git push origin HEAD:agent/project-foundation

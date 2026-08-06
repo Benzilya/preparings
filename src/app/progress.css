@@ -1,0 +1,258 @@
+.progressDashboard,
+.progressPage,
+.favoritesPage {
+  display: grid;
+  gap: 24px;
+}
+
+.progressDashboardHeader,
+.progressPanelHeader {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.progressDashboardHeader h2,
+.progressPanelHeader h2 {
+  margin: 8px 0 0;
+  font-size: 1.5rem;
+}
+
+.progressActions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.progressActions button,
+.progressImport {
+  min-height: 38px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.progressActions button:hover,
+.progressImport:hover {
+  border-color: var(--accent);
+}
+
+.progressActions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.progressActions .dangerAction {
+  border-color: color-mix(in srgb, #dc2626 55%, var(--border));
+  color: #dc2626;
+}
+
+.progressImport input {
+  display: none;
+}
+
+.progressPanel,
+.favoriteQuestionCard {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 24px;
+}
+
+.progressMessage,
+.progressEmpty,
+.progressEmptyState p,
+.favoriteQuestionCard p {
+  color: var(--muted);
+}
+
+.resetConfirmation {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-top: 20px;
+  border: 1px solid color-mix(in srgb, #dc2626 35%, var(--border));
+  border-radius: 12px;
+  background: color-mix(in srgb, #dc2626 7%, var(--surface));
+  padding: 16px;
+}
+
+.resetConfirmation p {
+  margin: 5px 0 0;
+  color: var(--muted);
+}
+
+.resetConfirmationField {
+  display: grid;
+  gap: 6px;
+  max-width: 280px;
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.resetConfirmationField input {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  padding: 0 12px;
+}
+
+.categoryProgressList,
+.recentProgressList,
+.activityGroups {
+  display: grid;
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.activityGroups {
+  gap: 24px;
+}
+
+.activityGroup h3 {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.activityGroup .recentProgressList {
+  margin-top: 8px;
+}
+
+.categoryProgressItem {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) minmax(240px, 1.3fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.categoryProgressItem strong,
+.categoryProgressItem span {
+  display: block;
+}
+
+.categoryProgressItem span,
+.recentProgressList span {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.86rem;
+}
+
+.progressBar {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-subtle);
+}
+
+.progressBar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--accent);
+}
+
+.recentProgressList a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+}
+
+.recentProgressList a:last-child {
+  border-bottom: 0;
+}
+
+.recentProgressList a:hover strong,
+.favoriteQuestionCard a:hover {
+  color: var(--accent);
+}
+
+.favoriteQuestionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.favoriteQuestionCard h2 {
+  margin: 20px 0 12px;
+  font-size: 1.25rem;
+}
+
+.favoriteQuestionMeta,
+.favoriteQuestionFooter {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.favoriteQuestionMeta {
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.favoriteQuestionFooter {
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.progressStatusBadge {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-subtle);
+  color: var(--muted);
+  padding: 4px 9px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.progressEmptyState {
+  display: grid;
+  justify-items: start;
+  gap: 12px;
+}
+
+.progressEmptyState h2,
+.progressEmptyState p {
+  margin: 0;
+}
+
+@media (max-width: 700px) {
+  .progressDashboardHeader,
+  .progressPanelHeader,
+  .recentProgressList a,
+  .resetConfirmation,
+  .favoriteQuestionFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .categoryProgressItem,
+  .favoriteQuestionGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .categoryProgressItem {
+    gap: 10px;
+  }
+}
