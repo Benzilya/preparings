@@ -19,7 +19,7 @@ git clone https://github.com/Benzilya/preparings.git
 cd preparings
 git switch agent/project-foundation
 corepack enable
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
@@ -38,7 +38,7 @@ The development server supports hot reload: saved code changes appear in the bro
 ```bash
 git switch agent/project-foundation
 git pull origin agent/project-foundation
-pnpm install
+pnpm install --frozen-lockfile
 pnpm dev
 ```
 
@@ -94,10 +94,17 @@ Included / Включено:
 - улучшения доступности, security headers, архитектурные проверки, доменные и компонентные тесты и smoke-тесты релиза;
 - двуязычная документация по архитектуре, тестированию, безопасности, доступности и релизу.
 
-Known release debt / Известный технический долг:
+Release gate status / Статус release gate:
 
-- `pnpm-lock.yaml` must be regenerated after the Next.js 15.4.8 update and validated by a complete green GitHub Actions run before the PR is marked ready for merge.
-- после обновления Next.js до 15.4.8 необходимо пересоздать `pnpm-lock.yaml` и подтвердить полный зелёный прогон GitHub Actions до перевода PR в состояние ready for merge.
+- Next.js is pinned to 15.4.10;
+- `pnpm-lock.yaml` is synchronized with the package manifest;
+- CI installs dependencies with `pnpm install --frozen-lockfile`;
+- PR readiness still requires one complete green GitHub Actions run.
+
+- Next.js зафиксирован на версии 15.4.10;
+- `pnpm-lock.yaml` синхронизирован с package manifest;
+- CI устанавливает зависимости через `pnpm install --frozen-lockfile`;
+- для готовности PR всё ещё требуется один полный зелёный прогон GitHub Actions.
 
 Release audit / Аудит релиза: `docs/release/release-1-audit.md`.
 
@@ -107,6 +114,6 @@ Active development happens in the `agent/project-foundation` branch and PR #1.
 
 Активная разработка ведётся в ветке `agent/project-foundation` и PR #1.
 
-Release 1.0 implementation is feature-complete except for the documented lockfile and final CI verification debt.
+Release 1.0 implementation is feature-complete. The remaining gate is full CI confirmation; PR #1 stays draft until that result is green.
 
-Реализация Release 1.0 функционально завершена, кроме задокументированного долга по lockfile и финальной проверке CI.
+Реализация Release 1.0 функционально завершена. Оставшийся gate — подтверждение полного CI; PR #1 остаётся draft до зелёного результата.
