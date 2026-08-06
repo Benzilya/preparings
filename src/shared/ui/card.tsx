@@ -1,4 +1,4 @@
-import type { HTMLAttributes, PropsWithChildren } from "react";
+import React, { type HTMLAttributes, type PropsWithChildren } from "react";
 
 import { cn } from "@/shared/lib/cn";
 
