@@ -11,20 +11,20 @@ import {
   type UserSettings,
   writeSettings,
 } from "../model/settings";
-import { getTranslations } from "../model/translations";
+import { getSettingsTranslations } from "../model/settings-translations";
 
 export function SettingsPage() {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [message, setMessage] = useState("");
   const [clearPending, setClearPending] = useState(false);
-  const translations = getTranslations(settings.language).settings;
+  const translations = getSettingsTranslations(settings.language);
 
   useEffect(() => setSettings(readSettings()), []);
 
   const update = (next: UserSettings) => {
     setSettings(next);
     writeSettings(next);
-    setMessage(getTranslations(next.language).settings.saved);
+    setMessage(getSettingsTranslations(next.language).saved);
   };
 
   const clearProgress = () => {
@@ -100,7 +100,7 @@ export function SettingsPage() {
             onClick={() => {
               const next = resetSettings();
               setSettings(next);
-              setMessage(getTranslations(next.language).settings.resetDone);
+              setMessage(getSettingsTranslations(next.language).resetDone);
             }}
             type="button"
           >
