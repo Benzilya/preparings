@@ -19,7 +19,10 @@ Release 1.0 реализует сценарий подготовки к инте
 - keyboard accessibility safeguards, localized skip navigation, landmark labels, and visible focus states;
 - baseline response security headers and disabled framework disclosure header;
 - bilingual architecture, testing, settings, progress, security, accessibility, and release documentation;
-- README with local setup, quality commands, Release 1.0 scope, and known release debt.
+- README with local setup, quality commands, Release 1.0 scope, and release-gate status;
+- Next.js updated to 15.4.10;
+- `pnpm-lock.yaml` regenerated and synchronized;
+- CI restored to `pnpm install --frozen-lockfile`.
 
 - адаптивный каркас Next.js и типизированная навигация;
 - валидированный контент вопросов и детерминированная сортировка каталога;
@@ -32,38 +35,43 @@ Release 1.0 реализует сценарий подготовки к инте
 - клавиатурная доступность, локализованная skip-навигация, подписи landmarks и видимые focus-состояния;
 - базовые security headers и отключение заголовка раскрытия фреймворка;
 - двуязычная документация архитектуры, тестов, настроек, прогресса, безопасности, доступности и релиза;
-- README с локальным запуском, командами качества, составом Release 1.0 и известным техническим долгом.
+- README с локальным запуском, командами качества, составом Release 1.0 и статусом release gate;
+- Next.js обновлён до 15.4.10;
+- `pnpm-lock.yaml` пересоздан и синхронизирован;
+- в CI возвращён `pnpm install --frozen-lockfile`.
 
 ## Release evidence / Подтверждение релиза
 
 - working branch: `agent/project-foundation`;
 - pull request: `#1`;
-- README release update: `fda1fcb41058ebd53d121dd7c5ab74b2e4b10c2a`;
+- package update: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
+- lockfile synchronization: `373ce06ff86a357e95de284a0e725413c13b1b05`;
+- frozen-lockfile CI restoration: `4f665404a4602b129a53f42a21fd65d3fe2f662c`;
+- README release-gate update: `59fb07b468261ae65c8f8f94f1bf44750668418f`;
 - accessibility hardening: `054522954351730edd4bf485e6482ab765e98c7a`;
-- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`;
-- initial release audit: `507466ec81318fc1c1a8c1a69c4d18c5f0387cdc`.
+- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`.
 
 - рабочая ветка: `agent/project-foundation`;
 - pull request: `#1`;
-- обновление README для релиза: `fda1fcb41058ebd53d121dd7c5ab74b2e4b10c2a`;
+- обновление package: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
+- синхронизация lockfile: `373ce06ff86a357e95de284a0e725413c13b1b05`;
+- восстановление frozen-lockfile CI: `4f665404a4602b129a53f42a21fd65d3fe2f662c`;
+- обновление README по release gate: `59fb07b468261ae65c8f8f94f1bf44750668418f`;
 - улучшения доступности: `054522954351730edd4bf485e6482ab765e98c7a`;
-- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`;
-- первоначальный аудит релиза: `507466ec81318fc1c1a8c1a69c4d18c5f0387cdc`.
+- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`.
 
-## Deferred technical debt / Отложенный технический долг
+## Remaining release gate / Оставшийся release gate
 
-1. Regenerate `pnpm-lock.yaml` for Next.js 15.4.8.
-2. Restore `pnpm install --frozen-lockfile` after the lockfile is synchronized.
-3. Confirm a complete green GitHub Actions run for architecture, typecheck, tests, lint, format, and build.
-4. Move PR #1 from draft to ready only after item 3 is confirmed.
+1. Confirm one complete green GitHub Actions run for architecture, typecheck, tests, lint, format, and build.
+2. Keep PR #1 in draft until that run is confirmed.
+3. Do not mark the PR ready or merge without explicit user approval.
 
-1. Пересоздать `pnpm-lock.yaml` для Next.js 15.4.8.
-2. Вернуть `pnpm install --frozen-lockfile` после синхронизации lockfile.
-3. Подтвердить полностью зелёный GitHub Actions run: architecture, typecheck, tests, lint, format и build.
-4. Перевести PR #1 из draft в ready только после подтверждения пункта 3.
+1. Подтвердить один полный зелёный GitHub Actions run: architecture, typecheck, tests, lint, format и build.
+2. Оставить PR #1 в draft до подтверждения этого прогона.
+3. Не переводить PR в ready и не выполнять merge без отдельного разрешения пользователя.
 
 ## Final release decision / Финальное решение по релизу
 
-The agreed non-AI Release 1.0 product scope is feature-complete. Documentation, accessibility, security review, automated contract coverage, and PR preparation are complete. PR #1 must remain draft until the documented lockfile and full-CI debt is resolved; no additional independent product increment remains in the agreed Release 1.0 scope.
+The agreed non-AI Release 1.0 product scope is feature-complete. Lockfile synchronization and frozen installation are complete. The only remaining technical gate is a complete green GitHub Actions run. PR #1 must remain draft until that result is confirmed.
 
-Согласованный продуктовый объём Release 1.0 без AI функционально завершён. Документация, доступность, security review, автоматические контрактные проверки и подготовка PR завершены. PR #1 должен оставаться draft до устранения задокументированного долга по lockfile и полному CI; независимых продуктовых инкрементов в согласованном объёме Release 1.0 больше не осталось.
+Согласованный продуктовый объём Release 1.0 без AI функционально завершён. Синхронизация lockfile и frozen-установка завершены. Единственный оставшийся технический gate — полный зелёный прогон GitHub Actions. PR #1 должен оставаться draft до подтверждения результата.
