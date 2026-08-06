@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { Heart } from "lucide-react";
+import Link from "next/link";
+import { useMemo } from "react";
 
 import type { Question } from "@/entities/question";
 
@@ -9,8 +10,20 @@ import { useQuestionProgress } from "../model/use-question-progress";
 
 export function FavoriteQuestionsPage({ questions }: { questions: readonly Question[] }) {
   const { records } = useQuestionProgress();
-  const favoriteIds = new Set(records.filter((record) => record.favorite).map((record) => record.questionId));
-  const favorites = questions.filter((question) => favoriteIds.has(question.id));
+
+  const favorites = useMemo(() => {
+    const recordsByQuestion = new Map(records.map((record) => [record.questionId, record]));
+
+    return questions
+      .filter((question) => recordsByQuestion.get(question.id)?.favorite)
+      .map((question) => ({ question, progress: recordsByQuestion.get(question.id) }))
+      .toSorted((left, right) => {
+        const updated = (right.progress?.updatedAt ?? "").localeCompare(
+          left.progress?.updatedAt ?? "",
+        );
+        return updated || left.question.slug.localeCompare(right.question.slug, "en");
+      });
+  }, [questions, records]);
 
   return (
     <div className="favoritesPage">
@@ -24,7 +37,7 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
 
       {favorites.length ? (
         <div className="favoriteQuestionGrid">
-          {favorites.map((question) => (
+          {favorites.map(({ progress, question }) => (
             <article className="favoriteQuestionCard" key={question.id}>
               <div className="favoriteQuestionMeta">
                 <Heart aria-hidden="true" fill="currentColor" size={16} />
@@ -33,9 +46,14 @@ export function FavoriteQuestionsPage({ questions }: { questions: readonly Quest
               </div>
               <h2>{question.title}</h2>
               <p>{question.explanation}</p>
-              <Link className="questionLink" href={`/questions/${question.slug}`}>
-                Open question / Открыть вопрос →
-              </Link>
+              <div className="favoriteQuestionFooter">
+                <span className="progressStatusBadge">
+                  {progress?.status ?? "not-started"}
+                </span>
+                <Link className="questionLink" href={`/questions/${question.slug}`}>
+                  Open question / Открыть вопрос →
+                </Link>
+              </div>
             </article>
           ))}
         </div>
