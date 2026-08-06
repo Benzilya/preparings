@@ -8,6 +8,8 @@ import type { Question } from "@/entities/question";
 import { summarizeProgress } from "../model/storage";
 import { useQuestionProgress } from "../model/use-question-progress";
 
+const resetConfirmationText = "DELETE";
+
 function getDateKey(value: string): string {
   return new Date(value).toISOString().slice(0, 10);
 }
@@ -24,6 +26,7 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
   const { records, reset, exportJson, importJson } = useQuestionProgress();
   const [message, setMessage] = useState("");
   const [resetPending, setResetPending] = useState(false);
+  const [resetConfirmation, setResetConfirmation] = useState("");
   const summary = summarizeProgress(questions.length, records);
 
   const recordsByQuestion = useMemo(
@@ -83,6 +86,7 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
     try {
       importJson(await file.text());
       setResetPending(false);
+      setResetConfirmation("");
       setMessage("Progress imported / Прогресс импортирован");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Import failed / Ошибка импорта");
@@ -91,9 +95,15 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
     }
   };
 
-  const confirmReset = () => {
-    reset();
+  const cancelReset = () => {
     setResetPending(false);
+    setResetConfirmation("");
+  };
+
+  const confirmReset = () => {
+    if (resetConfirmation !== resetConfirmationText) return;
+    reset();
+    cancelReset();
     setMessage("Progress reset / Прогресс сброшен");
   };
 
@@ -151,13 +161,30 @@ export function ProgressPage({ questions }: { questions: readonly Question[] }) 
           <div className="resetConfirmation" role="alert">
             <div>
               <strong>Delete all local progress? / Удалить весь локальный прогресс?</strong>
-              <p>This cannot be undone unless you exported a backup.</p>
+              <p>
+                Type <code>{resetConfirmationText}</code> to confirm. This cannot be undone unless
+                you exported a backup.
+              </p>
+              <label className="resetConfirmationField">
+                <span>Confirmation / Подтверждение</span>
+                <input
+                  autoComplete="off"
+                  onChange={(event) => setResetConfirmation(event.target.value)}
+                  placeholder={resetConfirmationText}
+                  value={resetConfirmation}
+                />
+              </label>
             </div>
             <div className="progressActions">
-              <button onClick={() => setResetPending(false)} type="button">
+              <button onClick={cancelReset} type="button">
                 Cancel / Отмена
               </button>
-              <button className="dangerAction" onClick={confirmReset} type="button">
+              <button
+                className="dangerAction"
+                disabled={resetConfirmation !== resetConfirmationText}
+                onClick={confirmReset}
+                type="button"
+              >
                 Delete progress / Удалить
               </button>
             </div>
