@@ -1,4 +1,9 @@
-import type { Question, QuestionDifficulty } from "./types";
+import type {
+  LocalizedTag,
+  LocalizedText,
+  Question,
+  QuestionDifficulty,
+} from "./types";
 
 export class QuestionValidationError extends Error {
   constructor(message: string) {
@@ -14,10 +19,22 @@ function isNonEmptyString(value: unknown): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
 
-function assertNonEmptyStringArray(value: unknown, field: keyof Question): void {
-  if (!Array.isArray(value) || value.length === 0 || !value.every(isNonEmptyString)) {
+function isLocalizedText(value: unknown): value is LocalizedText {
+  if (!value || typeof value !== "object") return false;
+  const text = value as Partial<LocalizedText>;
+  return isNonEmptyString(text.ru) && isNonEmptyString(text.en);
+}
+
+function isLocalizedTag(value: unknown): value is LocalizedTag {
+  if (!value || typeof value !== "object") return false;
+  const tag = value as Partial<LocalizedTag>;
+  return isNonEmptyString(tag.key) && slugPattern.test(tag.key) && isLocalizedText(tag.label);
+}
+
+function assertLocalizedTextArray(value: unknown, field: keyof Question): void {
+  if (!Array.isArray(value) || value.length === 0 || !value.every(isLocalizedText)) {
     throw new QuestionValidationError(
-      `Question field '${field}' must contain at least one non-empty string.`,
+      `Question field '${field}' must contain at least one complete ru/en text.`,
     );
   }
 }
@@ -28,22 +45,21 @@ export function validateQuestion(value: unknown): Question {
   }
 
   const question = value as Partial<Question>;
-  const requiredStrings: Array<keyof Question> = [
-    "id",
-    "slug",
+  for (const field of ["id", "slug", "categorySlug", "difficulty", "updatedAt"] as const) {
+    if (!isNonEmptyString(question[field])) {
+      throw new QuestionValidationError(`Question field '${field}' must be a non-empty string.`);
+    }
+  }
+
+  for (const field of [
     "title",
     "category",
-    "categorySlug",
-    "difficulty",
     "explanation",
     "interviewerGoal",
     "expectedAnswer",
-    "updatedAt",
-  ];
-
-  for (const field of requiredStrings) {
-    if (!isNonEmptyString(question[field])) {
-      throw new QuestionValidationError(`Question field '${field}' must be a non-empty string.`);
+  ] as const) {
+    if (!isLocalizedText(question[field])) {
+      throw new QuestionValidationError(`Question field '${field}' must contain ru and en text.`);
     }
   }
 
@@ -55,14 +71,17 @@ export function validateQuestion(value: unknown): Question {
     throw new QuestionValidationError("Question difficulty must be junior, middle, or senior.");
   }
 
+  if (!Array.isArray(question.tags) || question.tags.length === 0 || !question.tags.every(isLocalizedTag)) {
+    throw new QuestionValidationError("Question tags must contain stable keys and complete ru/en labels.");
+  }
+
   for (const field of [
-    "tags",
     "alternativeAnswers",
     "mistakes",
     "followUpQuestions",
     "relatedTopics",
   ] as const) {
-    assertNonEmptyStringArray(question[field], field);
+    assertLocalizedTextArray(question[field], field);
   }
 
   if (!Array.isArray(question.answerExamples) || question.answerExamples.length === 0) {
@@ -72,12 +91,19 @@ export function validateQuestion(value: unknown): Question {
   if (
     !question.answerExamples.every(
       (example) =>
-        example &&
-        difficulties.has(example.level) &&
-        isNonEmptyString(example.answer),
+        example && difficulties.has(example.level) && isLocalizedText(example.answer),
     )
   ) {
-    throw new QuestionValidationError("Every answer example must have a valid level and answer.");
+    throw new QuestionValidationError(
+      "Every answer example must have a valid level and complete ru/en answer.",
+    );
+  }
+
+  if (question.practicalExample !== undefined && !isLocalizedText(question.practicalExample)) {
+    throw new QuestionValidationError("Question practicalExample must contain ru and en text.");
+  }
+  if (question.experienceExample !== undefined && !isLocalizedText(question.experienceExample)) {
+    throw new QuestionValidationError("Question experienceExample must contain ru and en text.");
   }
 
   if (!Array.isArray(question.sources) || question.sources.length === 0) {
