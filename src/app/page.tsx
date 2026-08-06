@@ -1,24 +1,21 @@
-const metrics = [
-  { label: "Тем для изучения", value: "40+" },
-  { label: "Режимов практики", value: "5" },
-  { label: "Уровней интервью", value: "3" },
-];
+import { seedQuestions } from "@/../content/questions/seed";
+import { ProgressDashboard } from "@/features/track-question-progress";
 
 const modules = [
   {
-    eyebrow: "01 · Interview",
-    title: "AI-интервью с адаптивной сложностью",
-    description: "Уточняющие вопросы, прозрачная оценка и персональный план развития.",
-  },
-  {
-    eyebrow: "02 · Library",
+    eyebrow: "01 · Library",
     title: "База вопросов, отделённая от UI",
     description: "Контент с источниками, сложностью и примерами Junior, Middle и Senior.",
   },
   {
-    eyebrow: "03 · Progress",
-    title: "Слабые темы и интервальные повторения",
-    description: "Профиль навыков превращает результаты практики в следующие шаги.",
+    eyebrow: "02 · Progress",
+    title: "Локальный прогресс без регистрации",
+    description: "Статусы, избранное и экспорт хранятся только в браузере пользователя.",
+  },
+  {
+    eyebrow: "03 · Categories",
+    title: "Категории и устойчивые фильтры",
+    description: "Каталог помогает быстро собирать релевантный набор тем для подготовки.",
   },
 ];
 
@@ -30,23 +27,16 @@ export default function HomePage() {
           <p className="eyebrow">Dashboard / Дашборд</p>
           <h1 id="dashboard-title">Подготовка к интервью как инженерная система.</h1>
           <p className="lead">
-            Единое рабочее пространство для теории, практики, интервью и измеримого прогресса QA
-            Fullstack Engineer.
+            Единое рабочее пространство для изучения вопросов, отслеживания прогресса и
+            повторения слабых тем QA Fullstack Engineer.
           </p>
         </div>
-        <a className="button buttonPrimary" href="/interview">
-          Начать интервью
+        <a className="button buttonPrimary" href="/questions">
+          Открыть базу вопросов
         </a>
       </section>
 
-      <section className="metrics" aria-label="Ключевые возможности">
-        {metrics.map((metric) => (
-          <article className="metric" key={metric.label}>
-            <strong>{metric.value}</strong>
-            <span>{metric.label}</span>
-          </article>
-        ))}
-      </section>
+      <ProgressDashboard totalQuestions={seedQuestions.length} />
 
       <section className="moduleGrid" aria-label="Основные модули">
         {modules.map((module) => (
