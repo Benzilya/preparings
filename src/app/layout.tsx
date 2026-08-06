@@ -1,7 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Providers } from "./providers";
+
+import { AppShell } from "@/widgets/app-shell/ui/app-shell";
+
 import "./globals.css";
+import { Providers } from "./providers";
 
 const sans = Geist({ subsets: ["latin", "cyrillic"], variable: "--font-sans" });
 const mono = Geist_Mono({ subsets: ["latin", "cyrillic"], variable: "--font-mono" });
@@ -25,8 +28,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ru" suppressHydrationWarning>
-      <body className={`${sans.variable} ${mono.variable} antialiased`}>
-        <Providers>{children}</Providers>
+      <body className={`${sans.variable} ${mono.variable}`}>
+        <Providers>
+          <AppShell>{children}</AppShell>
+        </Providers>
       </body>
     </html>
   );
