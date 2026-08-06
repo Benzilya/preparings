@@ -6,6 +6,7 @@ import { AppShell } from "@/widgets/app-shell";
 import "./globals.css";
 import "./progress.css";
 import "./questions.css";
+import "./settings.css";
 import { Providers } from "./providers";
 
 const sans = Geist({ subsets: ["latin", "cyrillic"], variable: "--font-sans" });
