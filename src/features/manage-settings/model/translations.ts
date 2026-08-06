@@ -71,7 +71,7 @@ const dictionary = {
   },
 } as const;
 
-export type InterfaceTranslations = (typeof dictionary)["en"];
+export type InterfaceTranslations = (typeof dictionary)[InterfaceLanguage];
 
 export function getTranslations(language: InterfaceLanguage): InterfaceTranslations {
   return dictionary[language];
