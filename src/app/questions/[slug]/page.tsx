@@ -1,21 +1,15 @@
 import { notFound } from "next/navigation";
 
-import { seedQuestions } from "@/../content/questions/seed";
+import { top100Questions } from "@/../content/questions/top100";
 import { LocalizedQuestionDetails } from "@/features/manage-settings/ui/localized-question-surfaces";
 
 export function generateStaticParams() {
-  return seedQuestions.map((question) => ({ slug: question.slug }));
+  return top100Questions.map((question) => ({ slug: question.slug }));
 }
 
-export default async function QuestionDetailsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function QuestionDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const question = seedQuestions.find((item) => item.slug === slug);
-
+  const question = top100Questions.find((item) => item.slug === slug);
   if (!question) notFound();
-
   return <LocalizedQuestionDetails question={question} />;
 }
