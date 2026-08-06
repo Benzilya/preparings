@@ -1,6 +1,6 @@
 Exit code: 0
-Wall time: 0.6 seconds
-Total output lines: 4647
+Wall time: 0.5 seconds
+Total output lines: 4646
 Output:
 lockfileVersion: '9.0'
 
@@ -22,8 +22,8 @@ importers:
         specifier: 0.468.0
         version: 0.468.0(react@19.1.1)
       next:
-        specifier: 15.4.8
-        version: 15.4.8(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
+        specifier: 15.4.10
+        version: 15.4.10(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
       next-themes:
         specifier: 0.4.4
         version: 0.4.4(react-dom@19.1.1(react@19.1.1))(react@19.1.1)
@@ -510,8 +510,7 @@ packages:
     engines: {node: '>=6.0.0'}
 
   '@jridgewell/sourcemap-codec@1.5.5':
-    resolution: {integrity: sha512-cY…28266 tokens truncated…:
-      function-bind: 1.1.2
+    resolution: {integrity: sha512-…28226 tokens truncated…      function-bind: 1.1.2
 
   html-encoding-sniffer@4.0.0:
     dependencies:
@@ -855,9 +854,9 @@ packages:
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
 
-  next@15.4.8(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
+  next@15.4.10(react-dom@19.1.1(react@19.1.1))(react@19.1.1):
     dependencies:
-      '@next/env': 15.4.8
+      '@next/env': 15.4.10
       '@swc/helpers': 0.5.15
       caniuse-lite: 1.0.30001806
       postcss: 8.4.31
