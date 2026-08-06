@@ -4,6 +4,7 @@ import { after, afterEach, before, test } from "node:test";
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import globalJsdom from "global-jsdom";
+import React from "react";
 
 import { QuestionProgressControls } from "../src/features/track-question-progress/ui/question-progress-controls";
 
@@ -21,7 +22,7 @@ afterEach(() => {
 after(() => cleanupDom());
 
 test("Question progress controls persist status and favorite state", async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ document: window.document });
   render(<QuestionProgressControls questionId="q-testing-pyramid" />);
 
   const status = screen.getByLabelText(/Question status/) as HTMLSelectElement;
@@ -35,12 +36,13 @@ test("Question progress controls persist status and favorite state", async () =>
 
   const stored = window.localStorage.getItem("qa-interview-trainer:question-progress:v1");
   assert.ok(stored);
-  assert.deepEqual(JSON.parse(stored), [
+  const parsed = JSON.parse(stored);
+  assert.deepEqual(parsed, [
     {
       questionId: "q-testing-pyramid",
       status: "completed",
       favorite: true,
-      updatedAt: JSON.parse(stored)[0].updatedAt,
+      updatedAt: parsed[0].updatedAt,
     },
   ]);
 });
