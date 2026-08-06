@@ -14,12 +14,16 @@ Release 1.0 реализует сценарий подготовки к инте
 - local progress statuses, favorites, import, export, activity history, and safe reset;
 - dashboard and progress analytics;
 - Russian and English interface localization through a shared typed dictionary;
+- Russian is the unconditional first-visit default when no saved preference exists;
+- visible `RU / EN` switching without page reload, persisted in localStorage;
+- typed author and contact configuration with accessible email, phone, Telegram, GitHub, and portfolio links;
+- localized `/contacts` page and author attribution in the application footer and About section;
 - settings restoration and local preferences;
-- domain, storage, component, localization, route, translation-contract, and security tests;
-- keyboard accessibility safeguards, localized skip navigation, landmark labels, and visible focus states;
+- domain, storage, component, localization, route, translation-contract, contact, and security tests;
+- keyboard accessibility safeguards, localized skip navigation, landmark labels, visible focus states, and responsive contact cards;
 - baseline response security headers and disabled framework disclosure header;
 - bilingual architecture, testing, settings, progress, security, accessibility, and release documentation;
-- README with local setup, quality commands, Release 1.0 scope, and release-gate status;
+- README with local setup, quality commands, language behavior, contacts, author, Release 1.0 scope, and release-gate status;
 - Next.js updated to 15.4.10;
 - `pnpm-lock.yaml` regenerated and synchronized;
 - CI restored to `pnpm install --frozen-lockfile`.
@@ -30,12 +34,16 @@ Release 1.0 реализует сценарий подготовки к инте
 - локальные статусы, избранное, импорт, экспорт, история активности и безопасный сброс прогресса;
 - Dashboard и аналитика прогресса;
 - русская и английская локализация интерфейса через общий типизированный словарь;
+- русский язык безусловно используется при первом посещении, если настройка ещё не сохранена;
+- заметный переключатель `RU / EN` работает без перезагрузки и сохраняется в localStorage;
+- типизированная конфигурация автора и контактов с доступными ссылками на email, телефон, Telegram, GitHub и портфолио;
+- локализованная страница `/contacts` и указание автора в подвале приложения и разделе «О проекте»;
 - восстановление настроек и локальные предпочтения;
-- тесты домена, storage, компонентов, локализации, маршрутов, контрактов переводов и security-конфигурации;
-- клавиатурная доступность, локализованная skip-навигация, подписи landmarks и видимые focus-состояния;
+- тесты домена, storage, компонентов, локализации, маршрутов, контрактов переводов, контактов и security-конфигурации;
+- клавиатурная доступность, локализованная skip-навигация, подписи landmarks, видимые focus-состояния и адаптивные карточки контактов;
 - базовые security headers и отключение заголовка раскрытия фреймворка;
 - двуязычная документация архитектуры, тестов, настроек, прогресса, безопасности, доступности и релиза;
-- README с локальным запуском, командами качества, составом Release 1.0 и статусом release gate;
+- README с локальным запуском, командами качества, поведением языка, контактами, авторством, составом Release 1.0 и статусом release gate;
 - Next.js обновлён до 15.4.10;
 - `pnpm-lock.yaml` пересоздан и синхронизирован;
 - в CI возвращён `pnpm install --frozen-lockfile`.
@@ -44,34 +52,40 @@ Release 1.0 реализует сценарий подготовки к инте
 
 - working branch: `agent/project-foundation`;
 - pull request: `#1`;
-- package update: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
+- typed author/contact configuration: `8be6ccc401c9fb1fe0e701383533a8de4969fb02`;
+- shared localization expansion: `fbb26d650449eedb55cc055af32f75616b27e90f`;
+- navigation, language switcher, and author footer: `eef55f48df7c1eb0cfd172b2257c71188de99095`;
+- contacts page and responsive styling: `2f842e63afbd743217ce37af60dee3fbec370702`;
+- contact and localization tests: `feaae53ce2d2bf0e09ee764757c524bc35b28f41`;
+- README update: `1797c1f446b99deee5302b4dd11e5549a9c8ddb4`;
+- Next.js update: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
 - lockfile synchronization: `373ce06ff86a357e95de284a0e725413c13b1b05`;
-- frozen-lockfile CI restoration: `4f665404a4602b129a53f42a21fd65d3fe2f662c`;
-- README release-gate update: `59fb07b468261ae65c8f8f94f1bf44750668418f`;
-- accessibility hardening: `054522954351730edd4bf485e6482ab765e98c7a`;
-- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`.
+- frozen-lockfile CI restoration: `4f665404a4602b129a53f42a21fd65d3fe2f662c`.
 
 - рабочая ветка: `agent/project-foundation`;
 - pull request: `#1`;
-- обновление package: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
+- типизированная конфигурация автора и контактов: `8be6ccc401c9fb1fe0e701383533a8de4969fb02`;
+- расширение общего словаря: `fbb26d650449eedb55cc055af32f75616b27e90f`;
+- навигация, переключатель языка и авторство в подвале: `eef55f48df7c1eb0cfd172b2257c71188de99095`;
+- страница контактов и адаптивные стили: `2f842e63afbd743217ce37af60dee3fbec370702`;
+- тесты контактов и локализации: `feaae53ce2d2bf0e09ee764757c524bc35b28f41`;
+- обновление README: `1797c1f446b99deee5302b4dd11e5549a9c8ddb4`;
+- обновление Next.js: `c5d582fc6d161ad278b6e0a51f061a5759a7d2ce`;
 - синхронизация lockfile: `373ce06ff86a357e95de284a0e725413c13b1b05`;
-- восстановление frozen-lockfile CI: `4f665404a4602b129a53f42a21fd65d3fe2f662c`;
-- обновление README по release gate: `59fb07b468261ae65c8f8f94f1bf44750668418f`;
-- улучшения доступности: `054522954351730edd4bf485e6482ab765e98c7a`;
-- security hardening: `63a398fee185309b1a94234b4f0e3556c1e08d93`.
+- восстановление frozen-lockfile CI: `4f665404a4602b129a53f42a21fd65d3fe2f662c`.
 
 ## Remaining release gate / Оставшийся release gate
 
-1. Confirm one complete green GitHub Actions run for architecture, typecheck, tests, lint, format, and build.
+1. Confirm one complete green GitHub Actions run for install, architecture, typecheck, tests, lint, format, and build.
 2. Keep PR #1 in draft until that run is confirmed.
 3. Do not mark the PR ready or merge without explicit user approval.
 
-1. Подтвердить один полный зелёный GitHub Actions run: architecture, typecheck, tests, lint, format и build.
+1. Подтвердить один полный зелёный GitHub Actions run: install, architecture, typecheck, tests, lint, format и build.
 2. Оставить PR #1 в draft до подтверждения этого прогона.
 3. Не переводить PR в ready и не выполнять merge без отдельного разрешения пользователя.
 
 ## Final release decision / Финальное решение по релизу
 
-The agreed non-AI Release 1.0 product scope is feature-complete. Lockfile synchronization and frozen installation are complete. The only remaining technical gate is a complete green GitHub Actions run. PR #1 must remain draft until that result is confirmed.
+The agreed non-AI Release 1.0 product scope is feature-complete. Russian-first localization, persistent language switching, contacts, authorship, lockfile synchronization, and frozen installation are complete. The remaining technical gate is a complete green GitHub Actions run. PR #1 must remain draft until that result is confirmed.
 
-Согласованный продуктовый объём Release 1.0 без AI функционально завершён. Синхронизация lockfile и frozen-установка завершены. Единственный оставшийся технический gate — полный зелёный прогон GitHub Actions. PR #1 должен оставаться draft до подтверждения результата.
+Согласованный продуктовый объём Release 1.0 без AI функционально завершён. Русский язык по умолчанию, сохраняемое переключение языка, контакты, авторство, синхронизация lockfile и frozen-установка завершены. Оставшийся технический gate — полный зелёный прогон GitHub Actions. PR #1 должен оставаться draft до подтверждения результата.
