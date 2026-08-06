@@ -14,24 +14,47 @@ const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
   "senior",
 ];
 
+type SortOption = "popularity" | "updated" | "title";
+
 export function QuestionLibrary({ questions }: { questions: readonly Question[] }) {
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty | "all">("all");
+  const [category, setCategory] = useState("all");
+  const [sort, setSort] = useState<SortOption>("popularity");
+
+  const categories = useMemo(
+    () => ["all", ...new Set(questions.map((question) => question.category))],
+    [questions],
+  );
 
   const filteredQuestions = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
 
-    return questions.filter((question) => {
-      const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
-      const searchableText = [question.title, question.category, ...question.tags]
-        .join(" ")
-        .toLowerCase();
-      const matchesQuery =
-        normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
+    return questions
+      .filter((question) => {
+        const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
+        const matchesCategory = category === "all" || question.category === category;
+        const searchableText = [question.title, question.category, ...question.tags]
+          .join(" ")
+          .toLowerCase();
+        const matchesQuery =
+          normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
 
-      return matchesDifficulty && matchesQuery;
-    });
-  }, [difficulty, query, questions]);
+        return matchesDifficulty && matchesCategory && matchesQuery;
+      })
+      .toSorted((left, right) => {
+        if (sort === "title") return left.title.localeCompare(right.title);
+        if (sort === "updated") return right.updatedAt.localeCompare(left.updatedAt);
+        return left.popularityRank - right.popularityRank;
+      });
+  }, [category, difficulty, query, questions, sort]);
+
+  const resetFilters = () => {
+    setQuery("");
+    setDifficulty("all");
+    setCategory("all");
+    setSort("popularity");
+  };
 
   return (
     <div className="questionLibrary">
@@ -47,7 +70,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
           />
         </label>
 
-        <label className="difficultyField">
+        <label className="filterField">
           <span>Level / Уровень</span>
           <select
             onChange={(event) =>
@@ -62,17 +85,45 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
             ))}
           </select>
         </label>
+
+        <label className="filterField">
+          <span>Category / Категория</span>
+          <select onChange={(event) => setCategory(event.target.value)} value={category}>
+            {categories.map((option) => (
+              <option key={option} value={option}>
+                {option === "all" ? "All / Все" : option}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="filterField">
+          <span>Sort / Сортировка</span>
+          <select onChange={(event) => setSort(event.target.value as SortOption)} value={sort}>
+            <option value="popularity">Popularity / Популярность</option>
+            <option value="updated">Recently updated / Обновлённые</option>
+            <option value="title">Title / Название</option>
+          </select>
+        </label>
       </div>
 
-      <p className="resultCount" aria-live="polite">
-        {filteredQuestions.length} of {questions.length} questions / вопросов
-      </p>
+      <div className="questionResultsBar">
+        <p className="resultCount" aria-live="polite">
+          {filteredQuestions.length} of {questions.length} questions / вопросов
+        </p>
+        <button className="resetFilters" onClick={resetFilters} type="button">
+          Reset filters / Сбросить
+        </button>
+      </div>
 
       <div className="questionGrid">
         {filteredQuestions.map((question) => (
           <Card key={question.id}>
             <CardHeader>
-              <span className="difficultyBadge">{question.difficulty}</span>
+              <div className="questionCardMeta">
+                <span className="difficultyBadge">{question.difficulty}</span>
+                <span>{question.category}</span>
+              </div>
               <CardTitle>{question.title}</CardTitle>
             </CardHeader>
             <CardContent>
@@ -93,7 +144,10 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
       {filteredQuestions.length === 0 ? (
         <div className="emptyState">
           <strong>No questions found / Вопросы не найдены</strong>
-          <p>Change the search text or selected level.</p>
+          <p>Change the filters or reset the library.</p>
+          <button className="resetFilters" onClick={resetFilters} type="button">
+            Reset filters / Сбросить
+          </button>
         </div>
       ) : null}
     </div>
