@@ -4,9 +4,18 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import React, { useMemo, useState } from "react";
 
-import type { Question, QuestionDifficulty } from "@/entities/question";
+import {
+  localizeQuestion,
+  type LocalizedQuestion,
+  type Question,
+  type QuestionDifficulty,
+} from "@/entities/question";
 import type { QuestionProgressStatus } from "@/entities/progress";
-import { getTranslations, useSettings } from "@/features/manage-settings";
+import {
+  getQuestionContentTranslations,
+  getTranslations,
+  useSettings,
+} from "@/features/manage-settings";
 import { useQuestionProgress } from "@/features/track-question-progress";
 import { Card, CardContent, CardHeader, CardTitle, Input } from "@/shared/ui";
 
@@ -20,9 +29,14 @@ const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
 type SortOption = "popularity" | "updated" | "title";
 type ProgressFilter = QuestionProgressStatus | "all" | "favorites";
 
-function compareQuestions(left: Question, right: Question, sort: SortOption): number {
+function compareQuestions(
+  left: LocalizedQuestion,
+  right: LocalizedQuestion,
+  sort: SortOption,
+  locale: string,
+): number {
   let result = 0;
-  if (sort === "title") result = left.title.localeCompare(right.title, "en");
+  if (sort === "title") result = left.title.localeCompare(right.title, locale);
   if (sort === "updated") result = right.updatedAt.localeCompare(left.updatedAt);
   if (sort === "popularity") result = left.popularityRank - right.popularityRank;
   return result || left.slug.localeCompare(right.slug, "en");
@@ -32,25 +46,31 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
   const { records } = useQuestionProgress();
   const { language } = useSettings();
   const copy = getTranslations(language).questionLibrary;
+  const contentCopy = getQuestionContentTranslations(language);
   const [query, setQuery] = useState("");
   const [difficulty, setDifficulty] = useState<QuestionDifficulty | "all">("all");
   const [category, setCategory] = useState("all");
   const [progress, setProgress] = useState<ProgressFilter>("all");
   const [sort, setSort] = useState<SortOption>("popularity");
 
-  const categories = useMemo(
-    () => ["all", ...new Set(questions.map((question) => question.category))].toSorted(),
-    [questions],
+  const localizedQuestions = useMemo(
+    () => questions.map((question) => localizeQuestion(question, language)),
+    [language, questions],
   );
+  const categories = useMemo(() => {
+    const entries = new Map<string, string>();
+    for (const question of localizedQuestions) entries.set(question.categorySlug, question.category);
+    return [...entries].toSorted((left, right) => left[1].localeCompare(right[1], language));
+  }, [language, localizedQuestions]);
   const progressByQuestion = useMemo(
     () => new Map(records.map((record) => [record.questionId, record])),
     [records],
   );
 
   const filteredQuestions = useMemo(() => {
-    const normalizedQuery = query.trim().toLowerCase();
+    const normalizedQuery = query.trim().toLocaleLowerCase(language);
 
-    return questions
+    return localizedQuestions
       .filter((question) => {
         const record = progressByQuestion.get(question.id);
         const status = record?.status ?? "not-started";
@@ -58,17 +78,30 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
           progress === "all" ||
           (progress === "favorites" ? record?.favorite === true : status === progress);
         const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
-        const matchesCategory = category === "all" || question.category === category;
-        const searchableText = [question.title, question.category, ...question.tags]
+        const matchesCategory = category === "all" || question.categorySlug === category;
+        const searchableText = [
+          question.title,
+          question.category,
+          ...question.tags.map((tag) => tag.label),
+          question.explanation,
+          question.interviewerGoal,
+          question.expectedAnswer,
+          ...question.alternativeAnswers,
+          ...question.answerExamples.map((example) => example.answer),
+          ...question.relatedTopics,
+        ]
           .join(" ")
-          .toLowerCase();
-        const matchesQuery =
-          normalizedQuery.length === 0 || searchableText.includes(normalizedQuery);
+          .toLocaleLowerCase(language);
 
-        return matchesProgress && matchesDifficulty && matchesCategory && matchesQuery;
+        return (
+          matchesProgress &&
+          matchesDifficulty &&
+          matchesCategory &&
+          (normalizedQuery.length === 0 || searchableText.includes(normalizedQuery))
+        );
       })
-      .toSorted((left, right) => compareQuestions(left, right, sort));
-  }, [category, difficulty, progress, progressByQuestion, query, questions, sort]);
+      .toSorted((left, right) => compareQuestions(left, right, sort, language));
+  }, [category, difficulty, language, localizedQuestions, progress, progressByQuestion, query, sort]);
 
   const resetFilters = () => {
     setQuery("");
@@ -100,7 +133,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
           >
             {difficultyOptions.map((option) => (
               <option key={option} value={option}>
-                {option === "all" ? copy.all : option}
+                {option === "all" ? copy.all : contentCopy.difficulty[option]}
               </option>
             ))}
           </select>
@@ -108,10 +141,9 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <label className="filterField">
           <span>{copy.category}</span>
           <select onChange={(event) => setCategory(event.target.value)} value={category}>
-            {categories.map((option) => (
-              <option key={option} value={option}>
-                {option === "all" ? copy.all : option}
-              </option>
+            <option value="all">{copy.all}</option>
+            {categories.map(([slug, label]) => (
+              <option key={slug} value={slug}>{label}</option>
             ))}
           </select>
         </label>
@@ -142,9 +174,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <p className="resultCount" aria-live="polite">
           {filteredQuestions.length} / {questions.length} {copy.questions}
         </p>
-        <button className="resetFilters" onClick={resetFilters} type="button">
-          {copy.reset}
-        </button>
+        <button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button>
       </div>
 
       <div className="questionGrid">
@@ -154,27 +184,21 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
             <Card key={question.id}>
               <CardHeader>
                 <div className="questionCardMeta">
-                  <span className="difficultyBadge">{question.difficulty}</span>
-                  <Link href={`/questions/categories/${question.categorySlug}`}>
-                    {question.category}
-                  </Link>
+                  <span className="difficultyBadge">{contentCopy.difficulty[question.difficulty]}</span>
+                  <Link href={`/questions/categories/${question.categorySlug}`}>{question.category}</Link>
                 </div>
                 <CardTitle>{question.title}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p>{question.explanation}</p>
                 <div className="questionState">
-                  <span>{record?.status ?? copy.notStarted}</span>
+                  <span>{record?.status ? copy[record.status === "not-started" ? "notStarted" : record.status] : copy.notStarted}</span>
                   {record?.favorite ? <span>★ {copy.favorite}</span> : null}
                 </div>
                 <div className="tagList" aria-label={copy.tags}>
-                  {question.tags.map((tag) => (
-                    <span key={tag}>{tag}</span>
-                  ))}
+                  {question.tags.map((tag) => <span key={tag.key}>{tag.label}</span>)}
                 </div>
-                <Link className="questionLink" href={`/questions/${question.slug}`}>
-                  {copy.openQuestion}
-                </Link>
+                <Link className="questionLink" href={`/questions/${question.slug}`}>{copy.openQuestion}</Link>
               </CardContent>
             </Card>
           );
@@ -185,9 +209,7 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
         <div className="emptyState">
           <strong>{copy.emptyTitle}</strong>
           <p>{copy.emptyBody}</p>
-          <button className="resetFilters" onClick={resetFilters} type="button">
-            {copy.reset}
-          </button>
+          <button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button>
         </div>
       ) : null}
     </div>
