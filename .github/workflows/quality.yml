@@ -32,7 +32,11 @@ jobs:
           corepack enable
           corepack prepare pnpm@10.15.0 --activate
           pnpm --version
-      - name: Install dependencies
+      - name: Regenerate lockfile for hotfix
+        run: |
+          rm -f pnpm-lock.yaml
+          pnpm install --lockfile-only --registry=https://registry.npmjs.org
+      - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
       - name: Architecture
         run: pnpm architecture
@@ -46,3 +50,10 @@ jobs:
         run: pnpm format
       - name: Build
         run: pnpm build
+      - name: Upload regenerated lockfile
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: regenerated-pnpm-lock
+          path: pnpm-lock.yaml
+          if-no-files-found: error
