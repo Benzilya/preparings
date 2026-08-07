@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { LocalizedQuestionDetails } from "@/features/manage-settings/ui/localized-question-surfaces";
 
 export function generateStaticParams() {
-  return top100Questions.map((question) => ({ slug: question.slug }));
+  return questionLibraryQuestions.map((question) => ({ slug: question.slug }));
 }
 
 export default async function QuestionDetailsPage({
@@ -13,7 +13,7 @@ export default async function QuestionDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const question = top100Questions.find((item) => item.slug === slug);
+  const question = questionLibraryQuestions.find((item) => item.slug === slug);
   if (!question) notFound();
   return <LocalizedQuestionDetails question={question} />;
 }
