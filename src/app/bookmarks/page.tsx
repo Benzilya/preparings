@@ -1,6 +1,6 @@
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { FavoriteQuestionsPage } from "@/features/track-question-progress";
 
 export default function BookmarksPage() {
-  return <FavoriteQuestionsPage questions={top100Questions} />;
+  return <FavoriteQuestionsPage questions={questionLibraryQuestions} />;
 }
