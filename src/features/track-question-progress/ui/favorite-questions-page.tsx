@@ -2,7 +2,7 @@
 
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { useMemo } from "react";
+import React, { useMemo } from "react";
 
 import { localizeQuestion, type Question } from "@/entities/question";
 import {
