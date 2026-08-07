@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - agent/project-foundation
+      - hotfix/release-1-lockfile-quality
     paths:
       - .github/workflows/repair-lockfile.yml
 
@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: repair-pnpm-lockfile
+  group: repair-pnpm-lockfile-hotfix
   cancel-in-progress: false
 
 jobs:
@@ -23,7 +23,7 @@ jobs:
       - name: Checkout current branch
         uses: actions/checkout@v5
         with:
-          ref: agent/project-foundation
+          ref: hotfix/release-1-lockfile-quality
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
@@ -39,8 +39,6 @@ jobs:
           rm -f pnpm-lock.yaml
           pnpm install --lockfile-only --registry=https://registry.npmjs.org
           pnpm install --frozen-lockfile
-      - name: Format localized changes
-        run: pnpm format:write
       - name: Architecture
         run: pnpm architecture
       - name: Typecheck
@@ -49,14 +47,14 @@ jobs:
         run: pnpm test
       - name: Lint
         run: pnpm lint
-      - name: Format check
+      - name: Format
         run: pnpm format
       - name: Build
         run: pnpm build
-      - name: Commit verified generated files
+      - name: Commit verified lockfile
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "chore: regenerate lockfile and format localized content" || exit 0
-          git push origin HEAD:agent/project-foundation
+          git add pnpm-lock.yaml
+          git commit -m "fix: regenerate pnpm lockfile" || exit 0
+          git push origin HEAD:hotfix/release-1-lockfile-quality
