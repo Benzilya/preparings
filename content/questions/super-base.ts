@@ -16,9 +16,7 @@ const inclusionRationale: LocalizedText = {
 const category = (ru: string, en: string): LocalizedText => ({ ru, en });
 const tag = (key: string, ru: string, en: string) => ({ key, label: { ru, en } });
 
-function fromStudyNotes(
-  spec: Omit<RankedQuestionSpec, "sources" | "frequencyTier">,
-): Question {
+function fromStudyNotes(spec: Omit<RankedQuestionSpec, "sources" | "frequencyTier">): Question {
   const question = createRankedQuestion({
     ...spec,
     sources: [studyNotesSource],
@@ -27,9 +25,7 @@ function fromStudyNotes(
 
   return {
     ...question,
-    ranking: question.ranking
-      ? { ...question.ranking, inclusionRationale }
-      : undefined,
+    ranking: question.ranking ? { ...question.ranking, inclusionRationale } : undefined,
   };
 }
 
@@ -370,11 +366,7 @@ export const superBaseQuestions: readonly Question[] = [
       ru: "REST в конспекте рассматривается как более гибкий архитектурный стиль поверх HTTP/HTTPS с разными форматами данных и возможностью HTTP-кэширования. SOAP — протокол с более строгими правилами и XML-сообщениями; его контракт обычно описывается WSDL, а для ручной проверки часто используют SoapUI.",
       en: "The notes present REST as a more flexible architectural style over HTTP/HTTPS that can use multiple data formats and HTTP caching. SOAP is a protocol with stricter rules and XML messages; its contract is commonly described with WSDL and manual checks are often performed with SoapUI.",
     },
-    tags: [
-      tag("rest", "REST", "REST"),
-      tag("soap", "SOAP", "SOAP"),
-      tag("wsdl", "WSDL", "WSDL"),
-    ],
+    tags: [tag("rest", "REST", "REST"), tag("soap", "SOAP", "SOAP"), tag("wsdl", "WSDL", "WSDL")],
   }),
   fromStudyNotes({
     rank: 118,
