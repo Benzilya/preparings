@@ -10,7 +10,7 @@ on:
       - agent/project-foundation
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   quality:
@@ -38,6 +38,14 @@ jobs:
           pnpm install --lockfile-only --registry=https://registry.npmjs.org
       - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
+      - name: Commit verified lockfile
+        if: github.event_name == 'pull_request' && github.actor != 'github-actions[bot]'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pnpm-lock.yaml
+          git commit -m "fix: regenerate pnpm lockfile" || exit 0
+          git push origin HEAD:hotfix/release-1-lockfile-quality
       - name: Architecture
         run: pnpm architecture
       - name: Typecheck
@@ -50,10 +58,3 @@ jobs:
         run: pnpm format
       - name: Build
         run: pnpm build
-      - name: Upload regenerated lockfile
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: regenerated-pnpm-lock
-          path: pnpm-lock.yaml
-          if-no-files-found: error
