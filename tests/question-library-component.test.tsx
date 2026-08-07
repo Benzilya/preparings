@@ -24,6 +24,26 @@ afterEach(async () => {
 
 after(() => cleanupDom());
 
+test("Question Library exposes a localized empty state and resets filters", async () => {
+  const view = render(<QuestionLibrary questions={seedQuestions} />);
+
+  fireEvent.input(view.getByLabelText("Поиск вопросов"), {
+    target: { value: "несуществующая-тема" },
+  });
+
+  await waitFor(() => {
+    assert.ok(view.getByText("Вопросы не найдены"));
+  });
+
+  const resetButtons = view.getAllByRole("button", { name: "Сбросить фильтры" });
+  fireEvent.click(resetButtons.at(-1)!);
+
+  await waitFor(() => {
+    assert.equal(view.queryByText("Вопросы не найдены"), null);
+    assert.ok(view.getByText("Что такое пирамида тестирования и когда она не работает?"));
+  });
+});
+
 test("Question Library uses Russian by default and searches Russian content", () => {
   const view = render(<QuestionLibrary questions={seedQuestions} />);
 
@@ -48,24 +68,4 @@ test("Question Library switches to English without reload and searches English c
   fireEvent.input(search, { target: { value: "contract tests" } });
   assert.ok(view.getByText("How do contract tests protect service integrations?"));
   assert.equal(view.queryByText("Как контрактные тесты защищают интеграции сервисов?"), null);
-});
-
-test("Question Library exposes a localized empty state and resets filters", async () => {
-  const view = render(<QuestionLibrary questions={seedQuestions} />);
-
-  fireEvent.input(view.getByLabelText("Поиск вопросов"), {
-    target: { value: "несуществующая-тема" },
-  });
-
-  await waitFor(() => {
-    assert.ok(view.getByText("Вопросы не найдены"));
-  });
-
-  const resetButtons = view.getAllByRole("button", { name: "Сбросить фильтры" });
-  fireEvent.click(resetButtons.at(-1)!);
-
-  await waitFor(() => {
-    assert.equal(view.queryByText("Вопросы не найдены"), null);
-    assert.ok(view.getByText("Что такое пирамида тестирования и когда она не работает?"));
-  });
 });
