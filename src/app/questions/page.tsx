@@ -1,6 +1,6 @@
 "use client";
 
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { QuestionLibrary } from "@/features/filter-questions";
 import { getQuestionContentTranslations, useSettings } from "@/features/manage-settings";
 
@@ -15,11 +15,11 @@ export default function QuestionsPage() {
         <h1 id="questions-title">{copy.title}</h1>
         <p className="lead">{copy.lead}</p>
         <p className="resultCount">
-          {copy.topCount}: <strong>{top100Questions.length}</strong>
+          {copy.topCount}: <strong>{questionLibraryQuestions.length}</strong>
         </p>
       </div>
 
-      <QuestionLibrary questions={top100Questions} />
+      <QuestionLibrary questions={questionLibraryQuestions} />
     </section>
   );
 }
