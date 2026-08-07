@@ -24,6 +24,7 @@ jobs:
         uses: actions/setup-node@v5
         with:
           node-version: 22
+          package-manager-cache: false
       - name: Validate package manifest
         run: node -e "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8'))"
       - name: Setup pnpm
