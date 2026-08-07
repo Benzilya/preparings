@@ -27,9 +27,8 @@ after(() => cleanupDom());
 test("Question Library exposes a localized empty state and resets filters", async () => {
   const view = render(<QuestionLibrary questions={seedQuestions} />);
 
-  fireEvent.input(view.getByLabelText("Поиск вопросов"), {
-    target: { value: "несуществующая-тема" },
-  });
+  fireEvent.change(view.getByLabelText("Категория"), { target: { value: "ui-automation" } });
+  fireEvent.change(view.getByLabelText("Уровень"), { target: { value: "senior" } });
 
   await waitFor(() => {
     assert.ok(view.getByText("Вопросы не найдены"));
