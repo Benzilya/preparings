@@ -1,10 +1,10 @@
 import { notFound } from "next/navigation";
 
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { LocalizedCategoryPage } from "@/features/manage-settings/ui/localized-question-surfaces";
 
 export function generateStaticParams() {
-  return [...new Set(top100Questions.map((question) => question.categorySlug))].map(
+  return [...new Set(questionLibraryQuestions.map((question) => question.categorySlug))].map(
     (categorySlug) => ({ categorySlug }),
   );
 }
@@ -15,7 +15,7 @@ export default async function QuestionCategoryPage({
   params: Promise<{ categorySlug: string }>;
 }) {
   const { categorySlug } = await params;
-  const questions = top100Questions
+  const questions = questionLibraryQuestions
     .filter((question) => question.categorySlug === categorySlug)
     .toSorted(
       (left, right) =>
