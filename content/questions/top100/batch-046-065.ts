@@ -2,7 +2,15 @@ import type { LocalizedText, QuestionDifficulty } from "@/entities/question";
 import { createRankedQuestion, rankingSources } from "../create-ranked-question";
 
 const sources = [rankingSources.softwaretestpilot, rankingSources.threadqa, rankingSources.qodex];
-type Row = readonly [number, string, QuestionDifficulty, string, LocalizedText, LocalizedText, LocalizedText];
+type Row = readonly [
+  number,
+  string,
+  QuestionDifficulty,
+  string,
+  LocalizedText,
+  LocalizedText,
+  LocalizedText,
+];
 const categories: Record<string, LocalizedText> = {
   situational: { ru: "Ситуационные задачи", en: "Situational Testing" },
   web: { ru: "Web и клиент-сервер", en: "Web and Client-Server" },
@@ -12,26 +20,295 @@ const categories: Record<string, LocalizedText> = {
   sql: { ru: "SQL и данные", en: "SQL and Data" },
 };
 const rows: readonly Row[] = [
-  [46,"test-date-picker","junior","situational",{ru:"Как тестировать выбор даты?",en:"How do you test a date picker?"},{ru:"Проверяют допустимые диапазоны, границы, високосные годы, локаль и часовой пояс, клавиатуру, недоступные даты, ручной ввод и сериализацию.",en:"Cover valid ranges, boundaries, leap years, locale and timezone, keyboard use, disabled dates, manual input, and serialization."},{ru:"выбор даты",en:"date picker"}],
-  [47,"test-payment-system","senior","situational",{ru:"Как тестировать платёжную систему?",en:"How do you test a payment system?"},{ru:"Проверяют авторизацию, списание, отмену, возвраты, идемпотентность, повторы, асинхронные callbacks, сверку, антифрод, аудит и частичные сбои.",en:"Test authorization, capture, cancellation, refunds, idempotency, retries, asynchronous callbacks, reconciliation, fraud controls, auditability, and partial failures."},{ru:"платежи",en:"payments"}],
-  [48,"client-server-architecture","junior","web",{ru:"Что такое клиент-серверная архитектура?",en:"What is client-server architecture?"},{ru:"Клиент отвечает за взаимодействие и отправляет запросы, сервер выполняет бизнес-логику и работает с данными, а связь строится по определённым протоколам и контрактам.",en:"The client handles interaction and sends requests; the server applies business logic and data access through defined protocols and contracts."},{ru:"клиент-сервер",en:"client-server"}],
-  [49,"browser-url-flow","middle","web",{ru:"Что происходит после ввода URL в браузере?",en:"What happens after entering a URL in a browser?"},{ru:"Браузер разбирает URL, разрешает DNS, устанавливает транспорт и TLS, отправляет HTTP-запрос, получает ресурсы, строит DOM и CSSOM, выполняет скрипты и отображает страницу.",en:"The browser parses the URL, resolves DNS, establishes transport and TLS, sends HTTP, receives resources, builds DOM and CSSOM, executes scripts, and renders."},{ru:"браузер",en:"browser"}],
-  [50,"http-methods","junior","api",{ru:"Какие HTTP-методы существуют и какова их семантика?",en:"What are HTTP methods and their semantics?"},{ru:"GET читает, POST создаёт или запускает обработку, PUT заменяет, PATCH частично обновляет, DELETE удаляет; безопасность и идемпотентность влияют на повторы и кеширование.",en:"GET reads, POST creates or triggers processing, PUT replaces, PATCH partially updates, and DELETE removes; safety and idempotency affect retries and caching."},{ru:"HTTP-методы",en:"HTTP methods"}],
-  [51,"http-status-codes","junior","api",{ru:"Какие HTTP status codes встречаются чаще всего?",en:"What are common HTTP status codes?"},{ru:"Важно понимать основные коды 2xx успеха, 3xx перенаправления, 4xx клиентских и 5xx серверных ошибок и трактовать их в контексте операции.",en:"Understand representative 2xx success, 3xx redirect, 4xx client error, and 5xx server error codes in the context of the operation."},{ru:"status codes",en:"status codes"}],
-  [52,"http-vs-https","junior","security",{ru:"Чем отличаются HTTP и HTTPS?",en:"What is the difference between HTTP and HTTPS?"},{ru:"HTTPS — это HTTP поверх TLS, обеспечивающий аутентификацию сервера, конфиденциальность и целостность при корректной настройке сертификатов и клиентов.",en:"HTTPS is HTTP protected by TLS, providing server authentication, confidentiality, and integrity when certificates and clients are configured correctly."},{ru:"HTTPS",en:"HTTPS"}],
-  [53,"cookies-sessions-tokens","middle","web",{ru:"Что такое cookies, sessions и tokens?",en:"What are cookies, sessions, and tokens?"},{ru:"Cookies — значения под управлением браузера, sessions — серверное состояние по идентификатору, а tokens содержат подписанные claims или непрозрачные ссылки авторизации.",en:"Cookies are browser-managed values, sessions are server-side state referenced by an identifier, and tokens carry signed claims or opaque authorization references."},{ru:"сессии",en:"sessions"}],
-  [54,"rest-constraints","middle","api",{ru:"Что такое REST и какие ограничения он задаёт?",en:"What is REST and what constraints does it define?"},{ru:"REST — архитектурный стиль с ресурсами, единообразным интерфейсом, stateless-запросами, кешированием, слоями и необязательной передачей исполняемого кода.",en:"REST is an architectural style built around resources, uniform interfaces, stateless requests, cacheability, layered systems, and optional code on demand."},{ru:"REST",en:"REST"}],
-  [55,"rest-vs-soap","middle","api",{ru:"Чем отличаются REST и SOAP?",en:"What is the difference between REST and SOAP?"},{ru:"REST — архитектурный стиль, обычно использующий HTTP-представления, а SOAP — протокол с XML-конвертами, формальными контрактами и enterprise-расширениями.",en:"REST is an architectural style commonly using HTTP representations; SOAP is a protocol with XML envelopes, formal contracts, and enterprise extensions."},{ru:"REST и SOAP",en:"REST and SOAP"}],
-  [56,"test-rest-api","middle","api",{ru:"Как тестировать REST API?",en:"How do you test a REST API?"},{ru:"Проверяют ресурсы, методы, status codes, схемы, бизнес-правила, аутентификацию, авторизацию, идемпотентность, пагинацию, ошибки, производительность и наблюдаемость.",en:"Validate resources, methods, status codes, schemas, business rules, authentication, authorization, idempotency, pagination, errors, performance, and observability."},{ru:"тестирование API",en:"API testing"}],
-  [57,"verify-api-response","junior","api",{ru:"Что проверять в ответе API?",en:"What should be verified in an API response?"},{ru:"Проверяют статус, headers, схему, типы, обязательные и необязательные поля, значения, договорный порядок, время ответа, correlation IDs и побочные эффекты.",en:"Verify status, headers, schema, types, required and optional fields, values, contractual ordering, response time, correlation IDs, and side effects."},{ru:"ответ API",en:"API response"}],
-  [58,"authentication-vs-authorization","junior","security",{ru:"Чем отличаются аутентификация и авторизация?",en:"How do authentication and authorization differ?"},{ru:"Аутентификация устанавливает личность, а авторизация определяет доступные этой личности ресурсы и действия.",en:"Authentication establishes identity; authorization determines which resources and actions that identity may access."},{ru:"доступ",en:"access control"}],
-  [59,"postman-api-testing","junior","api-tools",{ru:"Как использовать Postman для тестирования API?",en:"How do you use Postman for API testing?"},{ru:"Запросы организуют в коллекции, окружения параметризуют, добавляют pre-request scripts и assertions, безопасно передают данные и запускают наборы через Newman или CI.",en:"Organize requests in collections, parameterize environments, add pre-request scripts and assertions, chain data safely, and run suites through Newman or CI."},{ru:"Postman",en:"Postman"}],
-  [60,"json-api-issues","junior","api",{ru:"Что такое JSON и какие проблемы встречаются в JSON API?",en:"What is JSON and what common issues occur in JSON APIs?"},{ru:"Частые проблемы — неверные типы, пропущенные поля, точность чисел, кодировка, несовместимые изменения и разная обработка null.",en:"Common issues include wrong types, missing fields, numeric precision, encoding, incompatible changes, and inconsistent null handling."},{ru:"JSON",en:"JSON"}],
-  [61,"api-pagination-filtering-sorting","middle","api",{ru:"Как тестировать пагинацию, фильтрацию и сортировку API?",en:"How do you test API pagination, filtering, and sorting?"},{ru:"Проверяют границы, стабильный порядок, дубли и пропуски между страницами, невалидные параметры, комбинации фильтров, метаданные, параллельные изменения и производительность.",en:"Check boundaries, stable ordering, duplicates and omissions between pages, invalid parameters, combined filters, metadata, concurrent changes, and performance."},{ru:"пагинация API",en:"API pagination"}],
-  [62,"api-idempotency","middle","api",{ru:"Что такое идемпотентность и зачем она нужна в API?",en:"What is idempotency and why does it matter in APIs?"},{ru:"Идемпотентную операцию можно повторить с тем же ожидаемым эффектом, что делает повторы безопаснее при сетевой неопределённости.",en:"An idempotent operation can be repeated with the same intended effect, enabling safer retries under network uncertainty."},{ru:"идемпотентность",en:"idempotency"}],
-  [63,"async-api-webhooks","senior","api",{ru:"Как тестировать асинхронные API и webhooks?",en:"How do you test asynchronous APIs and webhooks?"},{ru:"Проверяют подтверждение приёма, eventual delivery, подписи, гарантии порядка, повторы, дедупликацию, таймауты, dead-letter обработку и наблюдаемость.",en:"Verify acknowledgement, eventual delivery, signatures, ordering guarantees, retries, deduplication, timeouts, dead-letter handling, and observability."},{ru:"webhooks",en:"webhooks"}],
-  [64,"database-keys-indexes","junior","sql",{ru:"Что такое primary key, foreign key и index?",en:"What are primary keys, foreign keys, and indexes?"},{ru:"Primary key уникально идентифицирует строку, foreign key обеспечивает связи, а index ускоряет выбранные запросы ценой места и стоимости записи.",en:"A primary key uniquely identifies a row, a foreign key enforces relationships, and an index accelerates selected access patterns at storage and write cost."},{ru:"ключи и индексы",en:"keys and indexes"}],
-  [65,"sql-join-types","junior","sql",{ru:"Чем отличаются INNER, LEFT, RIGHT и FULL JOIN?",en:"What is the difference between INNER, LEFT, RIGHT, and FULL JOIN?"},{ru:"Тип JOIN определяет, сохраняются ли несовпавшие строки слева, справа, с обеих сторон или не сохраняются вовсе.",en:"JOIN types determine whether unmatched rows from the left, right, both, or neither side are retained in the result."},{ru:"SQL JOIN",en:"SQL JOIN"}],
+  [
+    46,
+    "test-date-picker",
+    "junior",
+    "situational",
+    { ru: "Как тестировать выбор даты?", en: "How do you test a date picker?" },
+    {
+      ru: "Проверяют допустимые диапазоны, границы, високосные годы, локаль и часовой пояс, клавиатуру, недоступные даты, ручной ввод и сериализацию.",
+      en: "Cover valid ranges, boundaries, leap years, locale and timezone, keyboard use, disabled dates, manual input, and serialization.",
+    },
+    { ru: "выбор даты", en: "date picker" },
+  ],
+  [
+    47,
+    "test-payment-system",
+    "senior",
+    "situational",
+    { ru: "Как тестировать платёжную систему?", en: "How do you test a payment system?" },
+    {
+      ru: "Проверяют авторизацию, списание, отмену, возвраты, идемпотентность, повторы, асинхронные callbacks, сверку, антифрод, аудит и частичные сбои.",
+      en: "Test authorization, capture, cancellation, refunds, idempotency, retries, asynchronous callbacks, reconciliation, fraud controls, auditability, and partial failures.",
+    },
+    { ru: "платежи", en: "payments" },
+  ],
+  [
+    48,
+    "client-server-architecture",
+    "junior",
+    "web",
+    { ru: "Что такое клиент-серверная архитектура?", en: "What is client-server architecture?" },
+    {
+      ru: "Клиент отвечает за взаимодействие и отправляет запросы, сервер выполняет бизнес-логику и работает с данными, а связь строится по определённым протоколам и контрактам.",
+      en: "The client handles interaction and sends requests; the server applies business logic and data access through defined protocols and contracts.",
+    },
+    { ru: "клиент-сервер", en: "client-server" },
+  ],
+  [
+    49,
+    "browser-url-flow",
+    "middle",
+    "web",
+    {
+      ru: "Что происходит после ввода URL в браузере?",
+      en: "What happens after entering a URL in a browser?",
+    },
+    {
+      ru: "Браузер разбирает URL, разрешает DNS, устанавливает транспорт и TLS, отправляет HTTP-запрос, получает ресурсы, строит DOM и CSSOM, выполняет скрипты и отображает страницу.",
+      en: "The browser parses the URL, resolves DNS, establishes transport and TLS, sends HTTP, receives resources, builds DOM and CSSOM, executes scripts, and renders.",
+    },
+    { ru: "браузер", en: "browser" },
+  ],
+  [
+    50,
+    "http-methods",
+    "junior",
+    "api",
+    {
+      ru: "Какие HTTP-методы существуют и какова их семантика?",
+      en: "What are HTTP methods and their semantics?",
+    },
+    {
+      ru: "GET читает, POST создаёт или запускает обработку, PUT заменяет, PATCH частично обновляет, DELETE удаляет; безопасность и идемпотентность влияют на повторы и кеширование.",
+      en: "GET reads, POST creates or triggers processing, PUT replaces, PATCH partially updates, and DELETE removes; safety and idempotency affect retries and caching.",
+    },
+    { ru: "HTTP-методы", en: "HTTP methods" },
+  ],
+  [
+    51,
+    "http-status-codes",
+    "junior",
+    "api",
+    {
+      ru: "Какие HTTP status codes встречаются чаще всего?",
+      en: "What are common HTTP status codes?",
+    },
+    {
+      ru: "Важно понимать основные коды 2xx успеха, 3xx перенаправления, 4xx клиентских и 5xx серверных ошибок и трактовать их в контексте операции.",
+      en: "Understand representative 2xx success, 3xx redirect, 4xx client error, and 5xx server error codes in the context of the operation.",
+    },
+    { ru: "status codes", en: "status codes" },
+  ],
+  [
+    52,
+    "http-vs-https",
+    "junior",
+    "security",
+    { ru: "Чем отличаются HTTP и HTTPS?", en: "What is the difference between HTTP and HTTPS?" },
+    {
+      ru: "HTTPS — это HTTP поверх TLS, обеспечивающий аутентификацию сервера, конфиденциальность и целостность при корректной настройке сертификатов и клиентов.",
+      en: "HTTPS is HTTP protected by TLS, providing server authentication, confidentiality, and integrity when certificates and clients are configured correctly.",
+    },
+    { ru: "HTTPS", en: "HTTPS" },
+  ],
+  [
+    53,
+    "cookies-sessions-tokens",
+    "middle",
+    "web",
+    { ru: "Что такое cookies, sessions и tokens?", en: "What are cookies, sessions, and tokens?" },
+    {
+      ru: "Cookies — значения под управлением браузера, sessions — серверное состояние по идентификатору, а tokens содержат подписанные claims или непрозрачные ссылки авторизации.",
+      en: "Cookies are browser-managed values, sessions are server-side state referenced by an identifier, and tokens carry signed claims or opaque authorization references.",
+    },
+    { ru: "сессии", en: "sessions" },
+  ],
+  [
+    54,
+    "rest-constraints",
+    "middle",
+    "api",
+    {
+      ru: "Что такое REST и какие ограничения он задаёт?",
+      en: "What is REST and what constraints does it define?",
+    },
+    {
+      ru: "REST — архитектурный стиль с ресурсами, единообразным интерфейсом, stateless-запросами, кешированием, слоями и необязательной передачей исполняемого кода.",
+      en: "REST is an architectural style built around resources, uniform interfaces, stateless requests, cacheability, layered systems, and optional code on demand.",
+    },
+    { ru: "REST", en: "REST" },
+  ],
+  [
+    55,
+    "rest-vs-soap",
+    "middle",
+    "api",
+    { ru: "Чем отличаются REST и SOAP?", en: "What is the difference between REST and SOAP?" },
+    {
+      ru: "REST — архитектурный стиль, обычно использующий HTTP-представления, а SOAP — протокол с XML-конвертами, формальными контрактами и enterprise-расширениями.",
+      en: "REST is an architectural style commonly using HTTP representations; SOAP is a protocol with XML envelopes, formal contracts, and enterprise extensions.",
+    },
+    { ru: "REST и SOAP", en: "REST and SOAP" },
+  ],
+  [
+    56,
+    "test-rest-api",
+    "middle",
+    "api",
+    { ru: "Как тестировать REST API?", en: "How do you test a REST API?" },
+    {
+      ru: "Проверяют ресурсы, методы, status codes, схемы, бизнес-правила, аутентификацию, авторизацию, идемпотентность, пагинацию, ошибки, производительность и наблюдаемость.",
+      en: "Validate resources, methods, status codes, schemas, business rules, authentication, authorization, idempotency, pagination, errors, performance, and observability.",
+    },
+    { ru: "тестирование API", en: "API testing" },
+  ],
+  [
+    57,
+    "verify-api-response",
+    "junior",
+    "api",
+    { ru: "Что проверять в ответе API?", en: "What should be verified in an API response?" },
+    {
+      ru: "Проверяют статус, headers, схему, типы, обязательные и необязательные поля, значения, договорный порядок, время ответа, correlation IDs и побочные эффекты.",
+      en: "Verify status, headers, schema, types, required and optional fields, values, contractual ordering, response time, correlation IDs, and side effects.",
+    },
+    { ru: "ответ API", en: "API response" },
+  ],
+  [
+    58,
+    "authentication-vs-authorization",
+    "junior",
+    "security",
+    {
+      ru: "Чем отличаются аутентификация и авторизация?",
+      en: "How do authentication and authorization differ?",
+    },
+    {
+      ru: "Аутентификация устанавливает личность, а авторизация определяет доступные этой личности ресурсы и действия.",
+      en: "Authentication establishes identity; authorization determines which resources and actions that identity may access.",
+    },
+    { ru: "доступ", en: "access control" },
+  ],
+  [
+    59,
+    "postman-api-testing",
+    "junior",
+    "api-tools",
+    {
+      ru: "Как использовать Postman для тестирования API?",
+      en: "How do you use Postman for API testing?",
+    },
+    {
+      ru: "Запросы организуют в коллекции, окружения параметризуют, добавляют pre-request scripts и assertions, безопасно передают данные и запускают наборы через Newman или CI.",
+      en: "Organize requests in collections, parameterize environments, add pre-request scripts and assertions, chain data safely, and run suites through Newman or CI.",
+    },
+    { ru: "Postman", en: "Postman" },
+  ],
+  [
+    60,
+    "json-api-issues",
+    "junior",
+    "api",
+    {
+      ru: "Что такое JSON и какие проблемы встречаются в JSON API?",
+      en: "What is JSON and what common issues occur in JSON APIs?",
+    },
+    {
+      ru: "Частые проблемы — неверные типы, пропущенные поля, точность чисел, кодировка, несовместимые изменения и разная обработка null.",
+      en: "Common issues include wrong types, missing fields, numeric precision, encoding, incompatible changes, and inconsistent null handling.",
+    },
+    { ru: "JSON", en: "JSON" },
+  ],
+  [
+    61,
+    "api-pagination-filtering-sorting",
+    "middle",
+    "api",
+    {
+      ru: "Как тестировать пагинацию, фильтрацию и сортировку API?",
+      en: "How do you test API pagination, filtering, and sorting?",
+    },
+    {
+      ru: "Проверяют границы, стабильный порядок, дубли и пропуски между страницами, невалидные параметры, комбинации фильтров, метаданные, параллельные изменения и производительность.",
+      en: "Check boundaries, stable ordering, duplicates and omissions between pages, invalid parameters, combined filters, metadata, concurrent changes, and performance.",
+    },
+    { ru: "пагинация API", en: "API pagination" },
+  ],
+  [
+    62,
+    "api-idempotency",
+    "middle",
+    "api",
+    {
+      ru: "Что такое идемпотентность и зачем она нужна в API?",
+      en: "What is idempotency and why does it matter in APIs?",
+    },
+    {
+      ru: "Идемпотентную операцию можно повторить с тем же ожидаемым эффектом, что делает повторы безопаснее при сетевой неопределённости.",
+      en: "An idempotent operation can be repeated with the same intended effect, enabling safer retries under network uncertainty.",
+    },
+    { ru: "идемпотентность", en: "idempotency" },
+  ],
+  [
+    63,
+    "async-api-webhooks",
+    "senior",
+    "api",
+    {
+      ru: "Как тестировать асинхронные API и webhooks?",
+      en: "How do you test asynchronous APIs and webhooks?",
+    },
+    {
+      ru: "Проверяют подтверждение приёма, eventual delivery, подписи, гарантии порядка, повторы, дедупликацию, таймауты, dead-letter обработку и наблюдаемость.",
+      en: "Verify acknowledgement, eventual delivery, signatures, ordering guarantees, retries, deduplication, timeouts, dead-letter handling, and observability.",
+    },
+    { ru: "webhooks", en: "webhooks" },
+  ],
+  [
+    64,
+    "database-keys-indexes",
+    "junior",
+    "sql",
+    {
+      ru: "Что такое primary key, foreign key и index?",
+      en: "What are primary keys, foreign keys, and indexes?",
+    },
+    {
+      ru: "Primary key уникально идентифицирует строку, foreign key обеспечивает связи, а index ускоряет выбранные запросы ценой места и стоимости записи.",
+      en: "A primary key uniquely identifies a row, a foreign key enforces relationships, and an index accelerates selected access patterns at storage and write cost.",
+    },
+    { ru: "ключи и индексы", en: "keys and indexes" },
+  ],
+  [
+    65,
+    "sql-join-types",
+    "junior",
+    "sql",
+    {
+      ru: "Чем отличаются INNER, LEFT, RIGHT и FULL JOIN?",
+      en: "What is the difference between INNER, LEFT, RIGHT, and FULL JOIN?",
+    },
+    {
+      ru: "Тип JOIN определяет, сохраняются ли несовпавшие строки слева, справа, с обеих сторон или не сохраняются вовсе.",
+      en: "JOIN types determine whether unmatched rows from the left, right, both, or neither side are retained in the result.",
+    },
+    { ru: "SQL JOIN", en: "SQL JOIN" },
+  ],
 ];
 
-export const top100Batch046065 = rows.map(([rank,slug,difficulty,categorySlug,title,summary,label]) => createRankedQuestion({ rank, slug, difficulty, categorySlug, category: categories[categorySlug]!, title, summary, tags: [{ key: slug, label }], sources }));
+export const top100Batch046065 = rows.map(
+  ([rank, slug, difficulty, categorySlug, title, summary, label]) =>
+    createRankedQuestion({
+      rank,
+      slug,
+      difficulty,
+      categorySlug,
+      category: categories[categorySlug]!,
+      title,
+      summary,
+      tags: [{ key: slug, label }],
+      sources,
+    }),
+);

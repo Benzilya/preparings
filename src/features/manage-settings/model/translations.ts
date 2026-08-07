@@ -24,9 +24,21 @@ const dictionary = {
       openLibrary: "Open Question Library",
       modulesLabel: "Core modules",
       modules: [
-        ["01 · Library", "Questions separated from UI", "Content includes sources, difficulty, and Junior, Middle, and Senior answer examples."],
-        ["02 · Progress", "Local progress without registration", "Statuses, favorites, and exports stay in the user's browser."],
-        ["03 · Categories", "Categories and stable filters", "The catalog helps assemble a focused interview preparation plan."],
+        [
+          "01 · Library",
+          "Questions separated from UI",
+          "Content includes sources, difficulty, and Junior, Middle, and Senior answer examples.",
+        ],
+        [
+          "02 · Progress",
+          "Local progress without registration",
+          "Statuses, favorites, and exports stay in the user's browser.",
+        ],
+        [
+          "03 · Categories",
+          "Categories and stable filters",
+          "The catalog helps assemble a focused interview preparation plan.",
+        ],
       ],
       localProgress: "Local progress",
       snapshot: "Your preparation snapshot",
@@ -69,7 +81,8 @@ const dictionary = {
       openCategory: "Open category →",
       back: "Categories",
       categoryEyebrow: "Question category",
-      orderedLead: (count: number) => `${count} validated ${count === 1 ? "question" : "questions"} ordered by popularity with a stable slug tie-breaker.`,
+      orderedLead: (count: number) =>
+        `${count} validated ${count === 1 ? "question" : "questions"} ordered by popularity with a stable slug tie-breaker.`,
       openQuestion: "Open question →",
     },
     questionDetails: {
@@ -129,7 +142,8 @@ const dictionary = {
       title: "Contact the project author",
       lead: "Choose a convenient way to reach @benzilya. No contact form or server-side data collection is used.",
       aboutTitle: "About the project",
-      aboutBody: "QA Interview Trainer is a local-first platform for structured QA interview preparation.",
+      aboutBody:
+        "QA Interview Trainer is a local-first platform for structured QA interview preparation.",
       author: "Created by @benzilya",
       email: "Email",
       phone: "Phone",
@@ -162,9 +176,21 @@ const dictionary = {
       openLibrary: "Открыть базу вопросов",
       modulesLabel: "Основные модули",
       modules: [
-        ["01 · Библиотека", "База вопросов, отделённая от UI", "Контент с источниками, сложностью и примерами ответов Junior, Middle и Senior."],
-        ["02 · Прогресс", "Локальный прогресс без регистрации", "Статусы, избранное и экспорт хранятся только в браузере пользователя."],
-        ["03 · Категории", "Категории и устойчивые фильтры", "Каталог помогает собрать сфокусированный план подготовки к интервью."],
+        [
+          "01 · Библиотека",
+          "База вопросов, отделённая от UI",
+          "Контент с источниками, сложностью и примерами ответов Junior, Middle и Senior.",
+        ],
+        [
+          "02 · Прогресс",
+          "Локальный прогресс без регистрации",
+          "Статусы, избранное и экспорт хранятся только в браузере пользователя.",
+        ],
+        [
+          "03 · Категории",
+          "Категории и устойчивые фильтры",
+          "Каталог помогает собрать сфокусированный план подготовки к интервью.",
+        ],
       ],
       localProgress: "Локальный прогресс",
       snapshot: "Сводка подготовки",
@@ -207,7 +233,8 @@ const dictionary = {
       openCategory: "Открыть категорию →",
       back: "Категории",
       categoryEyebrow: "Категория вопросов",
-      orderedLead: (count: number) => `${count} валидированных вопросов, отсортированных по популярности со стабильным сравнением slug.`,
+      orderedLead: (count: number) =>
+        `${count} валидированных вопросов, отсортированных по популярности со стабильным сравнением slug.`,
       openQuestion: "Открыть вопрос →",
     },
     questionDetails: {
@@ -243,7 +270,8 @@ const dictionary = {
       importJson: "Импорт JSON",
       reset: "Сбросить",
       deleteTitle: "Удалить весь локальный прогресс?",
-      deleteHint: "Введите DELETE для подтверждения. Отменить действие можно только при наличии экспортированной копии.",
+      deleteHint:
+        "Введите DELETE для подтверждения. Отменить действие можно только при наличии экспортированной копии.",
       confirmation: "Подтверждение",
       cancel: "Отмена",
       deleteProgress: "Удалить прогресс",
@@ -267,7 +295,8 @@ const dictionary = {
       title: "Связаться с автором проекта",
       lead: "Выберите удобный способ связаться с @benzilya. Контактная форма и серверный сбор данных не используются.",
       aboutTitle: "О проекте",
-      aboutBody: "QA Interview Trainer — local-first платформа для системной подготовки к QA-интервью.",
+      aboutBody:
+        "QA Interview Trainer — local-first платформа для системной подготовки к QA-интервью.",
       author: "Автор проекта — @benzilya",
       email: "Email",
       phone: "Телефон",

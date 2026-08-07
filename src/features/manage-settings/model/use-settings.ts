@@ -3,12 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import type { UserSettings } from "./settings";
-import {
-  defaultSettings,
-  readSettings,
-  restoreSettings,
-  settingsChangedEvent,
-} from "./settings";
+import { defaultSettings, readSettings, restoreSettings, settingsChangedEvent } from "./settings";
 
 export function useSettings(): UserSettings {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);

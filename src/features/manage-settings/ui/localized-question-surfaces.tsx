@@ -88,9 +88,7 @@ export function LocalizedCategoryPage({
         {localizedQuestions.map((question) => (
           <Card key={question.id}>
             <CardHeader>
-              <span className="difficultyBadge">
-                {contentCopy.difficulty[question.difficulty]}
-              </span>
+              <span className="difficultyBadge">{contentCopy.difficulty[question.difficulty]}</span>
               <CardTitle>{question.title}</CardTitle>
             </CardHeader>
             <CardContent>

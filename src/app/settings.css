@@ -1,13 +1,74 @@
-.settingsPage { display: grid; gap: 24px; }
-.settingsPanel { display: grid; gap: 20px; border: 1px solid var(--border); border-radius: 16px; background: var(--surface); padding: 24px; }
-.settingsPanel h2 { margin: 8px 0 0; font-size: 1.35rem; }
-.settingsField { display: grid; gap: 8px; max-width: 520px; color: var(--muted); font-weight: 650; }
-.settingsField select { min-height: 44px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-subtle); color: var(--text); padding: 0 12px; }
-.settingsToggle { display: flex; align-items: center; gap: 10px; color: var(--text); }
-.settingsHint { margin: 10px 0 0; color: var(--muted); }
-.settingsActions, .settingsConfirm { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.settingsActions button, .settingsConfirm button { min-height: 40px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-subtle); color: var(--text); padding: 0 12px; cursor: pointer; font-weight: 700; }
-.settingsActions .dangerAction, .settingsConfirm .dangerAction { border-color: color-mix(in srgb, #dc2626 55%, var(--border)); color: #dc2626; }
-html[data-catalog-density="compact"] .questionGrid { gap: 10px; }
-html[data-catalog-density="compact"] .uiCard { min-height: 140px; padding: 16px; }
-html[data-show-explanations="false"] .questionGrid .uiCardContent > p { display: none; }
+.settingsPage {
+  display: grid;
+  gap: 24px;
+}
+.settingsPanel {
+  display: grid;
+  gap: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 24px;
+}
+.settingsPanel h2 {
+  margin: 8px 0 0;
+  font-size: 1.35rem;
+}
+.settingsField {
+  display: grid;
+  gap: 8px;
+  max-width: 520px;
+  color: var(--muted);
+  font-weight: 650;
+}
+.settingsField select {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-subtle);
+  color: var(--text);
+  padding: 0 12px;
+}
+.settingsToggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+}
+.settingsHint {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+.settingsActions,
+.settingsConfirm {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.settingsActions button,
+.settingsConfirm button {
+  min-height: 40px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-subtle);
+  color: var(--text);
+  padding: 0 12px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.settingsActions .dangerAction,
+.settingsConfirm .dangerAction {
+  border-color: color-mix(in srgb, #dc2626 55%, var(--border));
+  color: #dc2626;
+}
+html[data-catalog-density="compact"] .questionGrid {
+  gap: 10px;
+}
+html[data-catalog-density="compact"] .uiCard {
+  min-height: 140px;
+  padding: 16px;
+}
+html[data-show-explanations="false"] .questionGrid .uiCardContent > p {
+  display: none;
+}

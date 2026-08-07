@@ -66,6 +66,6 @@ The checked-in `pnpm-lock.yaml` is corrupted: it contains non-YAML command-outpu
 2. Confirm a complete green Quality run for frozen install, architecture, typecheck, tests, lint, format, and build.
 3. Keep PR #1 in Draft and do not mark it Ready or merge without explicit user approval.
 
-1. Завершить детерминированное пересоздание lockfile через pnpm.
-2. Подтвердить полный зелёный Quality run: frozen install, architecture, typecheck, tests, lint, format и build.
-3. Оставить PR #1 в Draft и не переводить его в Ready и не выполнять merge без отдельного разрешения пользователя.
+4. Завершить детерминированное пересоздание lockfile через pnpm.
+5. Подтвердить полный зелёный Quality run: frozen install, architecture, typecheck, tests, lint, format и build.
+6. Оставить PR #1 в Draft и не переводить его в Ready и не выполнять merge без отдельного разрешения пользователя.

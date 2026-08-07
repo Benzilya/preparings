@@ -14,11 +14,7 @@ export class QuestionValidationError extends Error {
 }
 
 const difficulties = new Set<QuestionDifficulty>(["junior", "middle", "senior"]);
-const frequencyTiers = new Set<QuestionFrequencyTier>([
-  "very-common",
-  "common",
-  "frequent",
-]);
+const frequencyTiers = new Set<QuestionFrequencyTier>(["very-common", "common", "frequent"]);
 const slugPattern = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 function isNonEmptyString(value: unknown): value is string {
