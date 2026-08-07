@@ -1,9 +1,9 @@
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import type { LocalizedText } from "@/entities/question";
 import { LocalizedCategoriesPage } from "@/features/manage-settings/ui/localized-question-surfaces";
 
 const categories = Array.from(
-  top100Questions.reduce((map, question) => {
+  questionLibraryQuestions.reduce((map, question) => {
     const current = map.get(question.categorySlug) ?? {
       name: question.category,
       slug: question.categorySlug,

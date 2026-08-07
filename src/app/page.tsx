@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 
-import { top100Questions } from "@/../content/questions/top100";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { getTranslations, useSettings } from "@/features/manage-settings";
 import { ProgressDashboard } from "@/features/track-question-progress";
 
@@ -22,7 +22,7 @@ export default function HomePage() {
           {copy.openLibrary}
         </Link>
       </section>
-      <ProgressDashboard totalQuestions={top100Questions.length} />
+      <ProgressDashboard totalQuestions={questionLibraryQuestions.length} />
       <section className="moduleGrid" aria-label={copy.modulesLabel}>
         {copy.modules.map(([eyebrow, title, description]) => (
           <article className="card" key={eyebrow}>

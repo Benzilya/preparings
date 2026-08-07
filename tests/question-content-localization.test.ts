@@ -7,27 +7,26 @@ import { localizeQuestion } from "../src/entities/question/model/types";
 import { getQuestionContentTranslations } from "../src/features/manage-settings/model/question-content-translations";
 
 const hardcodedHeroPhrases = [
-  "ТОП-100 вопросов для собеседования QA",
-  "Top 100 QA Interview Questions",
-  "Explore validated QA knowledge.",
+  "Изучайте проверенную базу знаний QA.",
+  "Explore the validated QA knowledge base.",
 ];
 
 test("question library hero is typed, Russian-first and not hardcoded in the route", async () => {
   const ru = getQuestionContentTranslations("ru").library;
   const en = getQuestionContentTranslations("en").library;
   assert.deepEqual(ru, {
-    eyebrow: "ТОП-100 QA",
-    title: "ТОП-100 вопросов для собеседования QA",
-    lead: "Самые частые вопросы, которые задают QA-специалистам на технических собеседованиях. Рейтинг составлен по нескольким независимым источникам.",
+    eyebrow: "База вопросов QA",
+    title: "Изучайте проверенную базу знаний QA.",
+    lead: "Ищите вопросы по теме или тегу, фильтруйте их по уровню собеседования и открывайте полные ответы с источниками.",
     showMore: "Показать ещё",
-    topCount: "Вопросов в основном рейтинге",
+    topCount: "Всего вопросов в библиотеке",
   });
   assert.deepEqual(en, {
-    eyebrow: "QA TOP 100",
-    title: "Top 100 QA Interview Questions",
-    lead: "The most frequently asked questions in QA technical interviews, ranked using multiple independent sources.",
+    eyebrow: "QA Question Library",
+    title: "Explore the validated QA knowledge base.",
+    lead: "Search questions by topic or tag, filter them by interview level, and open complete answers with sources.",
     showMore: "Show more",
-    topCount: "Questions in the primary ranking",
+    topCount: "Total questions in the library",
   });
 
   const pageSource = await readFile(
