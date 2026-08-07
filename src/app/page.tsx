@@ -13,12 +13,24 @@ export default function HomePage() {
   return (
     <div className="dashboardPage">
       <section className="dashboardHero" aria-labelledby="dashboard-title">
-        <div><p className="eyebrow">{copy.eyebrow}</p><h1 id="dashboard-title">{copy.title}</h1><p className="lead">{copy.lead}</p></div>
-        <Link className="button buttonPrimary" href="/questions">{copy.openLibrary}</Link>
+        <div>
+          <p className="eyebrow">{copy.eyebrow}</p>
+          <h1 id="dashboard-title">{copy.title}</h1>
+          <p className="lead">{copy.lead}</p>
+        </div>
+        <Link className="button buttonPrimary" href="/questions">
+          {copy.openLibrary}
+        </Link>
       </section>
       <ProgressDashboard totalQuestions={top100Questions.length} />
       <section className="moduleGrid" aria-label={copy.modulesLabel}>
-        {copy.modules.map(([eyebrow, title, description]) => <article className="card" key={eyebrow}><p className="cardLabel">{eyebrow}</p><h2>{title}</h2><p>{description}</p></article>)}
+        {copy.modules.map(([eyebrow, title, description]) => (
+          <article className="card" key={eyebrow}>
+            <p className="cardLabel">{eyebrow}</p>
+            <h2>{title}</h2>
+            <p>{description}</p>
+          </article>
+        ))}
       </section>
     </div>
   );

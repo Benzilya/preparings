@@ -6,27 +6,35 @@ import { seedQuestions } from "../content/questions/seed";
 import { localizeQuestion } from "../src/entities/question/model/types";
 import { getQuestionContentTranslations } from "../src/features/manage-settings/model/question-content-translations";
 
-const formerEnglishHero = [
-  "Question Library / База вопросов",
+const hardcodedHeroPhrases = [
+  "ТОП-100 вопросов для собеседования QA",
+  "Top 100 QA Interview Questions",
   "Explore validated QA knowledge.",
-  "Search by topic or tag, filter by interview level, and open a complete sourced answer.",
 ];
 
 test("question library hero is typed, Russian-first and not hardcoded in the route", async () => {
   const ru = getQuestionContentTranslations("ru").library;
   const en = getQuestionContentTranslations("en").library;
   assert.deepEqual(ru, {
-    eyebrow: "База вопросов",
-    title: "Изучайте проверенную базу знаний QA.",
-    lead: "Ищите вопросы по теме или тегу, фильтруйте их по уровню собеседования и открывайте полные ответы с источниками.",
+    eyebrow: "ТОП-100 QA",
+    title: "ТОП-100 вопросов для собеседования QA",
+    lead: "Самые частые вопросы, которые задают QA-специалистам на технических собеседованиях. Рейтинг составлен по нескольким независимым источникам.",
+    showMore: "Показать ещё",
+    topCount: "Вопросов в основном рейтинге",
   });
-  assert.equal(en.title, "Explore validated QA knowledge.");
+  assert.deepEqual(en, {
+    eyebrow: "QA TOP 100",
+    title: "Top 100 QA Interview Questions",
+    lead: "The most frequently asked questions in QA technical interviews, ranked using multiple independent sources.",
+    showMore: "Show more",
+    topCount: "Questions in the primary ranking",
+  });
 
   const pageSource = await readFile(
     new URL("../src/app/questions/page.tsx", import.meta.url),
     "utf8",
   );
-  for (const text of formerEnglishHero) assert.equal(pageSource.includes(text), false);
+  for (const text of hardcodedHeroPhrases) assert.equal(pageSource.includes(text), false);
 });
 
 test("all user-facing seed fields have complete and distinct Russian and English content", () => {

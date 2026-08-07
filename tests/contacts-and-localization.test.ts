@@ -10,7 +10,10 @@ test("Russian is the interface default and English remains available", () => {
   assert.equal(defaultSettings.language, "ru");
   assert.equal(getTranslations("ru").contacts.title, "Связаться с автором проекта");
   assert.equal(getTranslations("en").contacts.title, "Contact the project author");
-  assert.equal(getTranslations("ru").shell.switchToEnglish, "Переключить интерфейс на английский язык");
+  assert.equal(
+    getTranslations("ru").shell.switchToEnglish,
+    "Переключить интерфейс на английский язык",
+  );
   assert.equal(getTranslations("en").shell.switchToRussian, "Switch interface to Russian");
 });
 

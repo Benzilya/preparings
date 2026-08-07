@@ -10,9 +10,7 @@ function collectShape(value: unknown, prefix = ""): string[] {
   if (!value || typeof value !== "object") return [`${prefix}:${typeof value}`];
 
   return Object.entries(value as Record<string, unknown>)
-    .flatMap(([key, nestedValue]) =>
-      collectShape(nestedValue, prefix ? `${prefix}.${key}` : key),
-    )
+    .flatMap(([key, nestedValue]) => collectShape(nestedValue, prefix ? `${prefix}.${key}` : key))
     .toSorted();
 }
 
@@ -38,7 +36,10 @@ test("interface dictionaries do not contain empty user-facing strings", () => {
       ...collectStrings(getSettingsTranslations(language)),
     ];
     assert.ok(strings.length > 0);
-    assert.equal(strings.every((value) => value.trim().length > 0), true);
+    assert.equal(
+      strings.every((value) => value.trim().length > 0),
+      true,
+    );
   }
 });
 

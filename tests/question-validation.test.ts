@@ -20,7 +20,10 @@ const expectedIdentity = [
 
 test("all six bilingual seed questions pass runtime validation", () => {
   assert.equal(validateQuestions(seedQuestions).length, 6);
-  assert.deepEqual(seedQuestions.map(({ id, slug }) => [id, slug]), expectedIdentity);
+  assert.deepEqual(
+    seedQuestions.map(({ id, slug }) => [id, slug]),
+    expectedIdentity,
+  );
 
   for (const question of seedQuestions) {
     const ru = localizeQuestion(question, "ru");
@@ -42,10 +45,7 @@ test("validateQuestion rejects incomplete locales, malformed slugs and source UR
     () => validateQuestion({ ...base, title: { ru: base.title.ru, en: "" } }),
     /must contain ru and en text/,
   );
-  assert.throws(
-    () => validateQuestion({ ...base, slug: "Invalid Slug" }),
-    QuestionValidationError,
-  );
+  assert.throws(() => validateQuestion({ ...base, slug: "Invalid Slug" }), QuestionValidationError);
   assert.throws(
     () =>
       validateQuestion({

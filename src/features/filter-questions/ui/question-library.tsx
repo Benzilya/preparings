@@ -19,12 +19,22 @@ import {
 import { useQuestionProgress } from "@/features/track-question-progress";
 import { Card, CardContent, CardHeader, CardTitle, Input } from "@/shared/ui";
 
-const difficultyOptions: readonly (QuestionDifficulty | "all")[] = ["all", "junior", "middle", "senior"];
+const difficultyOptions: readonly (QuestionDifficulty | "all")[] = [
+  "all",
+  "junior",
+  "middle",
+  "senior",
+];
 const pageSize = 20;
 type SortOption = "popularity" | "updated" | "title";
 type ProgressFilter = QuestionProgressStatus | "all" | "favorites";
 
-function compareQuestions(left: LocalizedQuestion, right: LocalizedQuestion, sort: SortOption, locale: string): number {
+function compareQuestions(
+  left: LocalizedQuestion,
+  right: LocalizedQuestion,
+  sort: SortOption,
+  locale: string,
+): number {
   let result = 0;
   if (sort === "title") result = left.title.localeCompare(right.title, locale);
   if (sort === "updated") result = right.updatedAt.localeCompare(left.updatedAt);
@@ -50,7 +60,8 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
   );
   const categories = useMemo(() => {
     const entries = new Map<string, string>();
-    for (const question of localizedQuestions) entries.set(question.categorySlug, question.category);
+    for (const question of localizedQuestions)
+      entries.set(question.categorySlug, question.category);
     return [...entries].toSorted((left, right) => left[1].localeCompare(right[1], language));
   }, [language, localizedQuestions]);
   const progressByQuestion = useMemo(
@@ -70,41 +81,200 @@ export function QuestionLibrary({ questions }: { questions: readonly Question[] 
       .filter((question) => {
         const record = progressByQuestion.get(question.id);
         const status = record?.status ?? "not-started";
-        const matchesProgress = progress === "all" || (progress === "favorites" ? record?.favorite === true : status === progress);
+        const matchesProgress =
+          progress === "all" ||
+          (progress === "favorites" ? record?.favorite === true : status === progress);
         const matchesDifficulty = difficulty === "all" || question.difficulty === difficulty;
         const matchesCategory = category === "all" || question.categorySlug === category;
-        const searchableText = [question.title, question.category, ...question.tags.map((tag) => tag.label), question.explanation, question.interviewerGoal, question.expectedAnswer, ...question.alternativeAnswers, ...question.answerExamples.map((example) => example.answer), ...question.relatedTopics].join(" ").toLocaleLowerCase(language);
-        return matchesProgress && matchesDifficulty && matchesCategory && (normalizedQuery.length === 0 || searchableText.includes(normalizedQuery));
+        const searchableText = [
+          question.title,
+          question.category,
+          ...question.tags.map((tag) => tag.label),
+          question.explanation,
+          question.interviewerGoal,
+          question.expectedAnswer,
+          ...question.alternativeAnswers,
+          ...question.answerExamples.map((example) => example.answer),
+          ...question.relatedTopics,
+        ]
+          .join(" ")
+          .toLocaleLowerCase(language);
+        return (
+          matchesProgress &&
+          matchesDifficulty &&
+          matchesCategory &&
+          (normalizedQuery.length === 0 || searchableText.includes(normalizedQuery))
+        );
       })
       .toSorted((left, right) => compareQuestions(left, right, sort, language));
-  }, [category, difficulty, language, localizedQuestions, progress, progressByQuestion, query, sort]);
+  }, [
+    category,
+    difficulty,
+    language,
+    localizedQuestions,
+    progress,
+    progressByQuestion,
+    query,
+    sort,
+  ]);
 
   const displayedQuestions = filteredQuestions.slice(0, visibleCount);
   const resetFilters = () => {
-    setQuery(""); setDifficulty("all"); setCategory("all"); setProgress("all"); setSort("popularity"); setVisibleCount(pageSize);
+    setQuery("");
+    setDifficulty("all");
+    setCategory("all");
+    setProgress("all");
+    setSort("popularity");
+    setVisibleCount(pageSize);
   };
 
   return (
     <div className="questionLibrary">
       <div className="questionFilters" aria-label={copy.filters}>
-        <label className="searchField"><Search aria-hidden="true" size={18} /><span className="srOnly">{copy.searchLabel}</span><Input onChange={(event) => { setQuery(event.target.value); setVisibleCount(pageSize); }} placeholder={copy.searchPlaceholder} type="search" value={query} /></label>
-        <label className="filterField"><span>{copy.level}</span><select onChange={(event) => { setDifficulty(event.target.value as QuestionDifficulty | "all"); setVisibleCount(pageSize); }} value={difficulty}>{difficultyOptions.map((option) => <option key={option} value={option}>{option === "all" ? copy.all : contentCopy.difficulty[option]}</option>)}</select></label>
-        <label className="filterField"><span>{copy.category}</span><select onChange={(event) => { setCategory(event.target.value); setVisibleCount(pageSize); }} value={category}><option value="all">{copy.all}</option>{categories.map(([slug, label]) => <option key={slug} value={slug}>{label}</option>)}</select></label>
-        <label className="filterField"><span>{copy.progress}</span><select onChange={(event) => { setProgress(event.target.value as ProgressFilter); setVisibleCount(pageSize); }} value={progress}><option value="all">{copy.all}</option><option value="not-started">{copy.notStarted}</option><option value="learning">{copy.learning}</option><option value="completed">{copy.completed}</option><option value="favorites">{copy.favorites}</option></select></label>
-        <label className="filterField"><span>{copy.sort}</span><select onChange={(event) => { setSort(event.target.value as SortOption); setVisibleCount(pageSize); }} value={sort}><option value="popularity">{copy.popularity}</option><option value="updated">{copy.recentlyUpdated}</option><option value="title">{copy.title}</option></select></label>
+        <label className="searchField">
+          <Search aria-hidden="true" size={18} />
+          <span className="srOnly">{copy.searchLabel}</span>
+          <Input
+            onChange={(event) => {
+              setQuery(event.target.value);
+              setVisibleCount(pageSize);
+            }}
+            placeholder={copy.searchPlaceholder}
+            type="search"
+            value={query}
+          />
+        </label>
+        <label className="filterField">
+          <span>{copy.level}</span>
+          <select
+            onChange={(event) => {
+              setDifficulty(event.target.value as QuestionDifficulty | "all");
+              setVisibleCount(pageSize);
+            }}
+            value={difficulty}
+          >
+            {difficultyOptions.map((option) => (
+              <option key={option} value={option}>
+                {option === "all" ? copy.all : contentCopy.difficulty[option]}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.category}</span>
+          <select
+            onChange={(event) => {
+              setCategory(event.target.value);
+              setVisibleCount(pageSize);
+            }}
+            value={category}
+          >
+            <option value="all">{copy.all}</option>
+            {categories.map(([slug, label]) => (
+              <option key={slug} value={slug}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.progress}</span>
+          <select
+            onChange={(event) => {
+              setProgress(event.target.value as ProgressFilter);
+              setVisibleCount(pageSize);
+            }}
+            value={progress}
+          >
+            <option value="all">{copy.all}</option>
+            <option value="not-started">{copy.notStarted}</option>
+            <option value="learning">{copy.learning}</option>
+            <option value="completed">{copy.completed}</option>
+            <option value="favorites">{copy.favorites}</option>
+          </select>
+        </label>
+        <label className="filterField">
+          <span>{copy.sort}</span>
+          <select
+            onChange={(event) => {
+              setSort(event.target.value as SortOption);
+              setVisibleCount(pageSize);
+            }}
+            value={sort}
+          >
+            <option value="popularity">{copy.popularity}</option>
+            <option value="updated">{copy.recentlyUpdated}</option>
+            <option value="title">{copy.title}</option>
+          </select>
+        </label>
       </div>
 
-      <div className="questionResultsBar"><p className="resultCount" aria-live="polite">{displayedQuestions.length} / {filteredQuestions.length} / {questions.length} {copy.questions}</p><button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button></div>
+      <div className="questionResultsBar">
+        <p className="resultCount" aria-live="polite">
+          {displayedQuestions.length} / {filteredQuestions.length} / {questions.length}{" "}
+          {copy.questions}
+        </p>
+        <button className="resetFilters" onClick={resetFilters} type="button">
+          {copy.reset}
+        </button>
+      </div>
 
       <div className="questionGrid">
         {displayedQuestions.map((question) => {
           const record = progressByQuestion.get(question.id);
-          return <Card key={question.id}><CardHeader><div className="questionCardMeta"><span className="difficultyBadge">#{question.popularityRank} · {contentCopy.difficulty[question.difficulty]}</span><Link href={`/questions/categories/${question.categorySlug}`}>{question.category}</Link></div><CardTitle>{question.title}</CardTitle></CardHeader><CardContent><p>{question.explanation}</p><div className="questionState"><span>{statusLabel(record?.status)}</span>{record?.favorite ? <span>★ {copy.favorite}</span> : null}</div><div className="tagList" aria-label={copy.tags}>{question.tags.map((tag) => <span key={tag.key}>{tag.label}</span>)}</div><Link className="questionLink" href={`/questions/${question.slug}`}>{copy.openQuestion}</Link></CardContent></Card>;
+          return (
+            <Card key={question.id}>
+              <CardHeader>
+                <div className="questionCardMeta">
+                  <span className="difficultyBadge">
+                    #{question.popularityRank} · {contentCopy.difficulty[question.difficulty]}
+                  </span>
+                  <Link href={`/questions/categories/${question.categorySlug}`}>
+                    {question.category}
+                  </Link>
+                </div>
+                <CardTitle>{question.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p>{question.explanation}</p>
+                <div className="questionState">
+                  <span>{statusLabel(record?.status)}</span>
+                  {record?.favorite ? <span>★ {copy.favorite}</span> : null}
+                </div>
+                <div className="tagList" aria-label={copy.tags}>
+                  {question.tags.map((tag) => (
+                    <span key={tag.key}>{tag.label}</span>
+                  ))}
+                </div>
+                <Link className="questionLink" href={`/questions/${question.slug}`}>
+                  {copy.openQuestion}
+                </Link>
+              </CardContent>
+            </Card>
+          );
         })}
       </div>
 
-      {displayedQuestions.length < filteredQuestions.length ? <div className="questionResultsBar"><button className="button" onClick={() => setVisibleCount((count) => count + pageSize)} type="button">{contentCopy.library.showMore}</button></div> : null}
-      {filteredQuestions.length === 0 ? <div className="emptyState"><strong>{copy.emptyTitle}</strong><p>{copy.emptyBody}</p><button className="resetFilters" onClick={resetFilters} type="button">{copy.reset}</button></div> : null}
+      {displayedQuestions.length < filteredQuestions.length ? (
+        <div className="questionResultsBar">
+          <button
+            className="button"
+            onClick={() => setVisibleCount((count) => count + pageSize)}
+            type="button"
+          >
+            {contentCopy.library.showMore}
+          </button>
+        </div>
+      ) : null}
+      {filteredQuestions.length === 0 ? (
+        <div className="emptyState">
+          <strong>{copy.emptyTitle}</strong>
+          <p>{copy.emptyBody}</p>
+          <button className="resetFilters" onClick={resetFilters} type="button">
+            {copy.reset}
+          </button>
+        </div>
+      ) : null}
     </div>
   );
 }

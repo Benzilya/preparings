@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render } from "@testing-library/react";
 import globalJsdom from "global-jsdom";
 import React from "react";
 
@@ -31,32 +31,32 @@ afterEach(() => {
 after(() => cleanupDom());
 
 test("detail and category surfaces render complete Russian question content", () => {
-  const { unmount } = render(<LocalizedQuestionDetails question={firstQuestion} />);
-  assert.ok(screen.getByText(firstQuestion.title.ru));
-  assert.ok(screen.getByText(firstQuestion.interviewerGoal.ru));
-  assert.ok(screen.getByText(firstQuestion.expectedAnswer.ru));
-  assert.ok(screen.getByText(firstQuestion.alternativeAnswers[0]!.ru));
-  assert.ok(screen.getByText(firstQuestion.relatedTopics[0]!.ru));
-  assert.equal(screen.queryByText(firstQuestion.title.en), null);
-  unmount();
+  const detail = render(<LocalizedQuestionDetails question={firstQuestion} />);
+  assert.ok(detail.getByText(firstQuestion.title.ru));
+  assert.ok(detail.getByText(firstQuestion.interviewerGoal.ru));
+  assert.ok(detail.getByText(firstQuestion.expectedAnswer.ru));
+  assert.ok(detail.getByText(firstQuestion.alternativeAnswers[0]!.ru));
+  assert.ok(detail.getByText(firstQuestion.relatedTopics[0]!.ru));
+  assert.equal(detail.queryByText(firstQuestion.title.en), null);
+  detail.unmount();
 
-  render(
+  const category = render(
     <LocalizedCategoryPage categoryName={firstQuestion.category} questions={[firstQuestion]} />,
   );
-  assert.ok(screen.getByRole("heading", { name: firstQuestion.category.ru }));
-  assert.ok(screen.getByText(firstQuestion.title.ru));
-  assert.equal(screen.queryByText(firstQuestion.title.en), null);
+  assert.ok(category.getByRole("heading", { name: firstQuestion.category.ru }));
+  assert.ok(category.getByText(firstQuestion.title.ru));
+  assert.equal(category.queryByText(firstQuestion.title.en), null);
 });
 
 test("detail surface switches to English without reload", async () => {
-  render(<LocalizedQuestionDetails question={firstQuestion} />);
+  const view = render(<LocalizedQuestionDetails question={firstQuestion} />);
   act(() => {
     writeSettings({ language: "en", catalogDensity: "comfortable", showExplanations: true });
   });
 
-  assert.ok(await screen.findByText(firstQuestion.title.en));
-  assert.ok(screen.getByText(firstQuestion.expectedAnswer.en));
-  assert.equal(screen.queryByText(firstQuestion.title.ru), null);
+  assert.ok(await view.findByText(firstQuestion.title.en));
+  assert.ok(view.getByText(firstQuestion.expectedAnswer.en));
+  assert.equal(view.queryByText(firstQuestion.title.ru), null);
 });
 
 test("favorites and progress retain question state while localizing visible text", () => {
@@ -69,13 +69,13 @@ test("favorites and progress retain question state while localizing visible text
     },
   ]);
 
-  const { unmount } = render(<FavoriteQuestionsPage questions={seedQuestions} />);
-  assert.ok(screen.getByText(firstQuestion.title.ru));
-  assert.ok(screen.getByText(firstQuestion.category.ru));
-  unmount();
+  const favorites = render(<FavoriteQuestionsPage questions={seedQuestions} />);
+  assert.ok(favorites.getByText(firstQuestion.title.ru));
+  assert.ok(favorites.getByText(firstQuestion.category.ru));
+  favorites.unmount();
 
-  render(<ProgressPage questions={seedQuestions} />);
-  assert.ok(screen.getByText(firstQuestion.category.ru));
-  assert.ok(screen.getByText(firstQuestion.title.ru));
-  assert.equal(screen.queryByText(firstQuestion.title.en), null);
+  const progress = render(<ProgressPage questions={seedQuestions} />);
+  assert.ok(progress.getByText(firstQuestion.category.ru));
+  assert.ok(progress.getByText(firstQuestion.title.ru));
+  assert.equal(progress.queryByText(firstQuestion.title.en), null);
 });

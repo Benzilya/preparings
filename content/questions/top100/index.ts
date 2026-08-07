@@ -10,7 +10,10 @@ import { top100Batch066085 } from "./batch-066-085";
 import { top100Batch086100 } from "./batch-086-100";
 
 const verifiedAt = "2026-08-07";
-const evidenceByRank: Record<number, { frequencyTier: QuestionFrequencyTier; source: QuestionSource }> = {
+const evidenceByRank: Record<
+  number,
+  { frequencyTier: QuestionFrequencyTier; source: QuestionSource }
+> = {
   1: { frequencyTier: "very-common", source: rankingSources.katalon },
   2: { frequencyTier: "very-common", source: rankingSources.softwaretestpilot },
   3: { frequencyTier: "very-common", source: rankingSources.qodex },
@@ -50,5 +53,7 @@ export const top100Questions = validateQuestions([
 ]).toSorted((left, right) => left.popularityRank - right.popularityRank);
 
 if (top100Questions.length !== 100) {
-  throw new Error(`Top 100 ranking must contain exactly 100 questions; received ${top100Questions.length}.`);
+  throw new Error(
+    `Top 100 ranking must contain exactly 100 questions; received ${top100Questions.length}.`,
+  );
 }

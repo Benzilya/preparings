@@ -3,7 +3,10 @@
 import { getTranslations, useSettings } from "@/features/manage-settings";
 import { projectAuthor, projectContacts, type ContactKind } from "@/shared/config/project-author";
 
-const contactLabelKeys: Record<ContactKind, "email" | "phone" | "telegram" | "github" | "portfolio"> = {
+const contactLabelKeys: Record<
+  ContactKind,
+  "email" | "phone" | "telegram" | "github" | "portfolio"
+> = {
   email: "email",
   phone: "phone",
   telegram: "telegram",
@@ -39,9 +42,7 @@ export default function ContactsPage() {
                   aria-label={`${label}: ${contact.value}${externalHint}`}
                   className="contactLink"
                   href={contact.href}
-                  {...(contact.external
-                    ? { rel: "noopener noreferrer", target: "_blank" }
-                    : {})}
+                  {...(contact.external ? { rel: "noopener noreferrer", target: "_blank" } : {})}
                 >
                   {contact.value}
                 </a>

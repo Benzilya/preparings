@@ -32,8 +32,13 @@ test("primary Release 1.0 routes remain discoverable from navigation", () => {
 });
 
 test("navigation hrefs are unique and absolute", () => {
-  const hrefs = [...mainNavigation, ...utilityNavigation].map((navigationItem) => navigationItem.href);
+  const hrefs = [...mainNavigation, ...utilityNavigation].map(
+    (navigationItem) => navigationItem.href,
+  );
 
   assert.equal(new Set(hrefs).size, hrefs.length);
-  assert.equal(hrefs.every((href) => href.startsWith("/")), true);
+  assert.equal(
+    hrefs.every((href) => href.startsWith("/")),
+    true,
+  );
 });

@@ -5,11 +5,18 @@ import { top100Questions } from "../content/questions/top100";
 import { seedQuestions } from "../content/questions/seed";
 import { localizeQuestion, validateQuestions } from "../src/entities/question";
 
-const normalize = (value: string) => value.toLocaleLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+const normalize = (value: string) =>
+  value
+    .toLocaleLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
 
 test("primary ranking contains exactly 100 unique questions with ranks 1 through 100", () => {
   assert.equal(top100Questions.length, 100);
-  assert.deepEqual(top100Questions.map((question) => question.popularityRank), Array.from({ length: 100 }, (_, index) => index + 1));
+  assert.deepEqual(
+    top100Questions.map((question) => question.popularityRank),
+    Array.from({ length: 100 }, (_, index) => index + 1),
+  );
   assert.equal(new Set(top100Questions.map((question) => question.id)).size, 100);
   assert.equal(new Set(top100Questions.map((question) => question.slug)).size, 100);
   assert.equal(new Set(top100Questions.map((question) => question.popularityRank)).size, 100);

@@ -19,11 +19,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
       - name: Setup Node.js
         uses: actions/setup-node@v5
         with:
           node-version: 22
+          package-manager-cache: false
       - name: Validate package manifest
         run: node -e "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8'))"
       - name: Setup pnpm
@@ -31,7 +32,7 @@ jobs:
           corepack enable
           corepack prepare pnpm@10.15.0 --activate
           pnpm --version
-      - name: Install dependencies
+      - name: Install dependencies with frozen lockfile
         run: pnpm install --frozen-lockfile
       - name: Architecture
         run: pnpm architecture

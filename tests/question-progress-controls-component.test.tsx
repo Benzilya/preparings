@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, render, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import globalJsdom from "global-jsdom";
 import React from "react";
@@ -23,15 +23,15 @@ after(() => cleanupDom());
 
 test("Question progress controls persist status and favorite state", async () => {
   const user = userEvent.setup({ document: window.document });
-  render(<QuestionProgressControls questionId="q-testing-pyramid" />);
+  const view = render(<QuestionProgressControls questionId="q-testing-pyramid" />);
 
-  const status = screen.getByLabelText(/Question status/) as HTMLSelectElement;
+  const status = view.getByLabelText(/Question status/) as HTMLSelectElement;
   await user.selectOptions(status, "completed");
-  await user.click(screen.getByRole("button", { name: /Add favorite/ }));
+  await user.click(view.getByRole("button", { name: /Add favorite/ }));
 
   await waitFor(() => {
     assert.equal(status.value, "completed");
-    assert.ok(screen.getByRole("button", { name: /Favorite/ }));
+    assert.ok(view.getByRole("button", { name: /Favorite/ }));
   });
 
   const stored = window.localStorage.getItem("qa-interview-trainer:question-progress:v1");
@@ -60,10 +60,10 @@ test("Question progress controls restore an existing local record", async () => 
     ]),
   );
 
-  render(<QuestionProgressControls questionId="q-flaky-tests" />);
+  const view = render(<QuestionProgressControls questionId="q-flaky-tests" />);
 
   await waitFor(() => {
-    assert.equal((screen.getByLabelText(/Question status/) as HTMLSelectElement).value, "learning");
-    assert.ok(screen.getByRole("button", { name: /Favorite/ }));
+    assert.equal((view.getByLabelText(/Question status/) as HTMLSelectElement).value, "learning");
+    assert.ok(view.getByRole("button", { name: /Favorite/ }));
   });
 });

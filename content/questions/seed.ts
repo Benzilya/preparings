@@ -65,11 +65,20 @@ const records = [
       },
     ],
     mistakes: [
-      { ru: "Считать пирамиду фиксированным процентным соотношением", en: "Treating the pyramid as a fixed percentage" },
-      { ru: "Игнорировать контрактные и интеграционные тесты", en: "Ignoring contract and integration tests" },
+      {
+        ru: "Считать пирамиду фиксированным процентным соотношением",
+        en: "Treating the pyramid as a fixed percentage",
+      },
+      {
+        ru: "Игнорировать контрактные и интеграционные тесты",
+        en: "Ignoring contract and integration tests",
+      },
     ],
     followUpQuestions: [
-      { ru: "Как вы тестировали бы границу микросервиса?", en: "How would you test a microservice boundary?" },
+      {
+        ru: "Как вы тестировали бы границу микросервиса?",
+        en: "How would you test a microservice boundary?",
+      },
       { ru: "Что должно входить в сквозной тест?", en: "What belongs in an end-to-end test?" },
     ],
     relatedTopics: [
@@ -126,7 +135,10 @@ const records = [
     answerExamples: [
       {
         level: "junior",
-        answer: { ru: "Перезапустить тест, изучить логи и убрать фиксированные ожидания.", en: "Re-run the test, inspect logs, and remove fixed sleeps." },
+        answer: {
+          ru: "Перезапустить тест, изучить логи и убрать фиксированные ожидания.",
+          en: "Re-run the test, inspect logs, and remove fixed sleeps.",
+        },
       },
       {
         level: "middle",
@@ -149,7 +161,10 @@ const records = [
     ],
     followUpQuestions: [
       { ru: "Когда карантин допустим?", en: "When is quarantine acceptable?" },
-      { ru: "Какие метрики отражают здоровье набора тестов?", en: "Which metrics show suite health?" },
+      {
+        ru: "Какие метрики отражают здоровье набора тестов?",
+        en: "Which metrics show suite health?",
+      },
     ],
     relatedTopics: [
       { ru: "наблюдаемость", en: "observability" },
@@ -205,19 +220,31 @@ const records = [
     answerExamples: [
       {
         level: "junior",
-        answer: { ru: "Контрактный тест проверяет, что ответ API содержит поля, ожидаемые клиентом.", en: "A contract test checks that an API response has the fields a client expects." },
+        answer: {
+          ru: "Контрактный тест проверяет, что ответ API содержит поля, ожидаемые клиентом.",
+          en: "A contract test checks that an API response has the fields a client expects.",
+        },
       },
       {
         level: "middle",
-        answer: { ru: "Потребители публикуют ожидания, а поставщики проверяют их в CI до релиза.", en: "Consumers publish expectations and providers verify them in CI before release." },
+        answer: {
+          ru: "Потребители публикуют ожидания, а поставщики проверяют их в CI до релиза.",
+          en: "Consumers publish expectations and providers verify them in CI before release.",
+        },
       },
       {
         level: "senior",
-        answer: { ru: "Контракты снижают интеграционный риск, но не заменяют тесты рабочих процессов, устойчивости и производственного мониторинга.", en: "Contracts reduce integration risk, but they do not replace workflow, resilience, or production monitoring tests." },
+        answer: {
+          ru: "Контракты снижают интеграционный риск, но не заменяют тесты рабочих процессов, устойчивости и производственного мониторинга.",
+          en: "Contracts reduce integration risk, but they do not replace workflow, resilience, or production monitoring tests.",
+        },
       },
     ],
     mistakes: [
-      { ru: "Считать контракты полными тестами бизнес-процесса", en: "Treating contracts as full business-flow tests" },
+      {
+        ru: "Считать контракты полными тестами бизнес-процесса",
+        en: "Treating contracts as full business-flow tests",
+      },
       { ru: "Игнорировать обратную совместимость", en: "Ignoring backward compatibility" },
     ],
     followUpQuestions: [
@@ -278,24 +305,42 @@ const records = [
     answerExamples: [
       {
         level: "junior",
-        answer: { ru: "Используйте роль, подпись или стабильный test ID вместо длинного CSS-селектора.", en: "Use a role, label, or stable test ID instead of a long CSS selector." },
+        answer: {
+          ru: "Используйте роль, подпись или стабильный test ID вместо длинного CSS-селектора.",
+          en: "Use a role, label, or stable test ID instead of a long CSS selector.",
+        },
       },
       {
         level: "middle",
-        answer: { ru: "Выбирайте селекторы, соответствующие восприятию интерфейса пользователем и понятно падающие при изменении семантики.", en: "Choose selectors that match how users perceive the UI and fail clearly when semantics change." },
+        answer: {
+          ru: "Выбирайте селекторы, соответствующие восприятию интерфейса пользователем и понятно падающие при изменении семантики.",
+          en: "Choose selectors that match how users perceive the UI and fail clearly when semantics change.",
+        },
       },
       {
         level: "senior",
-        answer: { ru: "Рассматривайте стратегию локаторов как продуктовый контракт разработчиков, тестировщиков и требований доступности.", en: "Treat locator strategy as a product contract shared by developers, testers, and accessibility requirements." },
+        answer: {
+          ru: "Рассматривайте стратегию локаторов как продуктовый контракт разработчиков, тестировщиков и требований доступности.",
+          en: "Treat locator strategy as a product contract shared by developers, testers, and accessibility requirements.",
+        },
       },
     ],
     mistakes: [
-      { ru: "Выбирать элементы по сгенерированным CSS-классам", en: "Selecting by generated CSS classes" },
-      { ru: "Использовать nth-child для бизнес-элементов", en: "Using nth-child for business elements" },
+      {
+        ru: "Выбирать элементы по сгенерированным CSS-классам",
+        en: "Selecting by generated CSS classes",
+      },
+      {
+        ru: "Использовать nth-child для бизнес-элементов",
+        en: "Using nth-child for business elements",
+      },
     ],
     followUpQuestions: [
       { ru: "Когда уместен test ID?", en: "When is a test ID appropriate?" },
-      { ru: "Как локаторы поддерживают доступность?", en: "How do locators support accessibility?" },
+      {
+        ru: "Как локаторы поддерживают доступность?",
+        en: "How do locators support accessibility?",
+      },
     ],
     relatedTopics: [
       { ru: "Playwright", en: "Playwright" },
@@ -351,15 +396,24 @@ const records = [
     answerExamples: [
       {
         level: "junior",
-        answer: { ru: "Сначала тестировать самые важные и недавно изменённые пользовательские сценарии.", en: "Test the most important and recently changed user flows first." },
+        answer: {
+          ru: "Сначала тестировать самые важные и недавно изменённые пользовательские сценарии.",
+          en: "Test the most important and recently changed user flows first.",
+        },
       },
       {
         level: "middle",
-        answer: { ru: "Ранжировать функции по влиянию и вероятности, затем покрывать критические риски самыми быстрыми полезными тестами.", en: "Rank features by impact and likelihood, then cover critical risks with the fastest useful tests." },
+        answer: {
+          ru: "Ранжировать функции по влиянию и вероятности, затем покрывать критические риски самыми быстрыми полезными тестами.",
+          en: "Rank features by impact and likelihood, then cover critical risks with the fastest useful tests.",
+        },
       },
       {
         level: "senior",
-        answer: { ru: "Явно фиксировать предположения о рисках, связывать их с наблюдаемостью и возможностями отката и непрерывно обновлять.", en: "Make risk assumptions explicit, connect them to observability and rollback options, and update them continuously." },
+        answer: {
+          ru: "Явно фиксировать предположения о рисках, связывать их с наблюдаемостью и возможностями отката и непрерывно обновлять.",
+          en: "Make risk assumptions explicit, connect them to observability and rollback options, and update them continuously.",
+        },
       },
     ],
     mistakes: [
@@ -424,20 +478,35 @@ const records = [
     answerExamples: [
       {
         level: "junior",
-        answer: { ru: "Создавать только необходимые тесту данные и удалять их после выполнения.", en: "Create only the data a test needs and clean it up afterward." },
+        answer: {
+          ru: "Создавать только необходимые тесту данные и удалять их после выполнения.",
+          en: "Create only the data a test needs and clean it up afterward.",
+        },
       },
       {
         level: "middle",
-        answer: { ru: "Использовать фабрики с уникальными идентификаторами, чтобы тесты выполнялись независимо и параллельно.", en: "Use factories with unique identifiers so tests can run independently and in parallel." },
+        answer: {
+          ru: "Использовать фабрики с уникальными идентификаторами, чтобы тесты выполнялись независимо и параллельно.",
+          en: "Use factories with unique identifiers so tests can run independently and in parallel.",
+        },
       },
       {
         level: "senior",
-        answer: { ru: "Проектировать жизненный цикл данных, контроль приватности, наполнение окружений и наблюдаемость как единую систему надёжности.", en: "Design data lifecycle, privacy controls, environment seeding, and observability as one reliability system." },
+        answer: {
+          ru: "Проектировать жизненный цикл данных, контроль приватности, наполнение окружений и наблюдаемость как единую систему надёжности.",
+          en: "Design data lifecycle, privacy controls, environment seeding, and observability as one reliability system.",
+        },
       },
     ],
     mistakes: [
-      { ru: "Совместно использовать изменяемые фикстуры между тестами", en: "Sharing mutable fixtures between tests" },
-      { ru: "Копировать чувствительные производственные данные", en: "Copying sensitive production data" },
+      {
+        ru: "Совместно использовать изменяемые фикстуры между тестами",
+        en: "Sharing mutable fixtures between tests",
+      },
+      {
+        ru: "Копировать чувствительные производственные данные",
+        en: "Copying sensitive production data",
+      },
     ],
     followUpQuestions: [
       { ru: "Как тестировать миграции?", en: "How do you test migrations?" },

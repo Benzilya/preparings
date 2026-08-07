@@ -55,7 +55,23 @@ export interface Question {
   readonly updatedAt: string;
 }
 
-export interface LocalizedQuestion extends Omit<Question, "title" | "category" | "tags" | "explanation" | "interviewerGoal" | "expectedAnswer" | "alternativeAnswers" | "answerExamples" | "mistakes" | "followUpQuestions" | "relatedTopics" | "practicalExample" | "experienceExample"> {
+export interface LocalizedQuestion
+  extends Omit<
+    Question,
+    | "title"
+    | "category"
+    | "tags"
+    | "explanation"
+    | "interviewerGoal"
+    | "expectedAnswer"
+    | "alternativeAnswers"
+    | "answerExamples"
+    | "mistakes"
+    | "followUpQuestions"
+    | "relatedTopics"
+    | "practicalExample"
+    | "experienceExample"
+  > {
   readonly title: string;
   readonly category: string;
   readonly tags: readonly { readonly key: string; readonly label: string }[];
@@ -63,7 +79,10 @@ export interface LocalizedQuestion extends Omit<Question, "title" | "category" |
   readonly interviewerGoal: string;
   readonly expectedAnswer: string;
   readonly alternativeAnswers: readonly string[];
-  readonly answerExamples: readonly { readonly level: QuestionDifficulty; readonly answer: string }[];
+  readonly answerExamples: readonly {
+    readonly level: QuestionDifficulty;
+    readonly answer: string;
+  }[];
   readonly mistakes: readonly string[];
   readonly followUpQuestions: readonly string[];
   readonly relatedTopics: readonly string[];
@@ -81,7 +100,10 @@ export function localizeText(text: LocalizedText, language: QuestionLanguage): s
   return text[language];
 }
 
-export function localizeQuestion(question: Question, language: QuestionLanguage): LocalizedQuestion {
+export function localizeQuestion(
+  question: Question,
+  language: QuestionLanguage,
+): LocalizedQuestion {
   return {
     ...question,
     title: localizeText(question.title, language),

@@ -69,7 +69,7 @@ export function parseQuestionProgress(raw: string): readonly QuestionProgressRec
 }
 
 function notifyProgressChanged(): void {
-  window.dispatchEvent(new CustomEvent(changedEvent));
+  window.dispatchEvent(new window.CustomEvent(changedEvent));
 }
 
 export function readQuestionProgress(): readonly QuestionProgressRecord[] {

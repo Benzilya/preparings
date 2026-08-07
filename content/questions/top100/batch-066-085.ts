@@ -2,7 +2,15 @@ import type { LocalizedText, QuestionDifficulty } from "@/entities/question";
 import { createRankedQuestion, rankingSources } from "../create-ranked-question";
 
 const sources = [rankingSources.threadqa, rankingSources.enigma, rankingSources.katalon];
-type Row = readonly [number, string, QuestionDifficulty, string, LocalizedText, LocalizedText, LocalizedText];
+type Row = readonly [
+  number,
+  string,
+  QuestionDifficulty,
+  string,
+  LocalizedText,
+  LocalizedText,
+  LocalizedText,
+];
 const categories: Record<string, LocalizedText> = {
   sql: { ru: "SQL и данные", en: "SQL and Data" },
   tools: { ru: "Инструменты и окружение", en: "Tools and Environment" },
@@ -15,26 +23,301 @@ const categories: Record<string, LocalizedText> = {
   cicd: { ru: "CI/CD", en: "CI/CD" },
 };
 const rows: readonly Row[] = [
-  [66,"sql-find-duplicates","junior","sql",{ru:"Как найти дубликаты в SQL?",en:"How do you find duplicate records in SQL?"},{ru:"Группируют данные по бизнес-ключу и используют HAVING COUNT(*) > 1, после чего анализируют полные строки и допустимость повторов.",en:"Group by the business key and use HAVING COUNT(*) > 1, then inspect full rows and determine whether duplicates are legitimate."},{ru:"дубликаты SQL",en:"SQL duplicates"}],
-  [67,"database-normalization","middle","sql",{ru:"Что такое нормализация и когда полезна денормализация?",en:"What is normalization and when can denormalization be useful?"},{ru:"Нормализация уменьшает избыточность и аномалии обновления, а денормализация осознанно дублирует данные ради простоты или скорости чтения.",en:"Normalization reduces redundancy and update anomalies; denormalization intentionally duplicates data to simplify or accelerate reads."},{ru:"нормализация",en:"normalization"}],
-  [68,"database-transactions-acid","middle","sql",{ru:"Что такое транзакции и свойства ACID?",en:"What are database transactions and ACID properties?"},{ru:"Транзакции объединяют операции с атомарностью, согласованностью, изоляцией и долговечностью, а уровни изоляции балансируют аномалии и конкурентность.",en:"Transactions group operations with atomicity, consistency, isolation, and durability; isolation levels trade anomalies against concurrency."},{ru:"ACID",en:"ACID"}],
-  [69,"test-database-migrations","senior","sql",{ru:"Как тестировать миграции базы данных?",en:"How do you test database migrations?"},{ru:"Проверяют прямой и обратный путь, преобразование схемы и данных, ограничения, совместимость при rolling deploy, производительность, резервные копии и наблюдаемость.",en:"Test forward and rollback paths, schema and data transformations, constraints, rolling-deploy compatibility, performance, backups, and observability."},{ru:"миграции БД",en:"database migrations"}],
-  [70,"git-for-qa","junior","tools",{ru:"Какие базовые команды Git должен знать QA-инженер?",en:"What basic Git commands should a QA engineer know?"},{ru:"QA должен уверенно использовать clone, branch, fetch, pull, status, log, diff, commit, решать простые конфликты и создавать pull requests.",en:"QA should confidently use clone, branch, fetch, pull, status, log, diff, commit, resolve simple conflicts, and create pull requests."},{ru:"Git",en:"Git"}],
-  [71,"linux-for-qa","junior","tools",{ru:"Какие Linux-команды полезны для тестирования и диагностики?",en:"What Linux commands are useful for testing and troubleshooting?"},{ru:"Часто применяют ls, cd, cat, less, grep, find, tail, curl, ps, top, kill, chmod, env, ssh и утилиты анализа логов и сети.",en:"Common tools include ls, cd, cat, less, grep, find, tail, curl, ps, top, kill, chmod, env, ssh, and log and network utilities."},{ru:"Linux",en:"Linux"}],
-  [72,"browser-devtools","junior","web",{ru:"Как использовать Browser DevTools при тестировании?",en:"How do you use browser DevTools during testing?"},{ru:"Elements, Console, Network, Storage, Performance и accessibility-панели помогают исследовать DOM, ошибки, запросы, состояние, рендеринг и время.",en:"Elements, Console, Network, Storage, Performance, and accessibility panels help inspect DOM, errors, requests, state, rendering, and timing."},{ru:"DevTools",en:"DevTools"}],
-  [73,"cors-testing","middle","security",{ru:"Что такое CORS и как его тестировать?",en:"What is CORS and how do you test it?"},{ru:"CORS — политика браузера для cross-origin запросов; проверяют разрешённые origins, методы, headers, credentials, preflight и кеширование.",en:"CORS is a browser-enforced policy for cross-origin requests; test allowed origins, methods, headers, credentials, preflight behavior, and caching."},{ru:"CORS",en:"CORS"}],
-  [74,"cache-defects","middle","web",{ru:"Что такое кеширование и как оно вызывает дефекты?",en:"What is caching and how can it cause defects?"},{ru:"Кеши снижают задержку и нагрузку, но могут отдавать устаревшие, неверно разделённые, неавторизованные или несогласованно инвалидированные данные.",en:"Caches improve latency and load but can serve stale, incorrectly varied, unauthorized, or inconsistently invalidated data."},{ru:"кеширование",en:"caching"}],
-  [75,"localization-testing","middle","localization",{ru:"Как тестировать локализацию и интернационализацию?",en:"How do you test localization and internationalization?"},{ru:"Проверяют переводы, расширение layout, plural rules, даты, числа, валюту, сортировку, ввод, кодировку, направление, fallback и сохранение локали.",en:"Verify translations, layout expansion, plural rules, dates, numbers, currency, sorting, input, encoding, direction, fallback, and locale persistence."},{ru:"локализация",en:"localization"}],
-  [76,"accessibility-testing","middle","accessibility",{ru:"Как тестировать доступность?",en:"How do you test accessibility?"},{ru:"Сочетают клавиатурную навигацию, семантику, доступные имена, порядок фокуса, контраст, масштабирование, screen reader и автоматические правила с ручной оценкой.",en:"Combine keyboard navigation, semantics, accessible names, focus order, contrast, zoom, screen-reader checks, and automated rules with manual evaluation."},{ru:"доступность",en:"accessibility"}],
-  [77,"mobile-application-testing","middle","mobile",{ru:"Как тестировать мобильное приложение?",en:"How do you test a mobile application?"},{ru:"Проверяют устройства и версии ОС, ориентацию, жесты, разрешения, прерывания, background, сети, батарею, память, установку, обновления и правила платформы.",en:"Cover devices and OS versions, orientation, gestures, permissions, interruptions, backgrounding, networks, battery, storage, installation, updates, and platform conventions."},{ru:"mobile",en:"mobile"}],
-  [78,"native-hybrid-mobile-web","junior","mobile",{ru:"Чем отличаются native, hybrid и mobile web приложения?",en:"What is the difference between native, hybrid, and mobile web apps?"},{ru:"Native используют SDK платформы, hybrid оборачивают web-технологии с native bridges, а mobile web работают непосредственно в браузере.",en:"Native apps use platform SDKs, hybrid apps wrap web technology with native bridges, and mobile web apps run in the browser."},{ru:"типы мобильных приложений",en:"mobile app types"}],
-  [79,"poor-network-testing","middle","mobile",{ru:"Как тестировать приложение при плохой сети?",en:"How do you test an app under poor network conditions?"},{ru:"Моделируют задержку, ограничение скорости, потерю пакетов, offline-переходы, восстановление, дубли запросов, устаревшие данные и прерванные операции.",en:"Simulate latency, bandwidth limits, packet loss, offline transitions, reconnects, duplicate requests, stale data, and interrupted operations."},{ru:"плохая сеть",en:"poor network"}],
-  [80,"test-automation-purpose","junior","automation",{ru:"Что такое автоматизация тестирования и когда она нужна?",en:"What is test automation and when should it be used?"},{ru:"Автоматизируют стабильные, повторяемые и ценные проверки, когда это ускоряет обратную связь или снижает стоимость выполнения и оправдывает поддержку.",en:"Automate stable, repeatable, valuable checks when automation improves feedback time or execution cost and the maintenance trade-off is justified."},{ru:"автоматизация",en:"automation"}],
-  [81,"what-not-to-automate","middle","automation",{ru:"Что не стоит автоматизировать?",en:"What should not be automated?"},{ru:"Обычно не автоматизируют разовые, быстро меняющиеся, субъективные, малоценные или более дешёвые вручную сценарии без дополнительной явной выгоды.",en:"Avoid automating one-off, rapidly changing, subjective, low-value, or cheaper-to-check-manually scenarios without another clear benefit."},{ru:"выбор автоматизации",en:"automation selection"}],
-  [82,"choose-automation-cases","middle","automation",{ru:"Как выбирать тесты для автоматизации?",en:"How do you choose test cases for automation?"},{ru:"Приоритетны частые, детерминированные, бизнес-критичные и регрессионно опасные проверки со стабильным интерфейсом, измеримой выгодой и поддерживаемыми данными.",en:"Prioritize frequent, deterministic, business-critical, regression-prone checks with stable interfaces, measurable savings, and maintainable data."},{ru:"кандидаты на автоматизацию",en:"automation candidates"}],
-  [83,"automation-framework-quality","middle","automation",{ru:"Каким должен быть хороший фреймворк автоматизации?",en:"What are the characteristics of a good automation framework?"},{ru:"Хороший фреймворк имеет понятные слои, читаемые тесты, изолированные данные, детерминированную подготовку, диагностику, parallel safety, конфигурацию и простой запуск.",en:"A good framework has clear layers, readable tests, isolated data, deterministic setup, useful diagnostics, parallel safety, configuration, and simple execution."},{ru:"фреймворк",en:"framework"}],
-  [84,"page-object-pattern","middle","automation",{ru:"Что такое Page Object и каковы его ограничения?",en:"What is the Page Object pattern and what are its limitations?"},{ru:"Page Object инкапсулирует взаимодействие с UI, но слишком крупные объекты скрывают смысл, дублируют workflow и сильно связывают тесты со структурой страницы.",en:"Page Objects encapsulate UI interactions, but oversized objects can hide intent, duplicate workflows, and tightly couple tests to page structure."},{ru:"Page Object",en:"Page Object"}],
-  [85,"cicd-qa-role","middle","cicd",{ru:"Что такое CI/CD и как QA участвует в процессе?",en:"What is CI/CD and how does QA participate?"},{ru:"CI часто интегрирует и проверяет изменения, delivery или deployment автоматизирует выпуск, а QA проектирует quality gates, быструю обратную связь, окружения и наблюдаемость.",en:"CI integrates and verifies changes frequently; delivery or deployment automates release flow, while QA designs quality gates, fast feedback, environments, and observability."},{ru:"CI/CD",en:"CI/CD"}],
+  [
+    66,
+    "sql-find-duplicates",
+    "junior",
+    "sql",
+    { ru: "Как найти дубликаты в SQL?", en: "How do you find duplicate records in SQL?" },
+    {
+      ru: "Группируют данные по бизнес-ключу и используют HAVING COUNT(*) > 1, после чего анализируют полные строки и допустимость повторов.",
+      en: "Group by the business key and use HAVING COUNT(*) > 1, then inspect full rows and determine whether duplicates are legitimate.",
+    },
+    { ru: "дубликаты SQL", en: "SQL duplicates" },
+  ],
+  [
+    67,
+    "database-normalization",
+    "middle",
+    "sql",
+    {
+      ru: "Что такое нормализация и когда полезна денормализация?",
+      en: "What is normalization and when can denormalization be useful?",
+    },
+    {
+      ru: "Нормализация уменьшает избыточность и аномалии обновления, а денормализация осознанно дублирует данные ради простоты или скорости чтения.",
+      en: "Normalization reduces redundancy and update anomalies; denormalization intentionally duplicates data to simplify or accelerate reads.",
+    },
+    { ru: "нормализация", en: "normalization" },
+  ],
+  [
+    68,
+    "database-transactions-acid",
+    "middle",
+    "sql",
+    {
+      ru: "Что такое транзакции и свойства ACID?",
+      en: "What are database transactions and ACID properties?",
+    },
+    {
+      ru: "Транзакции объединяют операции с атомарностью, согласованностью, изоляцией и долговечностью, а уровни изоляции балансируют аномалии и конкурентность.",
+      en: "Transactions group operations with atomicity, consistency, isolation, and durability; isolation levels trade anomalies against concurrency.",
+    },
+    { ru: "ACID", en: "ACID" },
+  ],
+  [
+    69,
+    "test-database-migrations",
+    "senior",
+    "sql",
+    { ru: "Как тестировать миграции базы данных?", en: "How do you test database migrations?" },
+    {
+      ru: "Проверяют прямой и обратный путь, преобразование схемы и данных, ограничения, совместимость при rolling deploy, производительность, резервные копии и наблюдаемость.",
+      en: "Test forward and rollback paths, schema and data transformations, constraints, rolling-deploy compatibility, performance, backups, and observability.",
+    },
+    { ru: "миграции БД", en: "database migrations" },
+  ],
+  [
+    70,
+    "git-for-qa",
+    "junior",
+    "tools",
+    {
+      ru: "Какие базовые команды Git должен знать QA-инженер?",
+      en: "What basic Git commands should a QA engineer know?",
+    },
+    {
+      ru: "QA должен уверенно использовать clone, branch, fetch, pull, status, log, diff, commit, решать простые конфликты и создавать pull requests.",
+      en: "QA should confidently use clone, branch, fetch, pull, status, log, diff, commit, resolve simple conflicts, and create pull requests.",
+    },
+    { ru: "Git", en: "Git" },
+  ],
+  [
+    71,
+    "linux-for-qa",
+    "junior",
+    "tools",
+    {
+      ru: "Какие Linux-команды полезны для тестирования и диагностики?",
+      en: "What Linux commands are useful for testing and troubleshooting?",
+    },
+    {
+      ru: "Часто применяют ls, cd, cat, less, grep, find, tail, curl, ps, top, kill, chmod, env, ssh и утилиты анализа логов и сети.",
+      en: "Common tools include ls, cd, cat, less, grep, find, tail, curl, ps, top, kill, chmod, env, ssh, and log and network utilities.",
+    },
+    { ru: "Linux", en: "Linux" },
+  ],
+  [
+    72,
+    "browser-devtools",
+    "junior",
+    "web",
+    {
+      ru: "Как использовать Browser DevTools при тестировании?",
+      en: "How do you use browser DevTools during testing?",
+    },
+    {
+      ru: "Elements, Console, Network, Storage, Performance и accessibility-панели помогают исследовать DOM, ошибки, запросы, состояние, рендеринг и время.",
+      en: "Elements, Console, Network, Storage, Performance, and accessibility panels help inspect DOM, errors, requests, state, rendering, and timing.",
+    },
+    { ru: "DevTools", en: "DevTools" },
+  ],
+  [
+    73,
+    "cors-testing",
+    "middle",
+    "security",
+    { ru: "Что такое CORS и как его тестировать?", en: "What is CORS and how do you test it?" },
+    {
+      ru: "CORS — политика браузера для cross-origin запросов; проверяют разрешённые origins, методы, headers, credentials, preflight и кеширование.",
+      en: "CORS is a browser-enforced policy for cross-origin requests; test allowed origins, methods, headers, credentials, preflight behavior, and caching.",
+    },
+    { ru: "CORS", en: "CORS" },
+  ],
+  [
+    74,
+    "cache-defects",
+    "middle",
+    "web",
+    {
+      ru: "Что такое кеширование и как оно вызывает дефекты?",
+      en: "What is caching and how can it cause defects?",
+    },
+    {
+      ru: "Кеши снижают задержку и нагрузку, но могут отдавать устаревшие, неверно разделённые, неавторизованные или несогласованно инвалидированные данные.",
+      en: "Caches improve latency and load but can serve stale, incorrectly varied, unauthorized, or inconsistently invalidated data.",
+    },
+    { ru: "кеширование", en: "caching" },
+  ],
+  [
+    75,
+    "localization-testing",
+    "middle",
+    "localization",
+    {
+      ru: "Как тестировать локализацию и интернационализацию?",
+      en: "How do you test localization and internationalization?",
+    },
+    {
+      ru: "Проверяют переводы, расширение layout, plural rules, даты, числа, валюту, сортировку, ввод, кодировку, направление, fallback и сохранение локали.",
+      en: "Verify translations, layout expansion, plural rules, dates, numbers, currency, sorting, input, encoding, direction, fallback, and locale persistence.",
+    },
+    { ru: "локализация", en: "localization" },
+  ],
+  [
+    76,
+    "accessibility-testing",
+    "middle",
+    "accessibility",
+    { ru: "Как тестировать доступность?", en: "How do you test accessibility?" },
+    {
+      ru: "Сочетают клавиатурную навигацию, семантику, доступные имена, порядок фокуса, контраст, масштабирование, screen reader и автоматические правила с ручной оценкой.",
+      en: "Combine keyboard navigation, semantics, accessible names, focus order, contrast, zoom, screen-reader checks, and automated rules with manual evaluation.",
+    },
+    { ru: "доступность", en: "accessibility" },
+  ],
+  [
+    77,
+    "mobile-application-testing",
+    "middle",
+    "mobile",
+    { ru: "Как тестировать мобильное приложение?", en: "How do you test a mobile application?" },
+    {
+      ru: "Проверяют устройства и версии ОС, ориентацию, жесты, разрешения, прерывания, background, сети, батарею, память, установку, обновления и правила платформы.",
+      en: "Cover devices and OS versions, orientation, gestures, permissions, interruptions, backgrounding, networks, battery, storage, installation, updates, and platform conventions.",
+    },
+    { ru: "mobile", en: "mobile" },
+  ],
+  [
+    78,
+    "native-hybrid-mobile-web",
+    "junior",
+    "mobile",
+    {
+      ru: "Чем отличаются native, hybrid и mobile web приложения?",
+      en: "What is the difference between native, hybrid, and mobile web apps?",
+    },
+    {
+      ru: "Native используют SDK платформы, hybrid оборачивают web-технологии с native bridges, а mobile web работают непосредственно в браузере.",
+      en: "Native apps use platform SDKs, hybrid apps wrap web technology with native bridges, and mobile web apps run in the browser.",
+    },
+    { ru: "типы мобильных приложений", en: "mobile app types" },
+  ],
+  [
+    79,
+    "poor-network-testing",
+    "middle",
+    "mobile",
+    {
+      ru: "Как тестировать приложение при плохой сети?",
+      en: "How do you test an app under poor network conditions?",
+    },
+    {
+      ru: "Моделируют задержку, ограничение скорости, потерю пакетов, offline-переходы, восстановление, дубли запросов, устаревшие данные и прерванные операции.",
+      en: "Simulate latency, bandwidth limits, packet loss, offline transitions, reconnects, duplicate requests, stale data, and interrupted operations.",
+    },
+    { ru: "плохая сеть", en: "poor network" },
+  ],
+  [
+    80,
+    "test-automation-purpose",
+    "junior",
+    "automation",
+    {
+      ru: "Что такое автоматизация тестирования и когда она нужна?",
+      en: "What is test automation and when should it be used?",
+    },
+    {
+      ru: "Автоматизируют стабильные, повторяемые и ценные проверки, когда это ускоряет обратную связь или снижает стоимость выполнения и оправдывает поддержку.",
+      en: "Automate stable, repeatable, valuable checks when automation improves feedback time or execution cost and the maintenance trade-off is justified.",
+    },
+    { ru: "автоматизация", en: "automation" },
+  ],
+  [
+    81,
+    "what-not-to-automate",
+    "middle",
+    "automation",
+    { ru: "Что не стоит автоматизировать?", en: "What should not be automated?" },
+    {
+      ru: "Обычно не автоматизируют разовые, быстро меняющиеся, субъективные, малоценные или более дешёвые вручную сценарии без дополнительной явной выгоды.",
+      en: "Avoid automating one-off, rapidly changing, subjective, low-value, or cheaper-to-check-manually scenarios without another clear benefit.",
+    },
+    { ru: "выбор автоматизации", en: "automation selection" },
+  ],
+  [
+    82,
+    "choose-automation-cases",
+    "middle",
+    "automation",
+    {
+      ru: "Как выбирать тесты для автоматизации?",
+      en: "How do you choose test cases for automation?",
+    },
+    {
+      ru: "Приоритетны частые, детерминированные, бизнес-критичные и регрессионно опасные проверки со стабильным интерфейсом, измеримой выгодой и поддерживаемыми данными.",
+      en: "Prioritize frequent, deterministic, business-critical, regression-prone checks with stable interfaces, measurable savings, and maintainable data.",
+    },
+    { ru: "кандидаты на автоматизацию", en: "automation candidates" },
+  ],
+  [
+    83,
+    "automation-framework-quality",
+    "middle",
+    "automation",
+    {
+      ru: "Каким должен быть хороший фреймворк автоматизации?",
+      en: "What are the characteristics of a good automation framework?",
+    },
+    {
+      ru: "Хороший фреймворк имеет понятные слои, читаемые тесты, изолированные данные, детерминированную подготовку, диагностику, parallel safety, конфигурацию и простой запуск.",
+      en: "A good framework has clear layers, readable tests, isolated data, deterministic setup, useful diagnostics, parallel safety, configuration, and simple execution.",
+    },
+    { ru: "фреймворк", en: "framework" },
+  ],
+  [
+    84,
+    "page-object-pattern",
+    "middle",
+    "automation",
+    {
+      ru: "Что такое Page Object и каковы его ограничения?",
+      en: "What is the Page Object pattern and what are its limitations?",
+    },
+    {
+      ru: "Page Object инкапсулирует взаимодействие с UI, но слишком крупные объекты скрывают смысл, дублируют workflow и сильно связывают тесты со структурой страницы.",
+      en: "Page Objects encapsulate UI interactions, but oversized objects can hide intent, duplicate workflows, and tightly couple tests to page structure.",
+    },
+    { ru: "Page Object", en: "Page Object" },
+  ],
+  [
+    85,
+    "cicd-qa-role",
+    "middle",
+    "cicd",
+    {
+      ru: "Что такое CI/CD и как QA участвует в процессе?",
+      en: "What is CI/CD and how does QA participate?",
+    },
+    {
+      ru: "CI часто интегрирует и проверяет изменения, delivery или deployment автоматизирует выпуск, а QA проектирует quality gates, быструю обратную связь, окружения и наблюдаемость.",
+      en: "CI integrates and verifies changes frequently; delivery or deployment automates release flow, while QA designs quality gates, fast feedback, environments, and observability.",
+    },
+    { ru: "CI/CD", en: "CI/CD" },
+  ],
 ];
 
-export const top100Batch066085 = rows.map(([rank,slug,difficulty,categorySlug,title,summary,label]) => createRankedQuestion({ rank, slug, difficulty, categorySlug, category: categories[categorySlug]!, title, summary, tags: [{ key: slug, label }], sources }));
+export const top100Batch066085 = rows.map(
+  ([rank, slug, difficulty, categorySlug, title, summary, label]) =>
+    createRankedQuestion({
+      rank,
+      slug,
+      difficulty,
+      categorySlug,
+      category: categories[categorySlug]!,
+      title,
+      summary,
+      tags: [{ key: slug, label }],
+      sources,
+    }),
+);
