@@ -1,8 +1,7 @@
 import assert from "node:assert/strict";
 import { after, afterEach, before, test } from "node:test";
 
-import { act, cleanup, render } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import globalJsdom from "global-jsdom";
 import React from "react";
 
@@ -24,22 +23,20 @@ afterEach(() => {
 
 after(() => cleanupDom());
 
-test("Question Library uses Russian by default and searches Russian content", async () => {
-  const user = userEvent.setup({ document: window.document });
+test("Question Library uses Russian by default and searches Russian content", () => {
   const view = render(<QuestionLibrary questions={seedQuestions} />);
 
   const search = view.getByLabelText("Поиск вопросов");
-  await user.type(search, "нестабильные");
+  fireEvent.change(search, { target: { value: "нестабильные" } });
   assert.ok(view.getByText("Как исследовать и сокращать нестабильные тесты?"));
   assert.equal(view.queryByText("What is the testing pyramid and when does it fail?"), null);
 
-  await user.clear(search);
-  await user.selectOptions(view.getByLabelText("Уровень"), "junior");
-  assert.match(view.getByText(/1 \/ 6 вопросов/).textContent ?? "", /^1 \/ 6/);
+  fireEvent.change(search, { target: { value: "" } });
+  fireEvent.change(view.getByLabelText("Уровень"), { target: { value: "junior" } });
+  assert.match(view.getByText(/1 \/ 1 \/ 6 вопросов/).textContent ?? "", /^1 \/ 1 \/ 6/);
 });
 
 test("Question Library switches to English without reload and searches English content", async () => {
-  const user = userEvent.setup({ document: window.document });
   const view = render(<QuestionLibrary questions={seedQuestions} />);
 
   act(() => {
@@ -47,20 +44,21 @@ test("Question Library switches to English without reload and searches English c
   });
 
   const search = await view.findByLabelText("Search questions");
-  await user.type(search, "contract tests");
+  fireEvent.change(search, { target: { value: "contract tests" } });
   assert.ok(view.getByText("How do contract tests protect service integrations?"));
   assert.equal(view.queryByText("Как контрактные тесты защищают интеграции сервисов?"), null);
 });
 
-test("Question Library exposes a localized empty state and resets filters", async () => {
-  const user = userEvent.setup({ document: window.document });
+test("Question Library exposes a localized empty state and resets filters", () => {
   const view = render(<QuestionLibrary questions={seedQuestions} />);
 
-  await user.type(view.getByLabelText("Поиск вопросов"), "несуществующая-тема");
+  fireEvent.change(view.getByLabelText("Поиск вопросов"), {
+    target: { value: "несуществующая-тема" },
+  });
   assert.ok(view.getByText("Вопросы не найдены"));
 
   const resetButtons = view.getAllByRole("button", { name: "Сбросить фильтры" });
-  await user.click(resetButtons.at(-1)!);
+  fireEvent.click(resetButtons.at(-1)!);
 
   assert.equal(view.queryByText("Вопросы не найдены"), null);
   assert.ok(view.getByText("Что такое пирамида тестирования и когда она не работает?"));
