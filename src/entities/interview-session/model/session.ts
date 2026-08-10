@@ -79,6 +79,65 @@ export function appendInterviewTurn(
   };
 }
 
+export function recordInterviewTurnAnswer(
+  session: InterviewSession,
+  input: {
+    readonly turnId: string;
+    readonly answer: string;
+    readonly now: string;
+  },
+): InterviewSession {
+  if (session.status !== "running") {
+    throw new Error("Interview answers can only be recorded for a running session");
+  }
+
+  const answer = input.answer.trim();
+  if (!answer) throw new Error("Interview answer cannot be empty");
+
+  const turnIndex = session.turns.findIndex((turn) => turn.id === input.turnId);
+  if (turnIndex < 0) throw new Error("Interview turn was not found");
+
+  const existing = session.turns[turnIndex];
+  if (existing.answer) throw new Error("Interview turn is already answered");
+
+  const turns = [...session.turns];
+  turns[turnIndex] = {
+    ...existing,
+    answer,
+    answeredAt: input.now,
+  };
+
+  return {
+    ...session,
+    turns,
+    updatedAt: input.now,
+  };
+}
+
+export function advanceInterviewQuestion(session: InterviewSession, now: string): InterviewSession {
+  if (session.status !== "running") {
+    throw new Error("Interview can only advance while running");
+  }
+
+  const currentTurn = [...session.turns]
+    .reverse()
+    .find((turn) => turn.questionId === session.questionIds[session.currentQuestionIndex]);
+  if (!currentTurn?.answer) {
+    throw new Error("Current interview question must be answered before advancing");
+  }
+
+  const nextQuestionIndex = Math.min(
+    session.currentQuestionIndex + 1,
+    session.questionIds.length - 1,
+  );
+
+  return {
+    ...session,
+    currentQuestionIndex: nextQuestionIndex,
+    updatedAt: now,
+  };
+}
+
 export function answerInterviewTurn(
   session: InterviewSession,
   input: {
