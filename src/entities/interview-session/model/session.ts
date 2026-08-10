@@ -39,10 +39,7 @@ export function createInterviewSession({
   };
 }
 
-export function startInterviewSession(
-  session: InterviewSession,
-  now: string,
-): InterviewSession {
+export function startInterviewSession(session: InterviewSession, now: string): InterviewSession {
   if (session.status !== "idle") return session;
 
   return {
@@ -122,10 +119,7 @@ export function answerInterviewTurn(
   };
 }
 
-export function completeInterviewSession(
-  session: InterviewSession,
-  now: string,
-): InterviewSession {
+export function completeInterviewSession(session: InterviewSession, now: string): InterviewSession {
   if (session.status === "completed") return session;
 
   return {
