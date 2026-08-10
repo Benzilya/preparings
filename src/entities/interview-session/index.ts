@@ -11,9 +11,11 @@ export type {
   InterviewTurnKind,
 } from "./model/types";
 export {
+  advanceInterviewQuestion,
   answerInterviewTurn,
   appendInterviewTurn,
   completeInterviewSession,
   createInterviewSession,
+  recordInterviewTurnAnswer,
   startInterviewSession,
 } from "./model/session";
