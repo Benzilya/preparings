@@ -14,14 +14,17 @@ const setupCopy = {
     minutes: "мин",
     mode: "Режим",
     adaptiveMode: "Структурированное + адаптивное",
-    adaptiveHint: "Интервью идёт по выбранному плану, но уточняющие вопросы зависят от качества ваших ответов.",
+    adaptiveHint:
+      "Интервью идёт по выбранному плану, но уточняющие вопросы зависят от качества ваших ответов.",
     summary: "Параметры сессии",
     available: "Доступно вопросов",
     selected: "Будет выбрано",
     start: "Подготовить интервью",
     prepared: "Сессия подготовлена",
-    preparedHint: "Настройки и список вопросов сохранены локально. На следующем этапе подключим экран прохождения интервью.",
-    insufficient: "Для выбранных параметров недостаточно вопросов. Уменьшите количество или расширьте темы.",
+    preparedHint:
+      "Настройки и список вопросов сохранены локально. На следующем этапе подключим экран прохождения интервью.",
+    insufficient:
+      "Для выбранных параметров недостаточно вопросов. Уменьшите количество или расширьте темы.",
     russian: "Русский",
     english: "English",
     junior: "Junior",
@@ -41,14 +44,17 @@ const setupCopy = {
     minutes: "min",
     mode: "Mode",
     adaptiveMode: "Structured + adaptive",
-    adaptiveHint: "The interview follows a selected plan while follow-up questions adapt to the quality of your answers.",
+    adaptiveHint:
+      "The interview follows a selected plan while follow-up questions adapt to the quality of your answers.",
     summary: "Session settings",
     available: "Questions available",
     selected: "Questions selected",
     start: "Prepare interview",
     prepared: "Session prepared",
-    preparedHint: "The settings and question list are saved locally. The next stage will add the live interview screen.",
-    insufficient: "There are not enough questions for these settings. Reduce the count or broaden the topics.",
+    preparedHint:
+      "The settings and question list are saved locally. The next stage will add the live interview screen.",
+    insufficient:
+      "There are not enough questions for these settings. Reduce the count or broaden the topics.",
     russian: "Russian",
     english: "English",
     junior: "Junior",

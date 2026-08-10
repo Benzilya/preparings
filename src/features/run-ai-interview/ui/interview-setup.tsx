@@ -38,10 +38,7 @@ export function InterviewSetup() {
     const bySlug = new Map<string, string>();
     for (const question of questionLibraryQuestions) {
       if (!bySlug.has(question.categorySlug)) {
-        bySlug.set(
-          question.categorySlug,
-          localizeQuestion(question, interfaceLanguage).category,
-        );
+        bySlug.set(question.categorySlug, localizeQuestion(question, interfaceLanguage).category);
       }
     }
     return [...bySlug.entries()].sort((left, right) =>
