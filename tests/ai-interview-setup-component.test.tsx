@@ -47,7 +47,7 @@ test("AI interview setup is Russian-first and persists a real session", async ()
     const count = selectByLabel(view.container, "Количество вопросов");
     await act(async () => {
       count.value = "5";
-      count.dispatchEvent(new Event("change", { bubbles: true }));
+      count.dispatchEvent(new window.Event("change", { bubbles: true }));
     });
 
     const button = [...view.container.querySelectorAll("button")].find((item) =>
