@@ -97,6 +97,7 @@ test("AI interview setup follows saved English interface language", async () => 
 
     assert.match(container.textContent ?? "", /Configure an adaptive QA interview/);
     assert.match(container.textContent ?? "", /Structured \+ adaptive/);
+    assert.equal(selectByLabel(container, "Interview language").value, "en");
     act(() => root.unmount());
     container.remove();
   } finally {
