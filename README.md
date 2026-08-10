@@ -49,6 +49,72 @@ If port `3000` is busy, Next.js may choose another port such as `3001`. Use the 
 
 Если порт `3000` занят, Next.js может выбрать другой порт, например `3001`. Открывайте адрес `Local`, который показывает команда `pnpm dev`.
 
+### Change the local development port / Смена порта локального запуска
+
+To start the development server on a specific port, pass the port to Next.js through the existing `dev` script. For example, to use port `3001`:
+
+Чтобы запустить dev-сервер на конкретном порту, передайте номер порта Next.js через существующий `dev`-скрипт. Например, для порта `3001`:
+
+```bash
+pnpm dev -- -p 3001
+```
+
+You can use any free local port, for example:
+
+Можно использовать любой свободный локальный порт, например:
+
+```bash
+pnpm dev -- -p 3005
+pnpm dev -- -p 8080
+```
+
+Then open the matching address in the browser:
+
+После запуска откройте соответствующий адрес в браузере:
+
+```text
+http://localhost:3001
+```
+
+#### Check which process is using a port in PowerShell / Проверка занятого порта в PowerShell
+
+To see which process is using port `3000`:
+
+Чтобы узнать, какой процесс занимает порт `3000`:
+
+```powershell
+Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue |
+  Select-Object LocalAddress, LocalPort, State, OwningProcess
+```
+
+To inspect the process by PID:
+
+Чтобы посмотреть процесс по его PID:
+
+```powershell
+Get-Process -Id <PID>
+```
+
+If it is an old local development server and you are sure it can be stopped:
+
+Если это старый локальный dev-сервер и вы уверены, что его можно завершить:
+
+```powershell
+Stop-Process -Id <PID>
+```
+
+You can also force termination when a normal stop does not work:
+
+Если обычное завершение не сработало, можно использовать принудительное:
+
+```powershell
+Stop-Process -Id <PID> -Force
+```
+
+After freeing the port, run the application again with `pnpm dev` or choose another port explicitly with `pnpm dev -- -p <PORT>`.
+
+После освобождения порта снова запустите приложение командой `pnpm dev` или явно выберите другой порт через `pnpm dev -- -p <PORT>`.
+
 ### Update an existing local repository / Обновление существующей локальной копии
 
 Use this sequence when the repository is already cloned and you want to get the latest version from `main`.
