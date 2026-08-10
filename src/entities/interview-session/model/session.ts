@@ -39,7 +39,10 @@ export function createInterviewSession({
   };
 }
 
-export function startInterviewSession(session: InterviewSession, now: string): InterviewSession {
+export function startInterviewSession(
+  session: InterviewSession,
+  now: string,
+): InterviewSession {
   if (session.status !== "idle") return session;
 
   return {
