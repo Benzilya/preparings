@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 
-import { questionLibraryQuestions } from "@/content/questions";
+import { questionLibraryQuestions } from "@/../content/questions";
 import { createInterviewSession } from "@/entities/interview-session";
 import type { QuestionDifficulty, QuestionLanguage } from "@/entities/question";
 import { localizeQuestion } from "@/entities/question";
