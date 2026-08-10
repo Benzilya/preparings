@@ -40,10 +40,7 @@ export function InterviewRunner({
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
 
   const currentQuestionId = session.questionIds[session.currentQuestionIndex];
-  const currentQuestion = useMemo(
-    () => resolveQuestion(currentQuestionId),
-    [currentQuestionId],
-  );
+  const currentQuestion = useMemo(() => resolveQuestion(currentQuestionId), [currentQuestionId]);
   const localizedQuestion = currentQuestion
     ? localizeQuestion(currentQuestion, session.config.language)
     : null;
@@ -126,8 +123,8 @@ export function InterviewRunner({
         <h1 id="interview-runner-title">{copy.title}</h1>
         <p className="lead">{session.status === "idle" ? copy.idleLead : copy.runningLead}</p>
         <p aria-label={copy.progress}>
-          {copy.question} {session.currentQuestionIndex + 1} {copy.of} {session.questionIds.length} ·{" "}
-          <strong>{progressPercent}%</strong>
+          {copy.question} {session.currentQuestionIndex + 1} {copy.of} {session.questionIds.length}{" "}
+          · <strong>{progressPercent}%</strong>
         </p>
       </div>
 

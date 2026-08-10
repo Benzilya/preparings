@@ -42,7 +42,10 @@ test("interview experience restores a prepared session and starts the live runne
 
     const firstTitle = localizeQuestion(selectedQuestions[0]!, "ru").title;
     assert.match(container.textContent ?? "", /Прохождение интервью/);
-    assert.match(container.textContent ?? "", new RegExp(firstTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    assert.match(
+      container.textContent ?? "",
+      new RegExp(firstTitle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")),
+    );
     assert.match(container.textContent ?? "", /Вопрос 1 из 2/);
 
     const startButton = [...container.querySelectorAll("button")].find((button) =>
@@ -54,7 +57,9 @@ test("interview experience restores a prepared session and starts the live runne
       startButton.click();
     });
 
-    const stored = JSON.parse(window.localStorage.getItem(interviewSessionStorageKey) ?? "null") as {
+    const stored = JSON.parse(
+      window.localStorage.getItem(interviewSessionStorageKey) ?? "null",
+    ) as {
       status: string;
       turns: { questionId: string }[];
     };
