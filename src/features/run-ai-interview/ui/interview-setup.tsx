@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { questionLibraryQuestions } from "@/content/questions";
 import { createInterviewSession } from "@/entities/interview-session";
@@ -29,6 +29,10 @@ export function InterviewSetup() {
   const [questionCount, setQuestionCount] = useState<number>(10);
   const [durationMinutes, setDurationMinutes] = useState<number>(30);
   const [preparedSessionId, setPreparedSessionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    setInterviewLanguage(interfaceLanguage);
+  }, [interfaceLanguage]);
 
   const categoryOptions = useMemo(() => {
     const bySlug = new Map<string, string>();
