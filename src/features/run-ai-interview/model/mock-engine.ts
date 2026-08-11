@@ -1,5 +1,9 @@
 import type { InterviewFeedback } from "@/entities/interview-session";
-import type { LocalizedQuestion, QuestionLanguage } from "@/entities/question";
+import type {
+  LocalizedQuestion,
+  QuestionDifficulty,
+  QuestionLanguage,
+} from "@/entities/question";
 
 const stopWords = new Set([
   "and",
@@ -20,6 +24,15 @@ const stopWords = new Set([
   "она",
   "они",
 ]);
+
+const difficultyCalibration: Record<
+  QuestionDifficulty,
+  { readonly adequate: number; readonly strong: number; readonly depthBias: number }
+> = {
+  junior: { adequate: 44, strong: 68, depthBias: 0 },
+  middle: { adequate: 52, strong: 74, depthBias: 6 },
+  senior: { adequate: 60, strong: 80, depthBias: 12 },
+};
 
 function tokenize(value: string): string[] {
   return value
@@ -46,12 +59,16 @@ export function evaluateMockInterviewAnswer({
   question,
   answer,
   language,
+  difficulty,
   isLastQuestion,
+  followUpCount,
 }: {
   readonly question: LocalizedQuestion;
   readonly answer: string;
   readonly language: QuestionLanguage;
+  readonly difficulty: QuestionDifficulty;
   readonly isLastQuestion: boolean;
+  readonly followUpCount: number;
 }): MockInterviewEvaluation {
   const answerTokens = new Set(tokenize(answer));
   const expectedTokens = unique([
@@ -63,16 +80,23 @@ export function evaluateMockInterviewAnswer({
   const matched = expectedTokens.filter((token) => answerTokens.has(token));
   const coverage = expectedTokens.length === 0 ? 0 : matched.length / expectedTokens.length;
   const wordCount = answer.trim().split(/\s+/).filter(Boolean).length;
+  const calibration = difficultyCalibration[difficulty];
 
   const correctness = clamp(35 + coverage * 65);
   const completeness = clamp(20 + coverage * 70 + Math.min(wordCount, 80) / 8);
   const clarity = clamp(35 + Math.min(wordCount, 60) * 0.8);
-  const depth = clamp(15 + coverage * 60 + Math.min(wordCount, 100) * 0.25);
+  const depth = clamp(15 + coverage * 60 + Math.min(wordCount, 100) * 0.25 - calibration.depthBias);
   const total = clamp(correctness * 0.35 + completeness * 0.3 + clarity * 0.2 + depth * 0.15);
 
-  const strong = total >= 72;
-  const weak = total < 48;
-  const decision = isLastQuestion && !weak ? "complete" : weak ? "follow-up" : "next-question";
+  const strong = total >= calibration.strong;
+  const adequate = total >= calibration.adequate;
+  const canFollowUp = followUpCount < 1;
+  const decision =
+    isLastQuestion && adequate
+      ? "complete"
+      : !adequate && canFollowUp
+        ? "follow-up"
+        : "next-question";
 
   const strengths = matched
     .slice(0, 3)
@@ -97,15 +121,19 @@ export function evaluateMockInterviewAnswer({
   const summary =
     language === "ru"
       ? strong
-        ? "Ответ достаточно полный для перехода дальше."
-        : weak
-          ? "Ответ требует уточнения: ключевые аспекты раскрыты недостаточно."
-          : "Ответ в целом верный, но его можно сделать полнее и глубже."
+        ? `Ответ уверенно соответствует уровню ${difficulty}.`
+        : adequate
+          ? `Ответ достаточен для уровня ${difficulty}, но его можно сделать глубже.`
+          : canFollowUp
+            ? `Ответ пока не достигает ожидаемого уровня ${difficulty}; нужен один уточняющий вопрос.`
+            : `После уточнения ответ всё ещё слабее ожидаемого уровня ${difficulty}; интервью продолжается без повторного follow-up.`
       : strong
-        ? "The answer is sufficiently complete to move forward."
-        : weak
-          ? "The answer needs clarification because key aspects are underdeveloped."
-          : "The answer is generally sound but can be more complete and deeper.";
+        ? `The answer confidently meets the ${difficulty} level.`
+        : adequate
+          ? `The answer is sufficient for the ${difficulty} level but could go deeper.`
+          : canFollowUp
+            ? `The answer is below the expected ${difficulty} level, so one follow-up is needed.`
+            : `After the follow-up the answer is still below the expected ${difficulty} level; the interview moves on without another follow-up.`;
 
   const followUpPrompt =
     decision === "follow-up"
