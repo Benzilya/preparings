@@ -17,14 +17,14 @@ Development is split into eight completed implementation stages. The feature rem
 7. Final result breakdown and separate local history of completed interviews.
 8. Security hardening, privacy settings, operating documentation and final Quality gate.
 
-1. Типизированная сессия интервью, ходы, scoring, адаптивные решения и локальное хранение.
-2. Настройка интервью на русском/английском: уровень, тема, количество вопросов, длительность и язык.
-3. Восстанавливаемый live-runner с прогрессом, ответами и локальным хранением.
-4. Детерминированный adaptive mock evaluator с feedback и уточняющими вопросами.
-5. Server-side интеграция OpenAI Responses API с автоматическим локальным fallback.
-6. Калибровка Junior/Middle/Senior, лимит одного follow-up и накопительный score сессии.
-7. Итоговая разбивка результата и отдельная локальная история завершённых интервью.
-8. Security hardening, privacy-настройки, эксплуатационная документация и финальный Quality gate.
+9. Типизированная сессия интервью, ходы, scoring, адаптивные решения и локальное хранение.
+10. Настройка интервью на русском/английском: уровень, тема, количество вопросов, длительность и язык.
+11. Восстанавливаемый live-runner с прогрессом, ответами и локальным хранением.
+12. Детерминированный adaptive mock evaluator с feedback и уточняющими вопросами.
+13. Server-side интеграция OpenAI Responses API с автоматическим локальным fallback.
+14. Калибровка Junior/Middle/Senior, лимит одного follow-up и накопительный score сессии.
+15. Итоговая разбивка результата и отдельная локальная история завершённых интервью.
+16. Security hardening, privacy-настройки, эксплуатационная документация и финальный Quality gate.
 
 ## Security and privacy / Безопасность и приватность
 
