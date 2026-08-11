@@ -10,6 +10,7 @@ export type {
   InterviewTurn,
   InterviewTurnKind,
 } from "./model/types";
+export type { InterviewSessionScoreSummary } from "./model/session";
 export {
   advanceInterviewQuestion,
   answerInterviewTurn,
@@ -18,4 +19,5 @@ export {
   createInterviewSession,
   recordInterviewTurnAnswer,
   startInterviewSession,
+  summarizeInterviewSessionScores,
 } from "./model/session";
