@@ -13,6 +13,7 @@ import type { InterviewSession } from "@/entities/interview-session";
 import { localizeQuestion } from "@/entities/question";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/shared/ui";
 
+import { evaluateInterviewAnswerWithApi } from "../model/ai-evaluation";
 import { evaluateMockInterviewAnswer } from "../model/mock-engine";
 import { getInterviewRunnerCopy } from "../model/runner-copy";
 import { interviewSessionStorage } from "../model/session-storage";
@@ -38,6 +39,7 @@ export function InterviewRunner({
   const copy = getInterviewRunnerCopy(session.config.language);
   const [answer, setAnswer] = useState("");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [isEvaluating, setIsEvaluating] = useState(false);
 
   const currentQuestionId = session.questionIds[session.currentQuestionIndex];
   const currentQuestion = useMemo(() => resolveQuestion(currentQuestionId), [currentQuestionId]);
@@ -73,60 +75,76 @@ export function InterviewRunner({
     persist(withFirstTurn);
   };
 
-  const submitAnswer = () => {
-    if (!currentTurn || !answer.trim() || !localizedQuestion) return;
-    const now = new Date().toISOString();
-    const isLastQuestion = session.currentQuestionIndex >= session.questionIds.length - 1;
-    const evaluation = evaluateMockInterviewAnswer({
-      question: localizedQuestion,
-      answer,
-      language: session.config.language,
-      isLastQuestion,
-    });
-    const answered = answerInterviewTurn(session, {
-      turnId: currentTurn.id,
-      answer,
-      feedback: evaluation.feedback,
-      now,
-    });
+  const submitAnswer = async () => {
+    if (!currentTurn || !answer.trim() || !localizedQuestion || isEvaluating) return;
+    setIsEvaluating(true);
+    setStatusMessage(copy.evaluating);
 
-    if (evaluation.feedback.decision === "complete") {
-      const completed = completeInterviewSession(answered, now);
-      persist(completed);
-      setAnswer("");
-      setStatusMessage(copy.completed);
-      return;
-    }
-
-    if (evaluation.feedback.decision === "follow-up") {
-      const withFollowUp = appendInterviewTurn(answered, {
-        id: createTurnId(),
-        kind: "follow-up",
-        questionId: currentQuestionId,
-        prompt: evaluation.followUpPrompt ?? copy.followUp,
+    try {
+      const now = new Date().toISOString();
+      const isLastQuestion = session.currentQuestionIndex >= session.questionIds.length - 1;
+      const apiEvaluation = await evaluateInterviewAnswerWithApi({
+        question: localizedQuestion,
+        answer,
+        language: session.config.language,
+        isLastQuestion,
+      });
+      const evaluation =
+        apiEvaluation ??
+        evaluateMockInterviewAnswer({
+          question: localizedQuestion,
+          answer,
+          language: session.config.language,
+          isLastQuestion,
+        });
+      const answered = answerInterviewTurn(session, {
+        turnId: currentTurn.id,
+        answer,
+        feedback: evaluation.feedback,
         now,
       });
-      persist(withFollowUp);
+      const evaluationStatus = apiEvaluation ? copy.aiEvaluated : copy.mockEvaluated;
+
+      if (evaluation.feedback.decision === "complete") {
+        const completed = completeInterviewSession(answered, now);
+        persist(completed);
+        setAnswer("");
+        setStatusMessage(evaluationStatus);
+        return;
+      }
+
+      if (evaluation.feedback.decision === "follow-up") {
+        const withFollowUp = appendInterviewTurn(answered, {
+          id: createTurnId(),
+          kind: "follow-up",
+          questionId: currentQuestionId,
+          prompt: evaluation.followUpPrompt ?? copy.followUp,
+          now,
+        });
+        persist(withFollowUp);
+        setAnswer("");
+        setStatusMessage(evaluationStatus);
+        return;
+      }
+
+      const nextQuestionId = answered.questionIds[answered.currentQuestionIndex];
+      const nextQuestion = resolveQuestion(nextQuestionId);
+      if (!nextQuestion) return;
+      const localizedNextQuestion = localizeQuestion(nextQuestion, session.config.language);
+      const withNextTurn = appendInterviewTurn(answered, {
+        id: createTurnId(),
+        kind: "question",
+        questionId: nextQuestionId,
+        prompt: localizedNextQuestion.title,
+        now,
+      });
+
+      persist(withNextTurn);
       setAnswer("");
-      setStatusMessage(copy.saved);
-      return;
+      setStatusMessage(evaluationStatus);
+    } finally {
+      setIsEvaluating(false);
     }
-
-    const nextQuestionId = answered.questionIds[answered.currentQuestionIndex];
-    const nextQuestion = resolveQuestion(nextQuestionId);
-    if (!nextQuestion) return;
-    const localizedNextQuestion = localizeQuestion(nextQuestion, session.config.language);
-    const withNextTurn = appendInterviewTurn(answered, {
-      id: createTurnId(),
-      kind: "question",
-      questionId: nextQuestionId,
-      prompt: localizedNextQuestion.title,
-      now,
-    });
-
-    persist(withNextTurn);
-    setAnswer("");
-    setStatusMessage(copy.saved);
   };
 
   if (!localizedQuestion) {
@@ -180,12 +198,19 @@ export function InterviewRunner({
                 value={answer}
                 onChange={(event) => setAnswer(event.target.value)}
                 rows={8}
+                disabled={isEvaluating}
               />
             </label>
-            <Button disabled={!answer.trim()} onClick={submitAnswer} variant="primary">
-              {session.currentQuestionIndex === session.questionIds.length - 1
-                ? copy.finish
-                : copy.saveAndContinue}
+            <Button
+              disabled={!answer.trim() || isEvaluating}
+              onClick={() => void submitAnswer()}
+              variant="primary"
+            >
+              {isEvaluating
+                ? copy.evaluating
+                : session.currentQuestionIndex === session.questionIds.length - 1
+                  ? copy.finish
+                  : copy.saveAndContinue}
             </Button>
             {statusMessage ? <p role="status">{statusMessage}</p> : null}
           </CardContent>
