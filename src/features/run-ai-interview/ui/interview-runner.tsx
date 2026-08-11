@@ -52,9 +52,7 @@ export function InterviewRunner({
   const currentTurn = [...session.turns]
     .reverse()
     .find((turn) => turn.questionId === currentQuestionId && !turn.answer);
-  const latestFeedback = [...answeredTurns]
-    .reverse()
-    .find((turn) => turn.feedback)?.feedback;
+  const latestFeedback = [...answeredTurns].reverse().find((turn) => turn.feedback)?.feedback;
 
   const persist = (nextSession: InterviewSession) => {
     interviewSessionStorage.write(nextSession);

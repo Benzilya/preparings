@@ -68,17 +68,19 @@ export function evaluateMockInterviewAnswer({
   const completeness = clamp(20 + coverage * 70 + Math.min(wordCount, 80) / 8);
   const clarity = clamp(35 + Math.min(wordCount, 60) * 0.8);
   const depth = clamp(15 + coverage * 60 + Math.min(wordCount, 100) * 0.25);
-  const total = clamp(
-    correctness * 0.35 + completeness * 0.3 + clarity * 0.2 + depth * 0.15,
-  );
+  const total = clamp(correctness * 0.35 + completeness * 0.3 + clarity * 0.2 + depth * 0.15);
 
   const strong = total >= 72;
   const weak = total < 48;
   const decision = isLastQuestion && !weak ? "complete" : weak ? "follow-up" : "next-question";
 
-  const strengths = matched.slice(0, 3).map((token) =>
-    language === "ru" ? `Упомянут важный аспект: ${token}.` : `Covered an important aspect: ${token}.`,
-  );
+  const strengths = matched
+    .slice(0, 3)
+    .map((token) =>
+      language === "ru"
+        ? `Упомянут важный аспект: ${token}.`
+        : `Covered an important aspect: ${token}.`,
+    );
   if (strengths.length === 0) {
     strengths.push(
       language === "ru"
@@ -107,10 +109,10 @@ export function evaluateMockInterviewAnswer({
 
   const followUpPrompt =
     decision === "follow-up"
-      ? question.followUpQuestions[0] ??
+      ? (question.followUpQuestions[0] ??
         (language === "ru"
           ? "Раскройте ответ подробнее и приведите практический пример."
-          : "Expand your answer and add a practical example.")
+          : "Expand your answer and add a practical example."))
       : undefined;
 
   return {
