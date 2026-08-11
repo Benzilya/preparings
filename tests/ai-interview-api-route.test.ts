@@ -75,9 +75,11 @@ test("AI evaluation route calls Responses API with strict level-aware structured
     assert.equal(capturedUrl, "https://api.openai.com/v1/responses");
     assert.equal(capturedAuthorization, "Bearer test-server-key");
     const body = capturedBody as {
+      store?: boolean;
       text?: { format?: { type?: string; strict?: boolean } };
       input?: string;
     };
+    assert.equal(body.store, false);
     assert.equal(body.text?.format?.type, "json_schema");
     assert.equal(body.text?.format?.strict, true);
     assert.match(body.input ?? "", /untrusted answer text/i);
