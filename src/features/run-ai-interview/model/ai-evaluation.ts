@@ -1,11 +1,17 @@
 import type { InterviewFeedback } from "@/entities/interview-session";
-import type { LocalizedQuestion, QuestionLanguage } from "@/entities/question";
+import type {
+  LocalizedQuestion,
+  QuestionDifficulty,
+  QuestionLanguage,
+} from "@/entities/question";
 
 export interface InterviewEvaluationRequest {
   readonly question: LocalizedQuestion;
   readonly answer: string;
   readonly language: QuestionLanguage;
+  readonly difficulty: QuestionDifficulty;
   readonly isLastQuestion: boolean;
+  readonly followUpCount: number;
 }
 
 export interface InterviewEvaluationResult {
@@ -19,6 +25,24 @@ export interface InterviewEvaluationApiResponse {
   readonly followUpPrompt?: string;
 }
 
+export function enforceAdaptiveDecisionLimit(
+  evaluation: InterviewEvaluationApiResponse,
+  input: Pick<InterviewEvaluationRequest, "followUpCount" | "isLastQuestion">,
+): InterviewEvaluationApiResponse {
+  if (evaluation.feedback.decision !== "follow-up" || input.followUpCount < 1) {
+    return evaluation;
+  }
+
+  const decision = input.isLastQuestion ? "complete" : "next-question";
+  return {
+    feedback: {
+      ...evaluation.feedback,
+      decision,
+    },
+    followUpPrompt: undefined,
+  };
+}
+
 export async function evaluateInterviewAnswerWithApi(
   input: InterviewEvaluationRequest,
 ): Promise<InterviewEvaluationApiResponse | null> {
@@ -30,7 +54,8 @@ export async function evaluateInterviewAnswerWithApi(
     });
 
     if (!response.ok) return null;
-    return (await response.json()) as InterviewEvaluationApiResponse;
+    const evaluation = (await response.json()) as InterviewEvaluationApiResponse;
+    return enforceAdaptiveDecisionLimit(evaluation, input);
   } catch {
     return null;
   }
