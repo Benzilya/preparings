@@ -12,24 +12,21 @@ const isGitHubPages = process.env.GITHUB_ACTIONS === "true";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
-  ...(isGitHubPages
-    ? {
-        output: "export",
-        basePath: "/preparings",
-        assetPrefix: "/preparings",
-        trailingSlash: true,
-        images: { unoptimized: true },
-      }
-    : {
-        async headers() {
-          return [
-            {
-              source: "/:path*",
-              headers: [...securityHeaders],
-            },
-          ];
-        },
-      }),
+  ...(isGitHubPages && {
+    output: "export",
+    basePath: "/preparings",
+    assetPrefix: "/preparings",
+    trailingSlash: true,
+    images: { unoptimized: true },
+  }),
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [...securityHeaders],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
