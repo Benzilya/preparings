@@ -148,6 +148,7 @@ export async function POST(request: Request) {
       },
       body: JSON.stringify({
         model,
+        store: false,
         input: buildPrompt(input),
         text: {
           format: {
