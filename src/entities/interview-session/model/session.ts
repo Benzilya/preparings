@@ -1,5 +1,6 @@
 import type {
   InterviewFeedback,
+  InterviewScore,
   InterviewSession,
   InterviewSessionConfig,
   InterviewTurn,
@@ -11,6 +12,15 @@ export interface CreateInterviewSessionInput {
   readonly config: InterviewSessionConfig;
   readonly questionIds: readonly string[];
   readonly now: string;
+}
+
+export interface InterviewSessionScoreSummary {
+  readonly answeredTurns: number;
+  readonly total: number;
+  readonly correctness: number;
+  readonly completeness: number;
+  readonly clarity: number;
+  readonly depth: number;
 }
 
 export function createInterviewSession({
@@ -186,5 +196,25 @@ export function completeInterviewSession(session: InterviewSession, now: string)
     status: "completed",
     completedAt: now,
     updatedAt: now,
+  };
+}
+
+function average(scores: readonly InterviewScore[], key: keyof InterviewScore): number {
+  if (scores.length === 0) return 0;
+  return Math.round(scores.reduce((sum, score) => sum + score[key], 0) / scores.length);
+}
+
+export function summarizeInterviewSessionScores(
+  session: InterviewSession,
+): InterviewSessionScoreSummary {
+  const scores = session.turns.flatMap((turn) => (turn.feedback ? [turn.feedback.score] : []));
+
+  return {
+    answeredTurns: scores.length,
+    total: average(scores, "total"),
+    correctness: average(scores, "correctness"),
+    completeness: average(scores, "completeness"),
+    clarity: average(scores, "clarity"),
+    depth: average(scores, "depth"),
   };
 }
