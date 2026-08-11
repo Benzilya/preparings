@@ -1,9 +1,5 @@
 import type { InterviewFeedback } from "@/entities/interview-session";
-import type {
-  LocalizedQuestion,
-  QuestionDifficulty,
-  QuestionLanguage,
-} from "@/entities/question";
+import type { LocalizedQuestion, QuestionDifficulty, QuestionLanguage } from "@/entities/question";
 
 export interface InterviewEvaluationRequest {
   readonly question: LocalizedQuestion;
