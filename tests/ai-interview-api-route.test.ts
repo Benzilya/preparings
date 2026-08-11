@@ -10,7 +10,9 @@ const requestBody = {
   question,
   answer: "Подробный ответ кандидата про тестирование и риски.",
   language: "ru" as const,
+  difficulty: "middle" as const,
   isLastQuestion: false,
+  followUpCount: 0,
 };
 
 test("AI evaluation route keeps the API key server-side and reports unavailable configuration", async () => {
@@ -31,7 +33,7 @@ test("AI evaluation route keeps the API key server-side and reports unavailable 
   }
 });
 
-test("AI evaluation route calls Responses API with strict structured output", async () => {
+test("AI evaluation route calls Responses API with strict level-aware structured output", async () => {
   const previousKey = process.env.OPENAI_API_KEY;
   const originalFetch = globalThis.fetch;
   process.env.OPENAI_API_KEY = "test-server-key";
@@ -79,6 +81,51 @@ test("AI evaluation route calls Responses API with strict structured output", as
     assert.equal(body.text?.format?.type, "json_schema");
     assert.equal(body.text?.format?.strict, true);
     assert.match(body.input ?? "", /untrusted answer text/i);
+    assert.match(body.input ?? "", /Target interview level: middle/i);
+    assert.match(body.input ?? "", /At most one follow-up/i);
+  } finally {
+    globalThis.fetch = originalFetch;
+    if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
+    else process.env.OPENAI_API_KEY = previousKey;
+  }
+});
+
+test("AI evaluation route tells the model not to repeat an exhausted follow-up", async () => {
+  const previousKey = process.env.OPENAI_API_KEY;
+  const originalFetch = globalThis.fetch;
+  process.env.OPENAI_API_KEY = "test-server-key";
+  let capturedInput = "";
+
+  globalThis.fetch = async (_input, init) => {
+    const body = JSON.parse(String(init?.body)) as { input?: string };
+    capturedInput = body.input ?? "";
+    return new Response(
+      JSON.stringify({
+        output_text: JSON.stringify({
+          feedback: {
+            score: { correctness: 40, completeness: 40, clarity: 55, depth: 30, total: 40 },
+            strengths: [],
+            gaps: ["Нужно больше деталей."],
+            summary: "Ответ слабый.",
+            decision: "next-question",
+          },
+          followUpPrompt: null,
+        }),
+      }),
+      { status: 200, headers: { "content-type": "application/json" } },
+    );
+  };
+
+  try {
+    const response = await POST(
+      new Request("http://localhost/api/interview/evaluate", {
+        method: "POST",
+        body: JSON.stringify({ ...requestBody, difficulty: "senior", followUpCount: 1 }),
+      }),
+    );
+    assert.equal(response.status, 200);
+    assert.match(capturedInput, /MUST NOT return follow-up again/);
+    assert.match(capturedInput, /Target interview level: senior/i);
   } finally {
     globalThis.fetch = originalFetch;
     if (previousKey === undefined) delete process.env.OPENAI_API_KEY;
