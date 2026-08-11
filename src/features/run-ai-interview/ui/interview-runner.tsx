@@ -8,6 +8,7 @@ import {
   appendInterviewTurn,
   completeInterviewSession,
   startInterviewSession,
+  summarizeInterviewSessionScores,
 } from "@/entities/interview-session";
 import type { InterviewSession } from "@/entities/interview-session";
 import { localizeQuestion } from "@/entities/question";
@@ -47,6 +48,7 @@ export function InterviewRunner({
     ? localizeQuestion(currentQuestion, session.config.language)
     : null;
   const answeredTurns = session.turns.filter((turn) => Boolean(turn.answer));
+  const scoreSummary = summarizeInterviewSessionScores(session);
   const progressPercent =
     session.status === "completed"
       ? 100
@@ -55,6 +57,9 @@ export function InterviewRunner({
     .reverse()
     .find((turn) => turn.questionId === currentQuestionId && !turn.answer);
   const latestFeedback = [...answeredTurns].reverse().find((turn) => turn.feedback)?.feedback;
+  const followUpCount = session.turns.filter(
+    (turn) => turn.questionId === currentQuestionId && turn.kind === "follow-up",
+  ).length;
 
   const persist = (nextSession: InterviewSession) => {
     interviewSessionStorage.write(nextSession);
@@ -83,20 +88,16 @@ export function InterviewRunner({
     try {
       const now = new Date().toISOString();
       const isLastQuestion = session.currentQuestionIndex >= session.questionIds.length - 1;
-      const apiEvaluation = await evaluateInterviewAnswerWithApi({
+      const evaluationInput = {
         question: localizedQuestion,
         answer,
         language: session.config.language,
+        difficulty: session.config.difficulty,
         isLastQuestion,
-      });
-      const evaluation =
-        apiEvaluation ??
-        evaluateMockInterviewAnswer({
-          question: localizedQuestion,
-          answer,
-          language: session.config.language,
-          isLastQuestion,
-        });
+        followUpCount,
+      } as const;
+      const apiEvaluation = await evaluateInterviewAnswerWithApi(evaluationInput);
+      const evaluation = apiEvaluation ?? evaluateMockInterviewAnswer(evaluationInput);
       const answered = answerInterviewTurn(session, {
         turnId: currentTurn.id,
         answer,
@@ -168,6 +169,12 @@ export function InterviewRunner({
           {copy.question} {session.currentQuestionIndex + 1} {copy.of} {session.questionIds.length}{" "}
           · <strong>{progressPercent}%</strong>
         </p>
+        {scoreSummary.answeredTurns > 0 ? (
+          <p aria-label={copy.sessionScore}>
+            {copy.sessionScore}: <strong>{scoreSummary.total}/100</strong> · {copy.answeredTurns}:{" "}
+            {scoreSummary.answeredTurns}
+          </p>
+        ) : null}
       </div>
 
       {session.status === "idle" ? (
@@ -254,6 +261,11 @@ export function InterviewRunner({
           </CardHeader>
           <CardContent>
             <p>{copy.completedHint}</p>
+            {scoreSummary.answeredTurns > 0 ? (
+              <p>
+                {copy.sessionScore}: <strong>{scoreSummary.total}/100</strong>
+              </p>
+            ) : null}
             <Button onClick={onReset}>{copy.restartSetup}</Button>
           </CardContent>
         </Card>
