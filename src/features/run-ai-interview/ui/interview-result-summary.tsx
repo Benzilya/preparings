@@ -52,7 +52,11 @@ export function InterviewResultSummary({ session }: { readonly session: Intervie
                 <strong>{turn.prompt}</strong>
               </p>
               <p>{turn.answer}</p>
-              {turn.feedback ? <p>{turn.feedback.score.total}/100 — {turn.feedback.summary}</p> : null}
+              {turn.feedback ? (
+                <p>
+                  {turn.feedback.score.total}/100 — {turn.feedback.summary}
+                </p>
+              ) : null}
             </article>
           ))}
       </CardContent>

@@ -7,10 +7,7 @@ import type { InterviewSession } from "@/entities/interview-session";
 import type { QuestionLanguage } from "@/entities/question";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/shared/ui";
 
-import {
-  interviewHistoryChangedEvent,
-  interviewHistoryStorage,
-} from "../model/history-storage";
+import { interviewHistoryChangedEvent, interviewHistoryStorage } from "../model/history-storage";
 import { getInterviewResultsCopy } from "../model/results-copy";
 import { InterviewResultSummary } from "./interview-result-summary";
 
@@ -39,10 +36,12 @@ export function InterviewHistory({ language }: { readonly language: QuestionLang
             return (
               <article key={session.id}>
                 <p>
-                  <strong>{score.total}/100</strong> · {copy.level}: {session.config.difficulty} · {copy.questions}: {session.questionIds.length}
+                  <strong>{score.total}/100</strong> · {copy.level}: {session.config.difficulty} ·{" "}
+                  {copy.questions}: {session.questionIds.length}
                 </p>
                 <p>
-                  {copy.completedAt}: {session.completedAt ? new Date(session.completedAt).toLocaleString() : "—"}
+                  {copy.completedAt}:{" "}
+                  {session.completedAt ? new Date(session.completedAt).toLocaleString() : "—"}
                 </p>
                 <Button onClick={() => setSelected(session)}>{copy.openResult}</Button>
               </article>

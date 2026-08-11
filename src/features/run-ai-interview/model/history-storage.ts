@@ -25,9 +25,11 @@ function parseHistory(raw: string | null): InterviewSession[] {
   try {
     const parsed: unknown = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.filter(isCompletedSession).sort((left, right) =>
-      (right.completedAt ?? right.updatedAt).localeCompare(left.completedAt ?? left.updatedAt),
-    );
+    return parsed
+      .filter(isCompletedSession)
+      .sort((left, right) =>
+        (right.completedAt ?? right.updatedAt).localeCompare(left.completedAt ?? left.updatedAt),
+      );
   } catch {
     return [];
   }

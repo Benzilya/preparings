@@ -38,7 +38,10 @@ test("completed interviews are persisted, deduplicated and sorted newest first",
     interviewHistoryStorage.save(completedSession("older", "2026-08-11T02:00:00.000Z"));
 
     const history = interviewHistoryStorage.read();
-    assert.deepEqual(history.map((session) => session.id), ["older", "newer"]);
+    assert.deepEqual(
+      history.map((session) => session.id),
+      ["older", "newer"],
+    );
     assert.equal(history[0]?.completedAt, "2026-08-11T02:00:00.000Z");
   } finally {
     cleanup();
