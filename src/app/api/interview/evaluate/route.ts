@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 
-import type { InterviewEvaluationApiResponse, InterviewEvaluationRequest } from "@/features/run-ai-interview/model/ai-evaluation";
+import type {
+  InterviewEvaluationApiResponse,
+  InterviewEvaluationRequest,
+} from "@/features/run-ai-interview/model/ai-evaluation";
 
 const model = process.env.OPENAI_INTERVIEW_MODEL ?? "gpt-5-mini";
 
