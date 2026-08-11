@@ -4,16 +4,16 @@ import React, { useMemo, useState } from "react";
 
 import { questionLibraryQuestions } from "@/../content/questions";
 import {
-  advanceInterviewQuestion,
+  answerInterviewTurn,
   appendInterviewTurn,
   completeInterviewSession,
-  recordInterviewTurnAnswer,
   startInterviewSession,
 } from "@/entities/interview-session";
 import type { InterviewSession } from "@/entities/interview-session";
 import { localizeQuestion } from "@/entities/question";
 import { Button, Card, CardContent, CardHeader, CardTitle } from "@/shared/ui";
 
+import { evaluateMockInterviewAnswer } from "../model/mock-engine";
 import { getInterviewRunnerCopy } from "../model/runner-copy";
 import { interviewSessionStorage } from "../model/session-storage";
 
@@ -45,10 +45,16 @@ export function InterviewRunner({
     ? localizeQuestion(currentQuestion, session.config.language)
     : null;
   const answeredTurns = session.turns.filter((turn) => Boolean(turn.answer));
-  const progressPercent = Math.round((answeredTurns.length / session.questionIds.length) * 100);
+  const progressPercent =
+    session.status === "completed"
+      ? 100
+      : Math.round((session.currentQuestionIndex / session.questionIds.length) * 100);
   const currentTurn = [...session.turns]
     .reverse()
     .find((turn) => turn.questionId === currentQuestionId && !turn.answer);
+  const latestFeedback = [...answeredTurns]
+    .reverse()
+    .find((turn) => turn.feedback)?.feedback;
 
   const persist = (nextSession: InterviewSession) => {
     interviewSessionStorage.write(nextSession);
@@ -70,16 +76,23 @@ export function InterviewRunner({
   };
 
   const submitAnswer = () => {
-    if (!currentTurn || !answer.trim()) return;
+    if (!currentTurn || !answer.trim() || !localizedQuestion) return;
     const now = new Date().toISOString();
-    const answered = recordInterviewTurnAnswer(session, {
+    const isLastQuestion = session.currentQuestionIndex >= session.questionIds.length - 1;
+    const evaluation = evaluateMockInterviewAnswer({
+      question: localizedQuestion,
+      answer,
+      language: session.config.language,
+      isLastQuestion,
+    });
+    const answered = answerInterviewTurn(session, {
       turnId: currentTurn.id,
       answer,
+      feedback: evaluation.feedback,
       now,
     });
-    const isLastQuestion = session.currentQuestionIndex >= session.questionIds.length - 1;
 
-    if (isLastQuestion) {
+    if (evaluation.feedback.decision === "complete") {
       const completed = completeInterviewSession(answered, now);
       persist(completed);
       setAnswer("");
@@ -87,12 +100,25 @@ export function InterviewRunner({
       return;
     }
 
-    const advanced = advanceInterviewQuestion(answered, now);
-    const nextQuestionId = advanced.questionIds[advanced.currentQuestionIndex];
+    if (evaluation.feedback.decision === "follow-up") {
+      const withFollowUp = appendInterviewTurn(answered, {
+        id: createTurnId(),
+        kind: "follow-up",
+        questionId: currentQuestionId,
+        prompt: evaluation.followUpPrompt ?? copy.followUp,
+        now,
+      });
+      persist(withFollowUp);
+      setAnswer("");
+      setStatusMessage(copy.saved);
+      return;
+    }
+
+    const nextQuestionId = answered.questionIds[answered.currentQuestionIndex];
     const nextQuestion = resolveQuestion(nextQuestionId);
     if (!nextQuestion) return;
     const localizedNextQuestion = localizeQuestion(nextQuestion, session.config.language);
-    const withNextTurn = appendInterviewTurn(advanced, {
+    const withNextTurn = appendInterviewTurn(answered, {
       id: createTurnId(),
       kind: "question",
       questionId: nextQuestionId,
@@ -142,10 +168,10 @@ export function InterviewRunner({
         </Card>
       ) : null}
 
-      {session.status === "running" ? (
+      {session.status === "running" && currentTurn ? (
         <Card>
           <CardHeader>
-            <CardTitle>{localizedQuestion.title}</CardTitle>
+            <CardTitle>{currentTurn.prompt}</CardTitle>
           </CardHeader>
           <CardContent>
             <label>
@@ -164,6 +190,36 @@ export function InterviewRunner({
                 : copy.saveAndContinue}
             </Button>
             {statusMessage ? <p role="status">{statusMessage}</p> : null}
+          </CardContent>
+        </Card>
+      ) : null}
+
+      {latestFeedback ? (
+        <Card>
+          <CardHeader>
+            <CardTitle>{copy.feedback}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p>
+              {copy.totalScore}: <strong>{latestFeedback.score.total}/100</strong>
+            </p>
+            <p>{latestFeedback.summary}</p>
+            <strong>{copy.strengths}</strong>
+            <ul>
+              {latestFeedback.strengths.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            {latestFeedback.gaps.length > 0 ? (
+              <>
+                <strong>{copy.gaps}</strong>
+                <ul>
+                  {latestFeedback.gaps.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
           </CardContent>
         </Card>
       ) : null}
@@ -190,6 +246,11 @@ export function InterviewRunner({
             <article key={turn.id}>
               <strong>{turn.prompt}</strong>
               <p>{turn.answer}</p>
+              {turn.feedback ? (
+                <p>
+                  {copy.totalScore}: {turn.feedback.score.total}/100
+                </p>
+              ) : null}
             </article>
           ))}
         </CardContent>
